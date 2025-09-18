@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>剪映助手 - 模板工作流</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', 'Noto Sans TC', system-ui, sans-serif;
+        }
+
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #5B5EF1 0%, #7C3AED 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
+        }
+
+        .progress-bar {
+            transition: width 0.5s ease-in-out;
+        }
+
+        .log-container {
+            background: #1F2937;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+
+        .status-idle { background-color: #6B7280; }
+        .status-running { background-color: #F59E0B; animation: pulse 2s infinite; }
+        .status-success { background-color: #10B981; }
+        .status-error { background-color: #EF4444; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .card {
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
+    <!-- 主容器 -->
+    <div class="container mx-auto px-4 py-6 max-w-6xl">
+        <!-- 頂部標題區 -->
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-gray-800 mb-2">剪映助手</h1>
+            <p class="text-xl text-gray-600 font-medium">模板工作流自動化系統</p>
+            <div class="mt-4 flex items-center justify-center">
+                <span class="status-indicator status-idle" id="statusIndicator"></span>
+                <span class="text-sm text-gray-500" id="statusText">就緒</span>
+            </div>
+        </header>
+
+        <!-- 主要操作區 -->
+        <section class="mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <!-- 一鍵執行按鈕 -->
+                <div class="card glass-effect rounded-xl p-6 text-center">
+                    <div class="mb-4">
+                        <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h8m-9-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">一鍵執行</h3>
+                        <p class="text-sm text-gray-600 mb-4">自動執行完整的影片處理流程</p>
+                    </div>
+                    <button id="executeBtn" class="btn-primary text-white px-6 py-3 rounded-lg font-medium w-full transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <span id="executeBtnText">開始執行</span>
+                    </button>
+                </div>
+
+                <!-- 自動配置按鈕 -->
+                <div class="card glass-effect rounded-xl p-6 text-center">
+                    <div class="mb-4">
+                        <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">自動配置</h3>
+                        <p class="text-sm text-gray-600 mb-4">自動偵測和設置路徑配置</p>
+                    </div>
+                    <button id="setupBtn" class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-6 py-3 rounded-lg font-medium w-full transition-all duration-300">
+                        路徑設置
+                    </button>
+                </div>
+
+                <!-- 手動配置按鈕 -->
+                <div class="card glass-effect rounded-xl p-6 text-center">
+                    <div class="mb-4">
+                        <div class="w-16 h-16 bg-gradient-to-br from-orange-500 to-red-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">手動配置</h3>
+                        <p class="text-sm text-gray-600 mb-4">自訂路徑和進階設置</p>
+                    </div>
+                    <button id="configBtn" class="bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white px-6 py-3 rounded-lg font-medium w-full transition-all duration-300">
+                        配置設定
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 配置顯示區 -->
+        <section class="mb-8">
+            <div class="glass-effect rounded-xl p-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    當前配置
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">影片資料夾</label>
+                        <div class="flex items-center">
+                            <input type="text" id="videoFolder" class="flex-1 px-3 py-2 border border-gray-300 rounded-md text-sm" readonly>
+                            <button id="selectVideoFolder" class="ml-2 px-3 py-2 bg-gray-200 hover:bg-gray-300 rounded-md text-sm transition-colors">
+                                選擇
+                            </button>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">剪映草稿路徑</label>
+                        <div class="flex items-center">
+                            <input type="text" id="draftFolder" class="flex-1 px-3 py-2 border border-gray-300 rounded-md text-sm" readonly>
+                            <button id="selectDraftFolder" class="ml-2 px-3 py-2 bg-gray-200 hover:bg-gray-300 rounded-md text-sm transition-colors">
+                                選擇
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 進度追蹤區 -->
+        <section class="mb-8">
+            <div class="glass-effect rounded-xl p-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                    </svg>
+                    執行進度
+                </h3>
+                <div class="mb-4">
+                    <div class="flex justify-between text-sm text-gray-600 mb-2">
+                        <span id="progressText">等待執行...</span>
+                        <span id="progressPercent">0%</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-3">
+                        <div id="progressBar" class="progress-bar bg-gradient-to-r from-blue-500 to-purple-600 h-3 rounded-full" style="width: 0%"></div>
+                    </div>
+                </div>
+                
+                <!-- 統計信息 -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+                    <div class="text-center p-3 bg-blue-50 rounded-lg">
+                        <div class="text-2xl font-bold text-blue-600" id="videoCount">0</div>
+                        <div class="text-sm text-gray-600">影片檔案</div>
+                    </div>
+                    <div class="text-center p-3 bg-green-50 rounded-lg">
+                        <div class="text-2xl font-bold text-green-600" id="processedCount">0</div>
+                        <div class="text-sm text-gray-600">已處理</div>
+                    </div>
+                    <div class="text-center p-3 bg-yellow-50 rounded-lg">
+                        <div class="text-2xl font-bold text-yellow-600" id="successCount">0</div>
+                        <div class="text-sm text-gray-600">成功</div>
+                    </div>
+                    <div class="text-center p-3 bg-red-50 rounded-lg">
+                        <div class="text-2xl font-bold text-red-600" id="errorCount">0</div>
+                        <div class="text-sm text-gray-600">錯誤</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 日誌輸出區 -->
+        <section>
+            <div class="glass-effect rounded-xl p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold text-gray-800 flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        執行日誌
+                    </h3>
+                    <button id="clearLogBtn" class="px-3 py-1 text-sm bg-gray-200 hover:bg-gray-300 rounded-md transition-colors">
+                        清除日誌
+                    </button>
+                </div>
+                <div class="log-container p-4 h-64 overflow-y-auto">
+                    <div id="logOutput" class="text-sm text-green-400 font-mono leading-relaxed">
+                        <div class="text-gray-400">[系統] 剪映助手已啟動，等待指令...</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- 配置模態框 -->
+    <div id="configModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-xl p-6 w-11/12 max-w-2xl max-h-screen overflow-y-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-semibold text-gray-800">配置設定</h2>
+                <button id="closeConfigModal" class="text-gray-400 hover:text-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <form id="configForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">專案根目錄</label>
+                    <input type="text" id="configProjectRoot" class="w-full px-3 py-2 border border-gray-300 rounded-md" required>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">模板資料夾</label>
+                    <input type="text" id="configTemplateFolder" class="w-full px-3 py-2 border border-gray-300 rounded-md" required>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">影片資料夾</label>
+                    <input type="text" id="configVideoFolder" class="w-full px-3 py-2 border border-gray-300 rounded-md" required>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">剪映草稿資料夾</label>
+                    <input type="text" id="configDraftFolder" class="w-full px-3 py-2 border border-gray-300 rounded-md" required>
+                </div>
+                
+                <div class="flex justify-end space-x-3 pt-4">
+                    <button type="button" id="cancelConfig" class="px-4 py-2 text-gray-600 bg-gray-200 hover:bg-gray-300 rounded-md transition-colors">
+                        取消
+                    </button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors">
+                        保存配置
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="renderer.js"></script>
+</body>
+</html>

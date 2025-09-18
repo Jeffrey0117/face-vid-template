@@ -845,7 +845,9 @@ class TemplateVideoReplacer:
             print(f"🖼️  跳過了 {len(skipped_image_files)} 個圖片文件")
 
         if not video_files:
-            print("❌ 在指定文件夾中找不到有效的影片文件")
+            print("❌ raw 資料夾內沒有找到影片檔案")
+            print("💡 請將待處理的影片檔案放入 videos/raw 資料夾中")
+            print("   支援格式：mp4, avi, mov, mkv, wmv, flv")
             return False
 
         print(f"🎬 找到 {len(video_files)} 個有效影片文件")
@@ -1067,8 +1069,9 @@ def direct_process_videos_to_template():
     video_folder = replacer.videos_folder
 
     if not os.path.exists(video_folder):
-        print(f"❌ 找不到 videos 文件夾: {video_folder}")
-        print("💡 請確保 videos 文件夾存在或運行 setup_paths.py 重新配置")
+        print(f"❌ 找不到 raw 資料夾: {video_folder}")
+        print("💡 請確保 videos/raw 資料夾存在並放入待處理的影片檔案")
+        print("   或運行 setup_paths.py 重新配置路徑設定")
         return False
 
     print(f"📁 將使用模板: 面相專案")

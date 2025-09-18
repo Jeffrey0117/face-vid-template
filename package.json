@@ -1,0 +1,79 @@
+{
+  "name": "face-vid-template",
+  "version": "1.0.0",
+  "description": "剪映助手 - 模板工作流自動化系統",
+  "main": "electron-main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "build": "electron-builder",
+    "build-win": "electron-builder --win",
+    "build-mac": "electron-builder --mac",
+    "build-linux": "electron-builder --linux",
+    "dist": "electron-builder --publish=never",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "build": {
+    "appId": "com.jianying.helper",
+    "productName": "剪映助手",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "electron-main.js",
+      "index.html",
+      "renderer.js",
+      "package.json",
+      "run.py",
+      "setup_paths.py",
+      "template_video_replacer.py",
+      "batch_export_faces.py",
+      "config.json",
+      "pyJianYingDraft/**/*",
+      "面相專案/**/*",
+      "videos/**/*"
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "assets/icon.ico"
+    },
+    "mac": {
+      "target": "dmg",
+      "icon": "assets/icon.icns"
+    },
+    "linux": {
+      "target": "AppImage",
+      "icon": "assets/icon.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "installerIcon": "assets/icon.ico",
+      "uninstallerIcon": "assets/icon.ico",
+      "installerHeaderIcon": "assets/icon.ico",
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Jeffrey0117/face-vid-template.git"
+  },
+  "keywords": [
+    "剪映",
+    "視頻編輯",
+    "自動化",
+    "模板",
+    "桌面應用"
+  ],
+  "author": "剪映助手開發團隊",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Jeffrey0117/face-vid-template/issues"
+  },
+  "homepage": "https://github.com/Jeffrey0117/face-vid-template#readme",
+  "devDependencies": {
+    "electron": "^38.1.2",
+    "electron-builder": "^26.0.12"
+  }
+}
