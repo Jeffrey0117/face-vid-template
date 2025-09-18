@@ -1,7 +1,8 @@
 # 面相影片模板專案
 
+![](https://storage.meteor.today/image/68cbbd21b1132fe3d)
+
 > **⚠️ 重要提醒：本專案必須搭配剪映 5.9 未加密版本使用！**
-> ![](https://storage.meteor.today/image/68cbbd21b1132fe3d)
 > 此專案提供自動化面相分析影片生成工具，可批量創建包含不同面相類型的影片專案。
 
 ## 🔄 使用流程與工作原理
