@@ -142,6 +142,47 @@ ipcMain.handle('setup-paths', async () => {
   });
 });
 
+// 處理批量導出面相
+ipcMain.handle('export-faces', async () => {
+  return new Promise((resolve, reject) => {
+    const pythonProcess = spawn('python', ['batch_export_faces.py'], {
+      cwd: __dirname,
+      stdio: 'pipe',
+      env: {
+        ...process.env,
+        PYTHONIOENCODING: 'utf-8'
+      }
+    });
+
+    let output = '';
+    let errorOutput = '';
+
+    pythonProcess.stdout.on('data', (data) => {
+      const chunk = data.toString();
+      output += chunk;
+      mainWindow.webContents.send('process-output', chunk);
+    });
+
+    pythonProcess.stderr.on('data', (data) => {
+      const chunk = data.toString();
+      errorOutput += chunk;
+      mainWindow.webContents.send('process-error', chunk);
+    });
+
+    pythonProcess.on('close', (code) => {
+      if (code === 0) {
+        resolve({ success: true, output });
+      } else {
+        reject({ success: false, error: errorOutput, code });
+      }
+    });
+
+    pythonProcess.on('error', (error) => {
+      reject({ success: false, error: error.message });
+    });
+  });
+});
+
 // 處理文件夾選擇
 ipcMain.handle('select-folder', async (event, title) => {
   const result = await dialog.showOpenDialog(mainWindow, {

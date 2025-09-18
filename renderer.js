@@ -115,6 +115,12 @@ function bindEventListeners() {
     elements.setupBtn.addEventListener('click', handleSetupPaths);
     elements.configBtn.addEventListener('click', showConfigModal);
     
+    // 其他功能按鈕
+    const exportFacesBtn = document.querySelector('.btn-feature');
+    if (exportFacesBtn) {
+        exportFacesBtn.addEventListener('click', handleExportFaces);
+    }
+    
     // 資料夾選擇
     elements.selectVideoFolder.addEventListener('click', () => selectFolder('video'));
     elements.selectDraftFolder.addEventListener('click', () => selectFolder('draft'));
