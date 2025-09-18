@@ -16,6 +16,7 @@ import re
 import copy  # 添加deepcopy支援
 from datetime import datetime  # 添加時間戳支援
 import uuid  # 添加UUID支援用於生成唯一ID
+from pathlib import Path
 
 # 禁用所有debug日誌用於生產環境
 DEBUG_MODE = False
@@ -40,23 +41,91 @@ class TemplateVideoReplacer:
 
     def __init__(self):
         self.username = getpass.getuser()
-        self.draft_folder_path = f"C:\\Users\\{self.username}\\AppData\\Local\\JianyingPro\\User Data\\Projects\\com.lveditor.draft"
+        # 載入配置文件
+        self.config = self.load_config()
+        # 使用配置文件中的路徑設置
+        self.template_folder_path = self.config.get("project_root", os.getcwd())
+        self.draft_folder_path = self.config.get("jianying_draft_folder",
+            f"C:\\Users\\{self.username}\\AppData\\Local\\JianyingPro\\User Data\\Projects\\com.lveditor.draft")
+        self.videos_folder = self.config.get("videos_raw_folder",
+            os.path.join(self.template_folder_path, "videos", "raw"))
+    
+    def load_config(self):
+        """載入配置文件"""
+        config_path = os.path.join(os.getcwd(), "config.json")
+        
+        # 如果配置文件不存在，嘗試運行 setup_paths.py 生成
+        if not os.path.exists(config_path):
+            print("⚠️  配置文件不存在，嘗試自動生成...")
+            try:
+                # 嘗試自動運行路徑設置
+                import setup_paths
+                setup = setup_paths.PathSetup()
+                if setup.setup():
+                    print("✅ 配置文件生成成功")
+                else:
+                    print("❌ 配置文件生成失敗，使用預設設置")
+                    return self.get_default_config()
+            except ImportError:
+                print("❌ 找不到 setup_paths.py，使用預設設置")
+                return self.get_default_config()
+            except Exception as e:
+                print(f"❌ 自動設置失敗: {e}，使用預設設置")
+                return self.get_default_config()
+        
+        # 讀取配置文件
+        try:
+            with open(config_path, 'r', encoding='utf-8') as f:
+                config = json.load(f)
+            print(f"✅ 載入配置文件: {config_path}")
+            print(f"   項目根目錄: {config.get('project_root', 'N/A')}")
+            print(f"   剪映草稿目錄: {config.get('jianying_draft_folder', 'N/A')}")
+            return config
+        except Exception as e:
+            print(f"❌ 讀取配置文件失敗: {e}，使用預設設置")
+            return self.get_default_config()
+    
+    def get_default_config(self):
+        """獲取預設配置"""
+        project_root = os.getcwd()
+        return {
+            "project_root": project_root,
+            "template_folder": os.path.join(project_root, "面相專案"),
+            "videos_folder": os.path.join(project_root, "videos"),
+            "videos_raw_folder": os.path.join(project_root, "videos", "raw"),
+            "jianying_draft_folder": f"C:\\Users\\{self.username}\\AppData\\Local\\JianyingPro\\User Data\\Projects\\com.lveditor.draft",
+            "username": self.username
+        }
 
     def find_template_draft(self, template_name: str = "面相專案"):
         # 🔧 Debug: 添加詳細的模板查找日誌
         print(f"🔍 [Debug] 正在尋找模板專案: {template_name}")
-        print(f"🔍 [Debug] 草稿文件夾路徑: {self.draft_folder_path}")
+        print(f"🔍 [Debug] 本地模板文件夾路徑: {self.template_folder_path}")
         """尋找指定名稱的草稿模板"""
         print(f"🔍 尋找模板草稿: {template_name}")
         
-        template_path = os.path.join(self.draft_folder_path, template_name)
-        if os.path.exists(template_path):
-            print(f"✅ 找到模板: {template_path}")
-            return template_path
+        # 優先在本地項目文件夾中查找模板
+        local_template_path = os.path.join(self.template_folder_path, template_name)
+        if os.path.exists(local_template_path):
+            print(f"✅ 找到本地模板: {local_template_path}")
+            return local_template_path
+        
+        # 如果本地找不到，再到剪映草稿文件夾查找
+        jianying_template_path = os.path.join(self.draft_folder_path, template_name)
+        if os.path.exists(jianying_template_path):
+            print(f"✅ 找到剪映模板: {jianying_template_path}")
+            return jianying_template_path
         else:
             print(f"❌ 找不到模板: {template_name}")
-            print("📁 可用的草稿專案:")
+            print("📁 可用的本地模板:")
             
+            if os.path.exists(self.template_folder_path):
+                for item in os.listdir(self.template_folder_path):
+                    item_path = os.path.join(self.template_folder_path, item)
+                    if os.path.isdir(item_path):
+                        print(f"   • {item}")
+            
+            print("📁 可用的剪映草稿專案:")
             if os.path.exists(self.draft_folder_path):
                 for item in os.listdir(self.draft_folder_path):
                     item_path = os.path.join(self.draft_folder_path, item)
@@ -923,12 +992,12 @@ def direct_process_videos_to_template():
         print("❌ 模板分析失敗")
         return False
 
-    # 設置 videos 文件夹路徑
-    video_folder = r"C:\Users\Jeffrey\Desktop\cut-project\pyJianYingDraft\videos"
+    # 使用配置中的影片文件夾路徑
+    video_folder = replacer.videos_folder
 
     if not os.path.exists(video_folder):
-        print(f"❌ 找不到 videos 文件夹: {video_folder}")
-        print("💡 請確保 videos 文件夹存在")
+        print(f"❌ 找不到 videos 文件夾: {video_folder}")
+        print("💡 請確保 videos 文件夾存在或運行 setup_paths.py 重新配置")
         return False
 
     print(f"📁 將使用模板: 面相專案")
@@ -945,20 +1014,30 @@ def main():
 
     replacer = TemplateVideoReplacer()
 
-    # 自動檢測並處理 videos 文件夹
-    video_folder = r"C:\Users\Jeffrey\Desktop\cut-project\pyJianYingDraft\videos"
+    # 自動檢測並處理配置的影片文件夾
+    video_folder = replacer.videos_folder
 
     if os.path.exists(video_folder):
-        print(f"✅ 發現 videos 文件夹: {video_folder}")
+        print(f"✅ 發現 videos 文件夾: {video_folder}")
         direct_process_videos_to_template()
     else:
-        print("⚠️  未找到 videos 文件夹，進入手動模式")
+        print("⚠️  未找到 videos 文件夾，嘗試自動設置...")
+        print("💡 請運行 setup_paths.py 來配置正確的路徑")
         print("=" * 60)
 
-        # 手動模式 (原來的互動式輸入)
-        # ... 保持原有邏輯
+        # 嘗試自動運行路徑設置
+        try:
+            import setup_paths
+            setup = setup_paths.PathSetup()
+            if setup.setup():
+                print("✅ 路徑設置完成，請重新運行程序")
+            else:
+                print("❌ 路徑設置失敗")
+        except Exception as e:
+            print(f"❌ 自動設置失敗: {e}")
+            print("💡 請手動運行: python setup_paths.py")
 
-    print("\n🎉 如果需要更多自定義選項，請編輯 template_video_replacer.py 文件")
+    print("\n🎉 如果需要更多自定義選項，請編輯 config.json 配置文件")
 
 if __name__ == "__main__":
     main()
