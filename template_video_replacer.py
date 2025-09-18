@@ -97,41 +97,100 @@ class TemplateVideoReplacer:
             "username": self.username
         }
 
+    def check_and_copy_template(self, template_name: str = "面相專案"):
+        """檢查剪映草稿文件夾中是否有模板，如沒有則自動複製"""
+        print(f"🔍 檢查剪映草稿文件夾中的模板: {template_name}")
+        
+        # 檢查剪映草稿文件夾中的模板路徑
+        jianying_template_path = os.path.join(self.draft_folder_path, template_name)
+        local_template_path = os.path.join(self.template_folder_path, template_name)
+        
+        # 如果剪映草稿文件夾中已有模板，直接返回
+        if os.path.exists(jianying_template_path):
+            print(f"✅ 剪映草稿文件夾中已存在模板: {jianying_template_path}")
+            return True
+        
+        # 檢查本地是否有模板
+        if not os.path.exists(local_template_path):
+            print(f"❌ 本地找不到模板: {local_template_path}")
+            print("💡 請確保本地項目文件夾中有「面相專案」模板")
+            return False
+        
+        # 開始複製模板
+        print(f"📋 開始複製模板到剪映草稿文件夾...")
+        print(f"   來源: {local_template_path}")
+        print(f"   目標: {jianying_template_path}")
+        
+        try:
+            # 確保剪映草稿文件夾存在
+            if not os.path.exists(self.draft_folder_path):
+                print(f"📁 創建剪映草稿文件夾: {self.draft_folder_path}")
+                os.makedirs(self.draft_folder_path, exist_ok=True)
+            
+            # 複製整個模板文件夾
+            shutil.copytree(local_template_path, jianying_template_path)
+            
+            print(f"✅ 模板複製成功!")
+            print(f"📁 已複製到: {jianying_template_path}")
+            
+            # 驗證複製結果
+            if os.path.exists(os.path.join(jianying_template_path, "draft_content.json")):
+                print(f"✅ 驗證成功: draft_content.json 已存在")
+                return True
+            else:
+                print(f"❌ 驗證失敗: 找不到 draft_content.json")
+                return False
+                
+        except Exception as e:
+            print(f"❌ 複製模板失敗: {e}")
+            import traceback
+            traceback.print_exc()
+            return False
+
     def find_template_draft(self, template_name: str = "面相專案"):
         # 🔧 Debug: 添加詳細的模板查找日誌
         print(f"🔍 [Debug] 正在尋找模板專案: {template_name}")
         print(f"🔍 [Debug] 本地模板文件夾路徑: {self.template_folder_path}")
-        """尋找指定名稱的草稿模板"""
+        """尋找指定名稱的草稿模板，如果剪映草稿文件夾中沒有則自動複製"""
         print(f"🔍 尋找模板草稿: {template_name}")
         
-        # 優先在本地項目文件夾中查找模板
-        local_template_path = os.path.join(self.template_folder_path, template_name)
-        if os.path.exists(local_template_path):
-            print(f"✅ 找到本地模板: {local_template_path}")
-            return local_template_path
+        # 首先執行自動檢查和複製
+        print(f"🔧 執行自動模板檢查和複製...")
+        copy_success = self.check_and_copy_template(template_name)
         
-        # 如果本地找不到，再到剪映草稿文件夾查找
+        if not copy_success:
+            print(f"❌ 模板準備失敗，無法繼續")
+            return None
+        
+        # 優先在剪映草稿文件夾中查找模板（複製後應該存在）
         jianying_template_path = os.path.join(self.draft_folder_path, template_name)
         if os.path.exists(jianying_template_path):
-            print(f"✅ 找到剪映模板: {jianying_template_path}")
+            print(f"✅ 使用剪映模板: {jianying_template_path}")
             return jianying_template_path
-        else:
-            print(f"❌ 找不到模板: {template_name}")
-            print("📁 可用的本地模板:")
-            
-            if os.path.exists(self.template_folder_path):
-                for item in os.listdir(self.template_folder_path):
-                    item_path = os.path.join(self.template_folder_path, item)
-                    if os.path.isdir(item_path):
-                        print(f"   • {item}")
-            
-            print("📁 可用的剪映草稿專案:")
-            if os.path.exists(self.draft_folder_path):
-                for item in os.listdir(self.draft_folder_path):
-                    item_path = os.path.join(self.draft_folder_path, item)
-                    if os.path.isdir(item_path):
-                        print(f"   • {item}")
-            return None
+        
+        # 如果剪映草稿文件夾中還是沒有，再檢查本地
+        local_template_path = os.path.join(self.template_folder_path, template_name)
+        if os.path.exists(local_template_path):
+            print(f"✅ 使用本地模板: {local_template_path}")
+            return local_template_path
+        
+        # 如果都找不到，顯示錯誤信息
+        print(f"❌ 找不到模板: {template_name}")
+        print("📁 可用的本地模板:")
+        
+        if os.path.exists(self.template_folder_path):
+            for item in os.listdir(self.template_folder_path):
+                item_path = os.path.join(self.template_folder_path, item)
+                if os.path.isdir(item_path):
+                    print(f"   • {item}")
+        
+        print("📁 可用的剪映草稿專案:")
+        if os.path.exists(self.draft_folder_path):
+            for item in os.listdir(self.draft_folder_path):
+                item_path = os.path.join(self.draft_folder_path, item)
+                if os.path.isdir(item_path):
+                    print(f"   • {item}")
+        return None
     
     def replace_text_variables(self, json_data: Dict, variables: Dict[str, str]) -> Dict:
         """新的文字變數替換策略：創建新文字素材取代原文字素材，保持樣式完整性"""
@@ -658,7 +717,7 @@ class TemplateVideoReplacer:
             video_title = self.get_video_title(new_video_path)
             print(f"📝 影片標題: {video_title}")
 
-            # 定義替換規則：將「婊」替換為影片標題
+            # 定義替換規則：只將「婊子無情」替換為影片標題
             replace_variables = {
                 '婊子無情': video_title
             }
@@ -720,10 +779,14 @@ class TemplateVideoReplacer:
         all_generated_ids = set()  # 跟踪所有已生成的素材ID
         project_creations = []  # 記錄每個專案的創建信息
 
-        # 尋找模板
+        # 尋找模板（包含自動檢查和複製）
+        print(f"🔍 準備模板: {template_name}")
         template_path = self.find_template_draft(template_name)
         if not template_path:
+            print(f"❌ 無法準備模板 {template_name}，批處理終止")
             return False
+        
+        print(f"✅ 模板準備完成，開始批處理...")
 
         # 🔧 CRITICAL FIX: 提前讀取並深度複製原始模板，防止模板污染
         try:
@@ -977,14 +1040,22 @@ def direct_process_videos_to_template():
 
     replacer = TemplateVideoReplacer()
 
-    # 🔧 Debug: 更新模板名稱以匹配現有專案
+    print("📋 第一步：檢查和準備模板...")
+    print("=" * 40)
+    
+    # 🔧 自動檢查和複製模板
     template_path = replacer.find_template_draft("面相專案")
 
     if not template_path:
-        print("❌ 找不到面相專案模板")
-        print("💡 可用模板:")
-        replacer.find_template_draft("dummy")  # 觸發列出所有可用模板
+        print("❌ 模板準備失敗")
+        print("💡 請檢查:")
+        print("   1. 本地項目文件夾中是否有「面相專案」文件夾")
+        print("   2. 「面相專案」文件夾中是否包含 draft_content.json")
+        print("   3. 剪映是否正確安裝在預期位置")
         return False
+    
+    print("✅ 模板準備完成")
+    print("=" * 40)
 
     # 分析模板結構
     template_info = replacer.analyze_template_structure(template_path)
