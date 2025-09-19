@@ -284,6 +284,52 @@ async function initializeVideoCount() {
     }
 }
 
+// 🔧 修復：統一且精確的成功計數邏輯
+let processedFiles = new Set(); // 追蹤已處理的文件，防重複計數
+
+function parseProgressFromOutput(output) {
+    // 嘗試解析進度信息
+    const progressMatch = output.match(/(\d+)\/(\d+)/);
+    if (progressMatch) {
+        const current = parseInt(progressMatch[1]);
+        const total = parseInt(progressMatch[2]);
+        const percent = (current / total) * 100;
+        
+        updateProgress(percent, `🟡 處理 ${current}/${total} 個檔案`);
+        appState.stats.processedCount = current;
+        updateStats();
+    }
+    
+    // 🔧 精確的成功計數：只計算實際創建成功的影片專案
+    const successPatterns = [
+        /✅ 成功創建:\s*(.+)/,
+        /✅ 創建成功.*?([^\/\\]+)\.(mp4|avi|mov|mkv|wmv|flv)/i,
+        /✅.*?面相專案_(.+)/
+    ];
+    
+    for (const pattern of successPatterns) {
+        const match = output.match(pattern);
+        if (match) {
+            const fileName = match[1] || 'unknown';
+            // 防止重複計數同一個文件
+            if (!processedFiles.has(fileName)) {
+                processedFiles.add(fileName);
+                appState.stats.successCount++;
+                updateStats();
+                addLog('成功', `🟢 成功處理影片: ${fileName} (總計: ${appState.stats.successCount}/${appState.stats.videoCount})`, 'success');
+            }
+            break;
+        }
+    }
+    
+    // 錯誤處理
+    if (output.includes('❌') || output.includes('失敗') || output.includes('錯誤')) {
+        appState.stats.errorCount++;
+        updateStats();
+        addLog('錯誤', `🔴 處理失敗: ${output.trim()}`, 'error');
+    }
+}
+
 // 顯示配置模態框
 function showConfigModal() {
     elements.configModal.classList.remove('hidden');
@@ -369,15 +415,11 @@ function parseProgressFromOutput(output) {
         updateStats();
     }
     
-    // 🔧 修復：更精確的成功計數邏輯，只計算實際處理成功的影片
-    if (output.includes('✅ 成功創建:') || output.includes('✅ 創建成功')) {
+    // 檢查成功完成的標記
+    if (output.includes('✅') || output.includes('成功')) {
         appState.stats.successCount++;
         updateStats();
-        addLog('計數', `成功處理影片 ${appState.stats.successCount}/${appState.stats.videoCount}`, 'info');
     }
-    
-    // 避免重複計數：移除過於寬泛的成功標記檢測
-    // 原代碼: if (output.includes('✅') || output.includes('成功'))
 }
 
 // 更新統計數據
