@@ -1,2 +1,17 @@
 node_modules/
 .history/
+
+# 影片檔案 - 避免大檔案被提交
+videos/raw/*.mp4
+videos/raw/*.avi
+videos/raw/*.mov
+videos/raw/*.mkv
+videos/raw/*.wmv
+videos/raw/*.flv
+videos/raw/*.m4v
+videos/raw/*.3gp
+videos/raw/*.webm
+
+# 但保留 README 檔案
+!videos/raw/README.md
+!videos/raw/.gitkeep
