@@ -145,25 +145,26 @@ function bindEventListeners() {
 function setupIpcListeners() {
     // 處理進程輸出
     ipcRenderer.on('process-output', (event, data) => {
-        addLog('執行', data.trim(), 'info');
+        // 🔧 修復：不要 trim() 掉重要的換行符，交由 addLog 處理
+        addLog('執行', data, 'info');
         parseProgressFromOutput(data);
     });
     
     // 處理進程錯誤
     ipcRenderer.on('process-error', (event, data) => {
-        addLog('錯誤', data.trim(), 'error');
+        addLog('錯誤', data, 'error');
         appState.stats.errorCount++;
         updateStats();
     });
     
     // 處理設置輸出
     ipcRenderer.on('setup-output', (event, data) => {
-        addLog('設置', data.trim(), 'info');
+        addLog('設置', data, 'info');
     });
     
     // 處理設置錯誤
     ipcRenderer.on('setup-error', (event, data) => {
-        addLog('設置錯誤', data.trim(), 'error');
+        addLog('設置錯誤', data, 'error');
     });
 }
 
@@ -401,26 +402,7 @@ function updateProgress(percent, text = '') {
     }
 }
 
-// 從輸出解析進度
-function parseProgressFromOutput(output) {
-    // 嘗試解析進度信息
-    const progressMatch = output.match(/(\d+)\/(\d+)/);
-    if (progressMatch) {
-        const current = parseInt(progressMatch[1]);
-        const total = parseInt(progressMatch[2]);
-        const percent = (current / total) * 100;
-        
-        updateProgress(percent, `處理 ${current}/${total} 個檔案`);
-        appState.stats.processedCount = current;
-        updateStats();
-    }
-    
-    // 檢查成功完成的標記
-    if (output.includes('✅') || output.includes('成功')) {
-        appState.stats.successCount++;
-        updateStats();
-    }
-}
+// 🔧 移除重複的函數，保留上面更完整的版本
 
 // 更新統計數據
 function updateStats() {
@@ -442,7 +424,6 @@ function resetStats() {
 // 添加日誌
 function addLog(type, message, level = 'info') {
     const timestamp = new Date().toLocaleTimeString('zh-TW', { hour12: false });
-    const logEntry = document.createElement('div');
     
     let colorClass;
     switch (level) {
@@ -459,10 +440,23 @@ function addLog(type, message, level = 'info') {
             colorClass = 'text-gray-300';
     }
     
-    logEntry.className = `${colorClass} mb-1`;
-    logEntry.innerHTML = `<span class="text-gray-500">[${timestamp}]</span> <span class="text-blue-300">[${type}]</span> ${message}`;
+    // 🔧 修復：正確處理換行符和多行文字
+    const lines = message.split('\n').filter(line => line.trim() !== '');
     
-    elements.logOutput.appendChild(logEntry);
+    lines.forEach((line, index) => {
+        const logEntry = document.createElement('div');
+        logEntry.className = `${colorClass} mb-1 whitespace-pre-wrap break-words`;
+        
+        // 第一行顯示完整的時間戳和類型，後續行只縮排
+        if (index === 0) {
+            logEntry.innerHTML = `<span class="text-gray-500">[${timestamp}]</span> <span class="text-blue-300">[${type}]</span> ${escapeHtml(line.trim())}`;
+        } else {
+            logEntry.innerHTML = `<span class="text-gray-500 opacity-50">[${timestamp}]</span> <span class="text-blue-300 opacity-50">[${type}]</span> <span class="ml-4">${escapeHtml(line.trim())}</span>`;
+        }
+        
+        elements.logOutput.appendChild(logEntry);
+    });
+    
     elements.logOutput.scrollTop = elements.logOutput.scrollHeight;
     
     // 限制日誌條目數量（保持性能）
@@ -471,9 +465,46 @@ function addLog(type, message, level = 'info') {
     }
 }
 
+// 🔧 新增：HTML 轉義函數，防止 XSS 並保持文字格式
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
 // 清除日誌
 function clearLog() {
     elements.logOutput.innerHTML = '<div class="text-gray-400">[系統] 日誌已清除</div>';
+}
+
+// 🔧 新增：處理批量導出面相專案
+async function handleExportFaces() {
+    if (appState.isExecuting) {
+        addLog('警告', '系統正在執行中，請稍候再試', 'warning');
+        return;
+    }
+    
+    try {
+        setExecutionState(true);
+        updateStatus('running', '正在導出影片...');
+        addLog('系統', '開始批量導出面相專案影片...', 'info');
+        
+        const result = await ipcRenderer.invoke('export-faces');
+        
+        if (result.success) {
+            addLog('成功', '批量導出完成！', 'success');
+            updateStatus('success', '導出完成');
+        } else {
+            addLog('錯誤', `導出失敗: ${result.error}`, 'error');
+            updateStatus('error', '導出失敗');
+        }
+        
+    } catch (error) {
+        addLog('錯誤', `導出失敗: ${error.error || error.message}`, 'error');
+        updateStatus('error', '導出失敗');
+    } finally {
+        setExecutionState(false);
+    }
 }
 
 // 初始化應用

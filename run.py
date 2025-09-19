@@ -284,11 +284,22 @@ def main():
     # 打印結束信息
     print_footer(success)
     
-    # 在 Windows 上暫停，讓用戶看到結果
-    if os.name == 'nt':
+    # 🔧 修復：檢測是否在 Electron 環境中運行
+    # 在 Electron 中不需要暫停等待用戶輸入
+    if os.name == 'nt' and not is_running_in_electron():
         input("\n按 Enter 鍵退出...")
     
     sys.exit(0 if success else 1)
+
+def is_running_in_electron():
+    """檢測是否在 Electron 環境中運行"""
+    # 檢查環境變數或其他 Electron 特有的標記
+    return (
+        os.environ.get('ELECTRON_RUN_AS_NODE') is not None or
+        os.environ.get('npm_lifecycle_event') == 'start' or
+        'electron' in os.environ.get('_', '').lower() or
+        'node_modules' in sys.executable
+    )
 
 if __name__ == "__main__":
     main()

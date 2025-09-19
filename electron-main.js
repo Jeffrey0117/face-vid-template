@@ -7,6 +7,8 @@ const fs = require('fs');
 let mainWindow;
 
 function createWindow() {
+  console.log('🚀 開始創建 Electron 窗口...');
+  
   // 創建瀏覽器窗口
   mainWindow = new BrowserWindow({
     width: 1200,
@@ -25,20 +27,30 @@ function createWindow() {
   });
 
   // 載入應用的 index.html
+  console.log('📄 載入 index.html...');
   mainWindow.loadFile('index.html');
 
   // 當頁面準備好時顯示窗口
   mainWindow.once('ready-to-show', () => {
+    console.log('✅ 窗口準備完成，正在顯示...');
     mainWindow.show();
+    console.log('🎉 Electron 應用啟動成功！');
+  });
+
+  // 🔧 添加載入錯誤處理
+  mainWindow.webContents.on('did-fail-load', (event, errorCode, errorDescription) => {
+    console.error('❌ 頁面載入失敗:', errorCode, errorDescription);
   });
 
   // 開發環境下打開 DevTools
   if (process.env.NODE_ENV === 'development' || process.argv.includes('--dev')) {
+    console.log('🔧 開發模式，開啟 DevTools...');
     mainWindow.webContents.openDevTools();
   }
 
   // 當窗口被關閉時，清除對它的引用
   mainWindow.on('closed', () => {
+    console.log('🔒 窗口已關閉');
     mainWindow = null;
   });
 }
@@ -150,7 +162,8 @@ ipcMain.handle('export-faces', async () => {
       stdio: 'pipe',
       env: {
         ...process.env,
-        PYTHONIOENCODING: 'utf-8'
+        PYTHONIOENCODING: 'utf-8',
+        ELECTRON_RUN_AS_NODE: '1'  // 🔧 標記在 Electron 環境中運行
       }
     });
 
