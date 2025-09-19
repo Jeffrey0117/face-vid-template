@@ -815,13 +815,25 @@ class TemplateVideoReplacer:
                 if os.path.isdir(item_path):
                     existing_drafts.add(item)
 
-        # 尋找影片文件
+        # 尋找影片文件 - 修復重複掃描問題
         video_extensions = ['*.mp4', '*.avi', '*.mov', '*.mkv', '*.wmv', '*.flv']
         all_video_files = []
 
+        # 🔧 修復：使用 set 去重，避免在 Windows 上重複掃描相同文件
+        found_files = set()
+        
         for ext in video_extensions:
-            all_video_files.extend(glob.glob(os.path.join(video_folder, ext)))
-            all_video_files.extend(glob.glob(os.path.join(video_folder, ext.upper())))
+            # 只掃描小寫擴展名，因為 glob 在 Windows 上會自動匹配大小寫
+            pattern_files = glob.glob(os.path.join(video_folder, ext))
+            
+            for file_path in pattern_files:
+                # 使用標準化路徑作為唯一標識符
+                normalized_path = os.path.normpath(file_path)
+                if normalized_path not in found_files:
+                    found_files.add(normalized_path)
+                    all_video_files.append(file_path)
+        
+        print(f"✅ [修復] 掃描完成，去重後找到 {len(all_video_files)} 個影片文件")
 
         # 過濾掉模板占位影片和非影片文件（如圖片）
         skipped_template_files = []

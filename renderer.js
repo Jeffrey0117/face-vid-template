@@ -184,6 +184,9 @@ async function handleExecute() {
         updateStatus('running', '正在執行...');
         resetStats();
         
+        // 🔧 修復：在執行前獲取影片檔案數量
+        await initializeVideoCount();
+        
         addLog('系統', '開始執行主要處理流程...', 'info');
         
         const result = await ipcRenderer.invoke('execute-main-process');
@@ -262,6 +265,22 @@ async function updateVideoCount(folderPath) {
         
     } catch (error) {
         addLog('錯誤', `讀取影片檔案失敗: ${error.message}`, 'error');
+    }
+}
+
+// 🔧 新增：初始化影片檔案計數函數
+async function initializeVideoCount() {
+    try {
+        if (appState.config && appState.config.videos_raw_folder) {
+            const videoFiles = await ipcRenderer.invoke('get-video-files', appState.config.videos_raw_folder);
+            appState.stats.videoCount = videoFiles.length;
+            updateStats();
+            addLog('系統', `檢測到 ${videoFiles.length} 個影片檔案待處理`, 'info');
+        } else {
+            addLog('警告', '無法獲取影片資料夾路徑', 'warning');
+        }
+    } catch (error) {
+        addLog('錯誤', `初始化影片計數失敗: ${error.message}`, 'error');
     }
 }
 
@@ -350,11 +369,15 @@ function parseProgressFromOutput(output) {
         updateStats();
     }
     
-    // 檢查成功完成的標記
-    if (output.includes('✅') || output.includes('成功')) {
+    // 🔧 修復：更精確的成功計數邏輯，只計算實際處理成功的影片
+    if (output.includes('✅ 成功創建:') || output.includes('✅ 創建成功')) {
         appState.stats.successCount++;
         updateStats();
+        addLog('計數', `成功處理影片 ${appState.stats.successCount}/${appState.stats.videoCount}`, 'info');
     }
+    
+    // 避免重複計數：移除過於寬泛的成功標記檢測
+    // 原代碼: if (output.includes('✅') || output.includes('成功'))
 }
 
 // 更新統計數據
