@@ -4,8 +4,8 @@
   "description": "剪映助手 - 模板工作流自動化系統",
   "main": "electron-main.js",
   "scripts": {
-    "start": "electron .",
-    "dev": "electron . --dev",
+    "start": "cross-env PYTHONIOENCODING=utf-8 PYTHONUTF8=1 electron .",
+    "dev": "cross-env PYTHONIOENCODING=utf-8 PYTHONUTF8=1 electron . --dev",
     "build": "electron-builder",
     "build-win": "electron-builder --win",
     "build-mac": "electron-builder --mac",
@@ -73,6 +73,7 @@
   },
   "homepage": "https://github.com/Jeffrey0117/face-vid-template#readme",
   "devDependencies": {
+    "cross-env": "^10.0.0",
     "electron": "^38.1.2",
     "electron-builder": "^26.0.12"
   }
