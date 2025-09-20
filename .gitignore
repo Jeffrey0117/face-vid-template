@@ -15,3 +15,6 @@ videos/raw/*.webm
 # 但保留 README 檔案
 !videos/raw/README.md
 !videos/raw/.gitkeep
+
+# 構建輸出資料夾
+dist/
