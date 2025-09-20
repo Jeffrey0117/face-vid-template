@@ -33,9 +33,24 @@
       "面相專案/**/*",
       "videos/**/*"
     ],
+    "extraResources": [
+      {
+        "from": "jianying_helper.exe",
+        "to": "jianying_helper.exe"
+      }
+    ],
     "win": {
-      "target": "nsis",
-      "icon": "assets/icon.ico"
+      "target": [
+        {
+          "target": "dir",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "assets/icon.ico",
+      "forceCodeSigning": false,
+      "verifyUpdateCodeSignature": false
     },
     "mac": {
       "target": "dmg",
@@ -52,8 +67,15 @@
       "uninstallerIcon": "assets/icon.ico",
       "installerHeaderIcon": "assets/icon.ico",
       "createDesktopShortcut": true,
-      "createStartMenuShortcut": true
-    }
+      "createStartMenuShortcut": true,
+      "license": "README.md",
+      "installerLanguages": [
+        "zh_TW",
+        "zh_CN",
+        "en_US"
+      ]
+    },
+    "publish": null
   },
   "repository": {
     "type": "git",

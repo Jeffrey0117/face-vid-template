@@ -4,7 +4,7 @@
 
 ## 🚀 快速開始
 
-### 方法一：使用桌面應用（推薦）
+### 推薦方式：使用桌面應用
 
 ```bash
 # 首次使用需安裝依賴
@@ -14,13 +14,13 @@ npm install
 npm start
 ```
 
-### 方法二：使用命令行
+### 備用方式：命令行執行
 
 ```bash
-# Windows 用戶
-start.bat
+# Windows 用戶（備用）
+run.bat
 
-# 或直接使用 Python
+# 或直接使用 Python（備用）
 python run.py
 ```
 
@@ -52,8 +52,8 @@ python run.py
 ## 💻 系統需求
 
 - **剪映專業版 5.9**（未加密版本）⚠️ 必須
-- **Python 3.7+**
-- **Node.js 16+**（使用桌面應用）
+- **Node.js 16+**（推薦使用桌面應用）
+- **Python 3.7+**（系統需求）
 - **Windows 10+**（主要支援）
 
 ## 📁 檔案說明
@@ -62,9 +62,9 @@ python run.py
 face-vid-template/
 ├── videos/raw/          # 👈 放置您的影片素材
 ├── 面相專案/            # 剪映草稿模板（勿動）
-├── start.bat            # Windows 快速啟動
+├── index.html          # 桌面應用界面（推薦）
+├── run.bat             # Windows 命令行啟動（備用）
 ├── run.py              # Python 主程式
-├── index.html          # 桌面應用界面
 └── config.json         # 自動生成的配置檔
 ```
 
@@ -86,6 +86,7 @@ python batch_export_faces.py
 
 **Q：程式無法執行？**
 
+- 確認 Node.js 已安裝（推薦使用 `npm start`）
 - 確認 Python 已安裝並加入 PATH
 - 確認剪映版本為 5.9 未加密版
 
@@ -93,6 +94,11 @@ python batch_export_faces.py
 
 - 程式會自動搜尋，若失敗請檢查剪映是否正確安裝
 - 可手動編輯 config.json 指定路徑
+
+**Q：桌面應用無法啟動？**
+
+- 確認已執行 `npm install` 安裝依賴
+- 可使用備用的 `run.bat` 或 `python run.py`
 
 **Q：生成的專案無法開啟？**
 

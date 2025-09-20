@@ -3,6 +3,27 @@ const path = require("path");
 const { spawn } = require("child_process");
 const fs = require("fs");
 
+// 獲取 Python 執行檔路徑
+function getPythonExecutable() {
+  // 檢查是否有打包的 Python 執行檔（在 extraResources 中）
+  const bundledPython = path.join(process.resourcesPath, "jianying_helper.exe");
+  if (fs.existsSync(bundledPython)) {
+    console.log("🐍 使用打包的 Python 執行檔:", bundledPython);
+    return bundledPython;
+  }
+
+  // 開發環境下檢查根目錄
+  const devPython = path.join(__dirname, "jianying_helper.exe");
+  if (fs.existsSync(devPython)) {
+    console.log("🐍 使用開發環境 Python 執行檔:", devPython);
+    return devPython;
+  }
+
+  // 回退到系統 Python
+  console.log("🐍 使用系統 Python");
+  return "python";
+}
+
 // 保持對窗口對象的全局引用，如果不這樣做，當 JavaScript 對象被垃圾回收時，窗口會被自動關閉。
 let mainWindow;
 
@@ -84,7 +105,9 @@ app.on("activate", () => {
 // 處理一鍵執行
 ipcMain.handle("execute-main-process", async () => {
   return new Promise((resolve, reject) => {
-    const pythonProcess = spawn("python", ["run.py"], {
+    // 使用打包的 Python 執行檔或系統 Python
+    const pythonExecutable = getPythonExecutable();
+    const pythonProcess = spawn(pythonExecutable, ["run.py"], {
       cwd: __dirname,
       stdio: "pipe",
       env: {
@@ -126,7 +149,9 @@ ipcMain.handle("execute-main-process", async () => {
 // 處理配置路徑設置
 ipcMain.handle("setup-paths", async () => {
   return new Promise((resolve, reject) => {
-    const pythonProcess = spawn("python", ["setup_paths.py"], {
+    // 使用打包的 Python 執行檔或系統 Python
+    const pythonExecutable = getPythonExecutable();
+    const pythonProcess = spawn(pythonExecutable, ["setup_paths.py"], {
       cwd: __dirname,
       stdio: "pipe",
       env: {
@@ -164,7 +189,9 @@ ipcMain.handle("setup-paths", async () => {
 // 處理批量導出面相
 ipcMain.handle("export-faces", async () => {
   return new Promise((resolve, reject) => {
-    const pythonProcess = spawn("python", ["batch_export_faces.py"], {
+    // 使用打包的 Python 執行檔或系統 Python
+    const pythonExecutable = getPythonExecutable();
+    const pythonProcess = spawn(pythonExecutable, ["batch_export_faces.py"], {
       cwd: __dirname,
       stdio: "pipe",
       env: {
