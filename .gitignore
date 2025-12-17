@@ -1,5 +1,9 @@
 node_modules/
 .history/
+__pycache__/
+*.pyc
+config.json
+*.spec
 
 # 影片檔案 - 避免大檔案被提交
 videos/raw/*.mp4

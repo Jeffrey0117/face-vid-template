@@ -20,6 +20,7 @@ python batch_export_faces.py "C:\\Users\\Jeffrey\\Desktop\\exports" 1080P 24fps
 import os
 import sys
 import time
+import json
 from pathlib import Path
 from typing import List, Optional
 from enum import Enum
@@ -31,15 +32,35 @@ sys.path.insert(0, current_dir)
 from pyJianYingDraft.jianying_controller import JianyingController, ExportResolution, ExportFramerate
 
 
+def get_jianying_draft_root() -> str:
+    """動態獲取剪映草稿根路徑"""
+    # 優先從 config.json 讀取
+    config_path = os.path.join(current_dir, "config.json")
+    if os.path.exists(config_path):
+        try:
+            with open(config_path, 'r', encoding='utf-8') as f:
+                config = json.load(f)
+                if "jianying_draft_folder" in config:
+                    return config["jianying_draft_folder"]
+        except Exception:
+            pass
+
+    # 備用方案：使用當前用戶名動態生成路徑
+    username = os.environ.get("USERNAME") or os.getlogin()
+    return rf"C:\Users\{username}\AppData\Local\JianyingPro\User Data\Projects\com.lveditor.draft"
+
+
 class BatchExporter:
     """批量導出器"""
 
     DRAFT_FOLDER_PREFIX = "面相專案_"
-    JIANYING_DRAFT_ROOT = r"C:\Users\Jeffrey\AppData\Local\JianyingPro\User Data\Projects\com.lveditor.draft"
 
     def __init__(self, output_path: Optional[str] = None,
                  resolution: str = "1080P",
                  framerate: str = "30fps"):
+        # 動態設置剪映草稿根路徑
+        self.JIANYING_DRAFT_ROOT = get_jianying_draft_root()
+
         # 設置輸出路徑
         if output_path is None:
             # 默認輸出到桌面

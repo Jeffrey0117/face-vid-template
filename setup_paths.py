@@ -9,6 +9,7 @@ import os
 import json
 import getpass
 import sys
+import shutil
 from pathlib import Path
 
 class PathSetup:
@@ -141,7 +142,48 @@ class PathSetup:
             print("      (剪映未安裝或路徑不同，程序仍可正常運行)")
         
         return verification_results
-    
+
+    def sync_template_to_jianying(self, config):
+        """將面相專案複製到剪映草稿夾（強制覆蓋）"""
+        print("\n📦 同步面相專案到剪映草稿夾...")
+
+        source_folder = config["template_folder"]
+        target_folder = os.path.join(config["jianying_draft_folder"], "面相專案")
+
+        # 檢查來源資料夾是否存在
+        if not os.path.exists(source_folder):
+            print(f"   ❌ 來源資料夾不存在: {source_folder}")
+            return False
+
+        # 檢查剪映草稿夾是否存在
+        if not os.path.exists(config["jianying_draft_folder"]):
+            print(f"   ❌ 剪映草稿夾不存在: {config['jianying_draft_folder']}")
+            print("   💡 請先安裝剪映並開啟一次以創建草稿夾")
+            return False
+
+        try:
+            # 如果目標已存在，先刪除（強制覆蓋）
+            if os.path.exists(target_folder):
+                print(f"   🗑️  移除舊版本: {target_folder}")
+                shutil.rmtree(target_folder)
+
+            # 複製整個資料夾
+            print(f"   📋 複製中...")
+            print(f"      來源: {source_folder}")
+            print(f"      目標: {target_folder}")
+            shutil.copytree(source_folder, target_folder)
+
+            print(f"   ✅ 面相專案已同步到剪映草稿夾！")
+            return True
+
+        except PermissionError as e:
+            print(f"   ❌ 權限錯誤: {e}")
+            print("   💡 請確保剪映已關閉，或以管理員身份運行")
+            return False
+        except Exception as e:
+            print(f"   ❌ 複製失敗: {e}")
+            return False
+
     def generate_config(self):
         """生成完整的路徑配置"""
         print(f"\n🔧 生成路徑配置...")
@@ -196,7 +238,10 @@ class PathSetup:
         
         # 驗證路徑
         verification_results = self.verify_paths(config)
-        
+
+        # 同步面相專案到剪映草稿夾（強制覆蓋）
+        self.sync_template_to_jianying(config)
+
         # 保存配置
         if self.save_config(config):
             print("\n✅ 路徑設置完成！")

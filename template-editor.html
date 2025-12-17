@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>面相專案 - 模板文字編輯器</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Microsoft JhengHei', 'PingFang TC', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #fff;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 28px;
+            background: linear-gradient(90deg, #f39c12, #e74c3c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .card {
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .card-title {
+            font-size: 14px;
+            color: #f39c12;
+            font-weight: bold;
+        }
+        .card-id {
+            font-size: 10px;
+            color: #666;
+            font-family: monospace;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 13px;
+            color: #aaa;
+        }
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            background: rgba(0,0,0,0.3);
+            color: #fff;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        input[type="text"]:focus, textarea:focus {
+            outline: none;
+            border-color: #f39c12;
+            box-shadow: 0 0 10px rgba(243,156,18,0.3);
+        }
+        textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+        .preview {
+            background: rgba(0,0,0,0.5);
+            padding: 10px 15px;
+            border-radius: 6px;
+            margin-top: 10px;
+            font-size: 14px;
+            color: #f39c12;
+        }
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+            justify-content: center;
+        }
+        .btn {
+            padding: 15px 40px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background: linear-gradient(90deg, #f39c12, #e74c3c);
+            color: #fff;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(243,156,18,0.4);
+        }
+        .btn-secondary {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        .status {
+            text-align: center;
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        .status.success {
+            background: rgba(46,204,113,0.2);
+            color: #2ecc71;
+        }
+        .status.error {
+            background: rgba(231,76,60,0.2);
+            color: #e74c3c;
+        }
+        .status.info {
+            background: rgba(52,152,219,0.2);
+            color: #3498db;
+        }
+        .loading {
+            text-align: center;
+            padding: 50px;
+            font-size: 18px;
+            color: #aaa;
+        }
+        .color-preview {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            vertical-align: middle;
+            margin-left: 10px;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="container">
+            <h1>模板文字編輯器</h1>
+
+            <div v-if="loading" class="loading">
+                載入中...
+            </div>
+
+            <div v-else>
+                <div v-for="(text, index) in textItems" :key="text.id" class="card">
+                    <div class="card-header">
+                        <span class="card-title">文字 #{{ index + 1 }}</span>
+                        <span class="card-id">{{ text.id.substring(0, 8) }}...</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            文字內容
+                            <span class="color-preview" :style="{ background: text.text_color }"></span>
+                        </label>
+                        <input
+                            type="text"
+                            v-model="text.displayText"
+                            @input="updateText(index)"
+                            :placeholder="'輸入文字...'"
+                        />
+                        <div class="preview">預覽: {{ text.displayText }}</div>
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn btn-secondary" @click="loadTemplate">
+                        重新載入
+                    </button>
+                    <button class="btn btn-primary" @click="saveTemplate">
+                        儲存變更
+                    </button>
+                </div>
+
+                <div v-if="statusMessage" :class="['status', statusType]">
+                    {{ statusMessage }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const { createApp, ref, onMounted } = Vue;
+
+        // 檢測是否在 Electron 環境中
+        const isElectron = typeof require !== 'undefined';
+        let fs, path;
+        if (isElectron) {
+            fs = require('fs');
+            path = require('path');
+        }
+
+        createApp({
+            setup() {
+                const loading = ref(true);
+                const textItems = ref([]);
+                const statusMessage = ref('');
+                const statusType = ref('info');
+                const originalData = ref(null);
+
+                // 模板檔案路徑
+                const getTemplatePath = () => {
+                    if (isElectron) {
+                        return path.join(__dirname, '面相專案', 'draft_content.json');
+                    }
+                    return '面相專案/draft_content.json';
+                };
+
+                // 從 content JSON 中提取純文字
+                const extractText = (contentStr) => {
+                    try {
+                        const content = JSON.parse(contentStr);
+                        return content.text || '';
+                    } catch (e) {
+                        return contentStr;
+                    }
+                };
+
+                // 更新 content JSON 中的文字
+                const updateContentText = (contentStr, newText) => {
+                    try {
+                        const content = JSON.parse(contentStr);
+                        content.text = newText;
+
+                        // 更新 styles 中的 range
+                        if (content.styles && content.styles.length > 0) {
+                            let currentPos = 0;
+                            content.styles.forEach((style, idx) => {
+                                if (idx === content.styles.length - 1) {
+                                    style.range = [currentPos, newText.length];
+                                } else if (style.range) {
+                                    const rangeLength = style.range[1] - style.range[0];
+                                    style.range = [currentPos, Math.min(currentPos + rangeLength, newText.length)];
+                                    currentPos = style.range[1];
+                                }
+                            });
+                        }
+
+                        return JSON.stringify(content);
+                    } catch (e) {
+                        return contentStr;
+                    }
+                };
+
+                // 載入模板
+                const loadTemplate = async () => {
+                    loading.value = true;
+                    statusMessage.value = '';
+
+                    try {
+                        let data;
+
+                        if (isElectron) {
+                            const templatePath = getTemplatePath();
+                            const fileContent = fs.readFileSync(templatePath, 'utf8');
+                            data = JSON.parse(fileContent);
+                        } else {
+                            // 瀏覽器模式 - 優先使用 API
+                            try {
+                                const response = await fetch('/api/template');
+                                data = await response.json();
+                            } catch (e) {
+                                // 回退到直接讀取
+                                const response = await fetch('面相專案/draft_content.json');
+                                data = await response.json();
+                            }
+                        }
+
+                        originalData.value = data;
+
+                        // 提取文字項目
+                        if (data.materials && data.materials.texts) {
+                            textItems.value = data.materials.texts.map(text => ({
+                                ...text,
+                                displayText: extractText(text.content)
+                            }));
+                        }
+
+                        statusMessage.value = '模板載入成功！';
+                        statusType.value = 'success';
+
+                    } catch (error) {
+                        console.error('載入失敗:', error);
+                        statusMessage.value = `載入失敗: ${error.message}`;
+                        statusType.value = 'error';
+                    } finally {
+                        loading.value = false;
+                    }
+                };
+
+                // 更新文字
+                const updateText = (index) => {
+                    const item = textItems.value[index];
+                    item.content = updateContentText(item.content, item.displayText);
+                };
+
+                // 儲存模板
+                const saveTemplate = async () => {
+                    try {
+                        if (!originalData.value) {
+                            throw new Error('沒有載入的模板數據');
+                        }
+
+                        // 更新原始數據中的文字
+                        originalData.value.materials.texts = textItems.value.map(item => {
+                            const { displayText, ...rest } = item;
+                            return rest;
+                        });
+
+                        if (isElectron) {
+                            const templatePath = getTemplatePath();
+                            fs.writeFileSync(
+                                templatePath,
+                                JSON.stringify(originalData.value),
+                                'utf8'
+                            );
+                            statusMessage.value = '儲存成功！模板已更新。';
+                            statusType.value = 'success';
+                        } else {
+                            // 瀏覽器模式 - 優先使用 API
+                            try {
+                                const response = await fetch('/api/template', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify(originalData.value)
+                                });
+                                const result = await response.json();
+
+                                if (result.success) {
+                                    statusMessage.value = '儲存成功！模板已更新。';
+                                    statusType.value = 'success';
+                                } else {
+                                    throw new Error(result.message || '儲存失敗');
+                                }
+                            } catch (e) {
+                                // API 失敗，回退到下載模式
+                                const blob = new Blob(
+                                    [JSON.stringify(originalData.value)],
+                                    { type: 'application/json' }
+                                );
+                                const url = URL.createObjectURL(blob);
+                                const a = document.createElement('a');
+                                a.href = url;
+                                a.download = 'draft_content.json';
+                                a.click();
+                                URL.revokeObjectURL(url);
+
+                                statusMessage.value = '已下載修改後的檔案，請手動替換 面相專案/draft_content.json';
+                                statusType.value = 'info';
+                            }
+                        }
+
+                    } catch (error) {
+                        console.error('儲存失敗:', error);
+                        statusMessage.value = `儲存失敗: ${error.message}`;
+                        statusType.value = 'error';
+                    }
+                };
+
+                onMounted(() => {
+                    loadTemplate();
+                });
+
+                return {
+                    loading,
+                    textItems,
+                    statusMessage,
+                    statusType,
+                    loadTemplate,
+                    updateText,
+                    saveTemplate
+                };
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>
