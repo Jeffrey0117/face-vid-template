@@ -1,0 +1,56 @@
+{
+  "version": "1.0",
+  "project_name": "YouTube翻譯專案",
+  "project_type": "youtube_translate",
+
+  "paths": {
+    "source_video_folder": "backend/downloads/youtube",
+    "output_folder": "videos/translated",
+    "draft_template": "翻譯專案",
+    "long_video_template": "長片專案"
+  },
+
+  "whisper": {
+    "model": "base",
+    "language": "en",
+    "task": "transcribe",
+    "temperature": 0,
+    "word_timestamps": true
+  },
+
+  "translation": {
+    "service": "openai",
+    "source_language": "en",
+    "target_language": "zh-TW",
+    "model": "gpt-3.5-turbo",
+    "prompt_template": "將以下英文字幕翻譯成繁體中文，保持專業術語準確，語氣自然流暢：\n\n{text}"
+  },
+
+  "subtitle_style": {
+    "font_size": 10,
+    "text_color": "#FFFFFF",
+    "background_color": "#000000",
+    "background_alpha": 0.7,
+    "position_y": -0.75,
+    "stroke_width": 2,
+    "stroke_color": "#000000",
+    "bold": true,
+    "shadow": true,
+    "line_max_width": 0.82
+  },
+
+  "jianying": {
+    "canvas_width": 1080,
+    "canvas_height": 1920,
+    "canvas_ratio": "original",
+    "fps": 30
+  },
+
+  "workflow": {
+    "auto_download_youtube": true,
+    "auto_transcribe": true,
+    "auto_translate": true,
+    "auto_generate_draft": true,
+    "skip_existing": true
+  }
+}
