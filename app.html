@@ -660,6 +660,33 @@
             to { transform: rotate(360deg); }
         }
 
+        /* Header Actions */
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            margin-left: auto;
+        }
+
+        .header-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: transparent;
+            border: 1px solid var(--border-default);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all var(--duration-fast) var(--ease-default);
+        }
+
+        .header-btn:hover {
+            background: var(--bg-card);
+            border-color: var(--border-hover);
+            color: var(--text-primary);
+        }
+
         /* 響應式調整 */
         @media (max-width: 768px) {
             .yt-video-info {
@@ -699,6 +726,14 @@
                     <div class="header-logo-icon"><i data-lucide="clapperboard"></i></div>
                     <span>AutoReels</span>
                 </a>
+                <div class="header-actions">
+                    <button class="header-btn" @click="toggleTheme" :title="theme === 'dark' ? '切換淺色模式' : '切換深色模式'">
+                        <i :data-lucide="theme === 'dark' ? 'sun' : 'moon'" style="width:20px;height:20px;"></i>
+                    </button>
+                    <button class="header-btn" @click="toggleLocale">
+                        {{ currentLocale === 'zh' ? 'EN' : '中' }}
+                    </button>
+                </div>
             </div>
         </header>
 
@@ -779,29 +814,29 @@
                 <div v-if="currentView === 'workflow'">
                     <div class="workflow-header">
                         <div>
-                            <h1 class="workflow-title">{{ currentProject === 'face' ? '面相專案' : '翻譯專案' }}</h1>
-                            <p class="workflow-subtitle">{{ currentProject === 'face' ? '批量替換影片人臉，自動生成剪映草稿' : '自動翻譯字幕並嵌入影片' }}</p>
+                            <h1 class="workflow-title">{{ currentProject === 'face' ? t('workflow.faceProject') : t('workflow.translateProject') }}</h1>
+                            <p class="workflow-subtitle">{{ currentProject === 'face' ? t('workflow.faceDesc') : t('workflow.translateDesc') }}</p>
                         </div>
                         <button class="btn btn-success execute-btn" @click="executeWorkflow" :disabled="isRunning">
                             <i :data-lucide="isRunning ? 'loader-2' : 'play'" style="width:18px;height:18px;"></i>
-                            {{ isRunning ? '執行中...' : '開始執行' }}
+                            {{ isRunning ? t('workflow.executing') : t('workflow.startExecute') }}
                         </button>
                     </div>
 
                     <!-- 配置 -->
                     <div class="config-panel">
                         <div class="config-item">
-                            <div class="config-label">影片資料夾</div>
+                            <div class="config-label">{{ t('workflow.videoFolder') }}</div>
                             <div class="config-value">
                                 <input type="text" :value="config.videoFolder" readonly>
-                                <button class="btn btn-secondary">選擇</button>
+                                <button class="btn btn-secondary">{{ t('workflow.select') }}</button>
                             </div>
                         </div>
                         <div class="config-item">
-                            <div class="config-label">剪映草稿路徑</div>
+                            <div class="config-label">{{ t('workflow.draftPath') }}</div>
                             <div class="config-value">
                                 <input type="text" :value="config.draftFolder" readonly>
-                                <button class="btn btn-secondary">選擇</button>
+                                <button class="btn btn-secondary">{{ t('workflow.select') }}</button>
                             </div>
                         </div>
                     </div>
@@ -818,19 +853,19 @@
                         <div class="progress-stats">
                             <div class="stat-card">
                                 <div class="stat-value" style="color: var(--text-primary)">{{ stats.videos }}</div>
-                                <div class="stat-label">總影片</div>
+                                <div class="stat-label">{{ t('workflow.totalVideos') }}</div>
                             </div>
                             <div class="stat-card">
                                 <div class="stat-value" style="color: var(--text-primary)">{{ stats.processed }}</div>
-                                <div class="stat-label">已處理</div>
+                                <div class="stat-label">{{ t('workflow.processed') }}</div>
                             </div>
                             <div class="stat-card">
                                 <div class="stat-value" style="color: var(--text-secondary)">{{ stats.pending }}</div>
-                                <div class="stat-label">處理中</div>
+                                <div class="stat-label">{{ t('workflow.processing') }}</div>
                             </div>
                             <div class="stat-card">
                                 <div class="stat-value" style="color: #ef4444">{{ stats.errors }}</div>
-                                <div class="stat-label">錯誤</div>
+                                <div class="stat-label">{{ t('workflow.errors') }}</div>
                             </div>
                         </div>
                     </div>
@@ -838,8 +873,8 @@
                     <!-- 日誌 -->
                     <div class="log-section">
                         <div class="log-header">
-                            <span class="section-title"><i data-lucide="file-text" style="width:18px;height:18px;"></i> 執行日誌</span>
-                            <button class="btn btn-secondary" @click="clearLogs">清除</button>
+                            <span class="section-title"><i data-lucide="file-text" style="width:18px;height:18px;"></i> {{ t('workflow.executionLog') }}</span>
+                            <button class="btn btn-secondary" @click="clearLogs">{{ t('workflow.clear') }}</button>
                         </div>
                         <div class="log-content" ref="logContainer">
                             <div v-for="(log, i) in logs" :key="i" class="log-line" :class="log.type">
@@ -1290,35 +1325,35 @@ https://www.instagram.com/p/xxxxx"
                     <div class="bottom-nav-icon">
                         <i data-lucide="home" style="width:24px;height:24px;"></i>
                     </div>
-                    <span class="bottom-nav-label">首頁</span>
+                    <span class="bottom-nav-label">{{ t('nav.home') }}</span>
                 </a>
 
                 <div class="bottom-nav-item" :class="{ active: currentView === 'workflow' }" @click="currentView = 'workflow'">
                     <div class="bottom-nav-icon">
                         <i data-lucide="play-circle" style="width:24px;height:24px;"></i>
                     </div>
-                    <span class="bottom-nav-label">工作流</span>
+                    <span class="bottom-nav-label">{{ t('nav.workflow') }}</span>
                 </div>
 
                 <div class="bottom-nav-item" :class="{ active: currentView === 'download' }" @click="currentView = 'download'">
                     <div class="bottom-nav-icon">
                         <i data-lucide="instagram" style="width:24px;height:24px;"></i>
                     </div>
-                    <span class="bottom-nav-label">IG下載</span>
+                    <span class="bottom-nav-label">{{ t('nav.igDownload') }}</span>
                 </div>
 
                 <div class="bottom-nav-item" :class="{ active: currentView === 'youtube' }" @click="currentView = 'youtube'">
                     <div class="bottom-nav-icon">
                         <i data-lucide="youtube" style="width:24px;height:24px;"></i>
                     </div>
-                    <span class="bottom-nav-label">YT下載</span>
+                    <span class="bottom-nav-label">{{ t('nav.ytDownload') }}</span>
                 </div>
 
                 <div class="bottom-nav-item" :class="{ active: currentView === 'settings' }" @click="currentView = 'settings'">
                     <div class="bottom-nav-icon">
                         <i data-lucide="settings" style="width:24px;height:24px;"></i>
                     </div>
-                    <span class="bottom-nav-label">設定</span>
+                    <span class="bottom-nav-label">{{ t('nav.settings') }}</span>
                 </div>
             </div>
         </nav>
@@ -1338,8 +1373,194 @@ https://www.instagram.com/p/xxxxx"
     <script>
         const { createApp, ref, computed, onMounted, onUpdated, nextTick, watch } = Vue;
 
+        // i18n 翻譯對象
+        const i18n = {
+            zh: {
+                nav: {
+                    home: '首頁',
+                    workflow: '工作流',
+                    igDownload: 'IG下載',
+                    ytDownload: 'YT下載',
+                    settings: '設定'
+                },
+                workflow: {
+                    faceProject: '面相專案',
+                    faceDesc: '批量替換影片人臉，自動生成剪映草稿',
+                    translateProject: '翻譯專案',
+                    translateDesc: '自動翻譯字幕並嵌入影片',
+                    startExecute: '開始執行',
+                    executing: '執行中...',
+                    videoFolder: '影片資料夾',
+                    draftPath: '剪映草稿路徑',
+                    select: '選擇',
+                    waiting: '等待執行...',
+                    totalVideos: '總影片',
+                    processed: '已處理',
+                    processing: '處理中',
+                    errors: '錯誤',
+                    executionLog: '執行日誌',
+                    clear: '清除'
+                },
+                download: {
+                    title: 'IG Reels 下載',
+                    subtitle: '批次下載 Instagram Reels 影片',
+                    inputUrl: '輸入網址',
+                    placeholder: '貼上 Instagram Reel 網址（每行一個）...',
+                    addToQueue: '加入佇列',
+                    startDownload: '開始下載',
+                    stop: '停止',
+                    queue: '佇列',
+                    history: '歷史',
+                    settings: '設定',
+                    delete: '刪除',
+                    retry: '重試',
+                    waiting: '等待中',
+                    downloading: '下載中',
+                    completed: '完成',
+                    failed: '失敗'
+                },
+                youtube: {
+                    title: 'YouTube 下載',
+                    subtitle: '使用 yt-dlp 下載 YouTube 影片',
+                    parse: '解析',
+                    parsing: '解析中...',
+                    quality: '畫質',
+                    bestQuality: '最高畫質',
+                    audioOnly: '僅下載音訊 (MP3)',
+                    startDownload: '開始下載',
+                    downloading: '下載中...',
+                    speed: '下載速度',
+                    eta: '預估剩餘時間',
+                    fileSize: '檔案大小',
+                    historyTab: '歷史紀錄',
+                    filesTab: '已下載檔案'
+                },
+                settings: {
+                    title: '設定',
+                    subtitle: '配置系統路徑和偏好設定',
+                    pathConfig: '路徑配置',
+                    projectRoot: '專案根目錄',
+                    theme: '主題',
+                    dark: '深色',
+                    light: '淺色',
+                    language: '語言',
+                    chinese: '繁體中文',
+                    english: 'English'
+                },
+                common: {
+                    loading: '載入中...',
+                    error: '錯誤',
+                    success: '成功',
+                    cancel: '取消',
+                    confirm: '確認',
+                    save: '儲存'
+                }
+            },
+            en: {
+                nav: {
+                    home: 'Home',
+                    workflow: 'Workflow',
+                    igDownload: 'IG Download',
+                    ytDownload: 'YT Download',
+                    settings: 'Settings'
+                },
+                workflow: {
+                    faceProject: 'Face Project',
+                    faceDesc: 'Batch replace faces in videos, auto-generate drafts',
+                    translateProject: 'Translate Project',
+                    translateDesc: 'Auto-translate subtitles and embed in videos',
+                    startExecute: 'Start',
+                    executing: 'Running...',
+                    videoFolder: 'Video Folder',
+                    draftPath: 'Draft Path',
+                    select: 'Select',
+                    waiting: 'Waiting...',
+                    totalVideos: 'Total',
+                    processed: 'Done',
+                    processing: 'Processing',
+                    errors: 'Errors',
+                    executionLog: 'Execution Log',
+                    clear: 'Clear'
+                },
+                download: {
+                    title: 'IG Reels Download',
+                    subtitle: 'Batch download Instagram Reels',
+                    inputUrl: 'Input URL',
+                    placeholder: 'Paste Instagram Reel URLs (one per line)...',
+                    addToQueue: 'Add to Queue',
+                    startDownload: 'Start',
+                    stop: 'Stop',
+                    queue: 'Queue',
+                    history: 'History',
+                    settings: 'Settings',
+                    delete: 'Delete',
+                    retry: 'Retry',
+                    waiting: 'Waiting',
+                    downloading: 'Downloading',
+                    completed: 'Done',
+                    failed: 'Failed'
+                },
+                youtube: {
+                    title: 'YouTube Download',
+                    subtitle: 'Download YouTube videos with yt-dlp',
+                    parse: 'Parse',
+                    parsing: 'Parsing...',
+                    quality: 'Quality',
+                    bestQuality: 'Best',
+                    audioOnly: 'Audio only (MP3)',
+                    startDownload: 'Download',
+                    downloading: 'Downloading...',
+                    speed: 'Speed',
+                    eta: 'ETA',
+                    fileSize: 'Size',
+                    historyTab: 'History',
+                    filesTab: 'Files'
+                },
+                settings: {
+                    title: 'Settings',
+                    subtitle: 'Configure paths and preferences',
+                    pathConfig: 'Path Configuration',
+                    projectRoot: 'Project Root',
+                    theme: 'Theme',
+                    dark: 'Dark',
+                    light: 'Light',
+                    language: 'Language',
+                    chinese: '繁體中文',
+                    english: 'English'
+                },
+                common: {
+                    loading: 'Loading...',
+                    error: 'Error',
+                    success: 'Success',
+                    cancel: 'Cancel',
+                    confirm: 'Confirm',
+                    save: 'Save'
+                }
+            }
+        };
+
         createApp({
             setup() {
+                // i18n 狀態
+                const currentLocale = ref(localStorage.getItem('locale') || 'zh');
+
+                const t = (key) => {
+                    const keys = key.split('.');
+                    let result = i18n[currentLocale.value];
+                    for (const k of keys) {
+                        result = result?.[k];
+                    }
+                    return result || key;
+                };
+
+                const toggleLocale = () => {
+                    currentLocale.value = currentLocale.value === 'zh' ? 'en' : 'zh';
+                    localStorage.setItem('locale', currentLocale.value);
+                };
+
+                // 主題
+                const theme = ref(localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'));
+
                 // 狀態
                 const currentView = ref('workflow');
                 const currentProject = ref('face');
@@ -1465,6 +1686,14 @@ https://www.instagram.com/p/xxxxx"
 
                 const openDraftFolder = () => {
                     alert('開啟草稿資料夾功能需要後端支援');
+                };
+
+                // 主題切換
+                const toggleTheme = () => {
+                    theme.value = theme.value === 'dark' ? 'light' : 'dark';
+                    document.documentElement.dataset.theme = theme.value;
+                    localStorage.setItem('theme', theme.value);
+                    initIcons();
                 };
 
                 // ===== 下載功能 =====
@@ -1866,6 +2095,9 @@ https://www.instagram.com/p/xxxxx"
 
                 // 載入配置
                 onMounted(async () => {
+                    // 初始化主題
+                    document.documentElement.dataset.theme = theme.value;
+
                     // 初始化 Lucide 圖標
                     initIcons();
 
@@ -1906,6 +2138,13 @@ https://www.instagram.com/p/xxxxx"
                 });
 
                 return {
+                    // i18n
+                    t,
+                    currentLocale,
+                    toggleLocale,
+                    // 主題
+                    theme,
+                    toggleTheme,
                     currentView,
                     currentProject,
                     sidebarCollapsed,

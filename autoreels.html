@@ -10,7 +10,7 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         :root {
-            /* Swiss Design - 極簡色系 */
+            /* Swiss Design - 極簡色系 (Dark Theme - Default) */
             --bg-primary: #030303;
             --bg-secondary: #0a0a0a;
             --bg-card: #111111;
@@ -41,6 +41,25 @@
 
             /* 字體 */
             --font-sans: 'Inter', 'Noto Sans TC', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        }
+
+        /* Light Theme */
+        [data-theme="light"] {
+            --bg-primary: #ffffff;
+            --bg-secondary: #fafafa;
+            --bg-card: #f4f4f5;
+            --bg-card-hover: #e4e4e7;
+            --text-primary: #09090b;
+            --text-secondary: #52525b;
+            --text-muted: #a1a1aa;
+            --border-default: #e4e4e7;
+            --border-light: #d4d4d8;
+            --accent: #09090b;
+        }
+
+        /* Light theme header background */
+        [data-theme="light"] .header {
+            background: rgba(255, 255, 255, 0.8);
         }
 
         * {
@@ -115,6 +134,12 @@
             gap: var(--space-8);
         }
 
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+
         .nav-link {
             color: var(--text-secondary);
             text-decoration: none;
@@ -125,6 +150,28 @@
 
         .nav-link:hover {
             color: var(--text-primary);
+        }
+
+        /* Theme & Language Toggle Buttons */
+        .toggle-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            background: transparent;
+            border: 1px solid var(--border-default);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .toggle-btn:hover {
+            border-color: var(--border-light);
+            color: var(--text-primary);
+            background: var(--bg-card);
         }
 
         .btn {
@@ -609,6 +656,9 @@
             .header-nav {
                 display: none;
             }
+            .header-actions {
+                display: flex;
+            }
             .hero {
                 padding: var(--space-20) var(--space-4);
             }
@@ -648,11 +698,18 @@
         <div class="header-inner">
             <a href="#" class="logo">AutoReels</a>
             <nav class="header-nav">
-                <a href="#how-it-works" class="nav-link">如何運作</a>
-                <a href="#features" class="nav-link">功能特色</a>
-                <a href="app.html" class="nav-link">工作台</a>
-                <a href="app.html" class="btn btn-primary">立即開始</a>
+                <a href="#how-it-works" class="nav-link" data-i18n="nav.howItWorks">如何運作</a>
+                <a href="#features" class="nav-link" data-i18n="nav.features">功能特色</a>
+                <a href="app.html" class="nav-link" data-i18n="nav.workbench">工作台</a>
             </nav>
+            <div class="header-actions">
+                <button class="toggle-btn" id="theme-toggle" title="Toggle theme">
+                    <i data-lucide="sun" id="theme-icon-sun" style="width: 18px; height: 18px; display: none;"></i>
+                    <i data-lucide="moon" id="theme-icon-moon" style="width: 18px; height: 18px;"></i>
+                </button>
+                <button class="toggle-btn" id="lang-toggle" title="Toggle language">EN</button>
+                <a href="app.html" class="btn btn-primary" data-i18n="nav.getStarted">立即開始</a>
+            </div>
         </div>
     </header>
 
@@ -660,34 +717,34 @@
     <section class="hero">
         <div class="hero-grid">
             <div class="hero-content">
-                <span class="label hero-label">自動化內容創作</span>
-                <h1 class="hero-title">5 步驟建立你的自動化 Reels 帳號</h1>
-                <p class="hero-subtitle">
+                <span class="label hero-label" data-i18n="hero.label">自動化內容創作</span>
+                <h1 class="hero-title" data-i18n="hero.title">5 步驟建立你的自動化 Reels 帳號</h1>
+                <p class="hero-subtitle" data-i18n="hero.subtitle">
                     從抓取國外熱門影片、AI 智能翻譯、到排程自動發布
                     — AutoReels 幫你實現內容創作全自動化
                 </p>
                 <div class="hero-cta">
-                    <a href="app.html" class="btn btn-primary btn-lg">開始使用</a>
-                    <a href="#how-it-works" class="btn btn-secondary btn-lg">了解更多</a>
+                    <a href="app.html" class="btn btn-primary btn-lg" data-i18n="hero.getStarted">開始使用</a>
+                    <a href="#how-it-works" class="btn btn-secondary btn-lg" data-i18n="hero.learnMore">了解更多</a>
                 </div>
             </div>
             <div class="hero-visual">
                 <div class="hero-stats">
                     <div class="stat-card">
                         <div class="stat-value">5</div>
-                        <div class="stat-label">簡單步驟</div>
+                        <div class="stat-label" data-i18n="stats.simpleSteps">簡單步驟</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-value">90%</div>
-                        <div class="stat-label">節省時間</div>
+                        <div class="stat-label" data-i18n="stats.timeSaved">節省時間</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-value">24/7</div>
-                        <div class="stat-label">自動運行</div>
+                        <div class="stat-label" data-i18n="stats.autoRun">自動運行</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-value">100%</div>
-                        <div class="stat-label">本地運行</div>
+                        <div class="stat-label" data-i18n="stats.localRun">本地運行</div>
                     </div>
                 </div>
             </div>
@@ -698,9 +755,9 @@
     <section id="how-it-works" class="section">
         <div class="container">
             <div class="section-header">
-                <span class="label section-label">如何運作</span>
-                <h2 class="section-title">5 步驟開始自動化</h2>
-                <p class="section-subtitle">
+                <span class="label section-label" data-i18n="howItWorks.label">如何運作</span>
+                <h2 class="section-title" data-i18n="howItWorks.title">5 步驟開始自動化</h2>
+                <p class="section-subtitle" data-i18n="howItWorks.subtitle">
                     不需要任何技術背景，跟著步驟走，輕鬆建立你的自動化 Reels 帳號
                 </p>
             </div>
@@ -711,9 +768,9 @@
                     <div class="step-icon">
                         <i data-lucide="user-plus" style="width: 32px; height: 32px;"></i>
                     </div>
-                    <h3 class="step-title">創建帳號</h3>
-                    <p class="step-desc">連結你的 Instagram 帳號，設定發布權限</p>
-                    <span class="step-status coming">即將推出</span>
+                    <h3 class="step-title" data-i18n="steps.step1.title">創建帳號</h3>
+                    <p class="step-desc" data-i18n="steps.step1.desc">連結你的 Instagram 帳號，設定發布權限</p>
+                    <span class="step-status coming" data-i18n="steps.comingSoon">即將推出</span>
                 </div>
 
                 <div class="step-card">
@@ -721,9 +778,9 @@
                     <div class="step-icon">
                         <i data-lucide="palette" style="width: 32px; height: 32px;"></i>
                     </div>
-                    <h3 class="step-title">設定模板</h3>
-                    <p class="step-desc">選擇字幕風格、品牌浮水印、影片比例</p>
-                    <span class="step-status ready">可使用</span>
+                    <h3 class="step-title" data-i18n="steps.step2.title">設定模板</h3>
+                    <p class="step-desc" data-i18n="steps.step2.desc">選擇字幕風格、品牌浮水印、影片比例</p>
+                    <span class="step-status ready" data-i18n="steps.available">可使用</span>
                 </div>
 
                 <div class="step-card">
@@ -731,9 +788,9 @@
                     <div class="step-icon">
                         <i data-lucide="download" style="width: 32px; height: 32px;"></i>
                     </div>
-                    <h3 class="step-title">抓取影片</h3>
-                    <p class="step-desc">輸入 YouTube 或 IG 網址，一鍵下載素材</p>
-                    <span class="step-status ready">可使用</span>
+                    <h3 class="step-title" data-i18n="steps.step3.title">抓取影片</h3>
+                    <p class="step-desc" data-i18n="steps.step3.desc">輸入 YouTube 或 IG 網址，一鍵下載素材</p>
+                    <span class="step-status ready" data-i18n="steps.available">可使用</span>
                 </div>
 
                 <div class="step-card">
@@ -741,9 +798,9 @@
                     <div class="step-icon">
                         <i data-lucide="languages" style="width: 32px; height: 32px;"></i>
                     </div>
-                    <h3 class="step-title">AI 翻譯</h3>
-                    <p class="step-desc">Whisper 語音辨識 + GPT 智能翻譯</p>
-                    <span class="step-status ready">可使用</span>
+                    <h3 class="step-title" data-i18n="steps.step4.title">AI 翻譯</h3>
+                    <p class="step-desc" data-i18n="steps.step4.desc">Whisper 語音辨識 + GPT 智能翻譯</p>
+                    <span class="step-status ready" data-i18n="steps.available">可使用</span>
                 </div>
 
                 <div class="step-card">
@@ -751,9 +808,9 @@
                     <div class="step-icon">
                         <i data-lucide="send" style="width: 32px; height: 32px;"></i>
                     </div>
-                    <h3 class="step-title">排程發布</h3>
-                    <p class="step-desc">設定發布時間，自動上傳到 IG Reels</p>
-                    <span class="step-status coming">即將推出</span>
+                    <h3 class="step-title" data-i18n="steps.step5.title">排程發布</h3>
+                    <p class="step-desc" data-i18n="steps.step5.desc">設定發布時間，自動上傳到 IG Reels</p>
+                    <span class="step-status coming" data-i18n="steps.comingSoon">即將推出</span>
                 </div>
             </div>
         </div>
@@ -763,9 +820,9 @@
     <section id="features" class="section">
         <div class="container">
             <div class="section-header">
-                <span class="label section-label">功能特色</span>
-                <h2 class="section-title">為什麼選擇 AutoReels</h2>
-                <p class="section-subtitle">
+                <span class="label section-label" data-i18n="features.label">功能特色</span>
+                <h2 class="section-title" data-i18n="features.title">為什麼選擇 AutoReels</h2>
+                <p class="section-subtitle" data-i18n="features.subtitle">
                     專為內容創作者設計，節省時間、提升效率
                 </p>
             </div>
@@ -774,48 +831,48 @@
                 <div class="feature-card">
                     <div class="feature-number">01</div>
                     <div class="feature-content">
-                        <h3 class="feature-title">多平台素材來源</h3>
-                        <p class="feature-desc">支援 YouTube、Instagram Reels、TikTok 等主流平台影片下載</p>
+                        <h3 class="feature-title" data-i18n="features.feature1.title">多平台素材來源</h3>
+                        <p class="feature-desc" data-i18n="features.feature1.desc">支援 YouTube、Instagram Reels、TikTok 等主流平台影片下載</p>
                     </div>
                 </div>
 
                 <div class="feature-card">
                     <div class="feature-number">02</div>
                     <div class="feature-content">
-                        <h3 class="feature-title">AI 智能翻譯</h3>
-                        <p class="feature-desc">Whisper 語音辨識 + GPT-4 翻譯，準確度高達 95%</p>
+                        <h3 class="feature-title" data-i18n="features.feature2.title">AI 智能翻譯</h3>
+                        <p class="feature-desc" data-i18n="features.feature2.desc">Whisper 語音辨識 + GPT-4 翻譯，準確度高達 95%</p>
                     </div>
                 </div>
 
                 <div class="feature-card">
                     <div class="feature-number">03</div>
                     <div class="feature-content">
-                        <h3 class="feature-title">一鍵套用模板</h3>
-                        <p class="feature-desc">自訂字幕樣式、品牌浮水印，批量套用到所有影片</p>
+                        <h3 class="feature-title" data-i18n="features.feature3.title">一鍵套用模板</h3>
+                        <p class="feature-desc" data-i18n="features.feature3.desc">自訂字幕樣式、品牌浮水印，批量套用到所有影片</p>
                     </div>
                 </div>
 
                 <div class="feature-card">
                     <div class="feature-number">04</div>
                     <div class="feature-content">
-                        <h3 class="feature-title">智能排程發布</h3>
-                        <p class="feature-desc">設定最佳發布時間，自動上傳到你的 IG 帳號</p>
+                        <h3 class="feature-title" data-i18n="features.feature4.title">智能排程發布</h3>
+                        <p class="feature-desc" data-i18n="features.feature4.desc">設定最佳發布時間，自動上傳到你的 IG 帳號</p>
                     </div>
                 </div>
 
                 <div class="feature-card">
                     <div class="feature-number">05</div>
                     <div class="feature-content">
-                        <h3 class="feature-title">數據分析儀表板</h3>
-                        <p class="feature-desc">追蹤影片表現，優化發布策略，提升觸及率</p>
+                        <h3 class="feature-title" data-i18n="features.feature5.title">數據分析儀表板</h3>
+                        <p class="feature-desc" data-i18n="features.feature5.desc">追蹤影片表現，優化發布策略，提升觸及率</p>
                     </div>
                 </div>
 
                 <div class="feature-card">
                     <div class="feature-number">06</div>
                     <div class="feature-content">
-                        <h3 class="feature-title">100% 本地安全</h3>
-                        <p class="feature-desc">本地運行，資料不上傳雲端，保護你的帳號安全</p>
+                        <h3 class="feature-title" data-i18n="features.feature6.title">100% 本地安全</h3>
+                        <p class="feature-desc" data-i18n="features.feature6.desc">本地運行，資料不上傳雲端，保護你的帳號安全</p>
                     </div>
                 </div>
             </div>
@@ -825,16 +882,16 @@
     <!-- CTA -->
     <section class="cta-section">
         <div class="cta-content">
-            <span class="label section-label">立即開始</span>
-            <h2 class="cta-title">準備好自動化你的內容了嗎？</h2>
-            <p class="cta-subtitle">
+            <span class="label section-label" data-i18n="cta.label">立即開始</span>
+            <h2 class="cta-title" data-i18n="cta.title">準備好自動化你的內容了嗎？</h2>
+            <p class="cta-subtitle" data-i18n="cta.subtitle">
                 加入已經在使用 AutoReels 建立自動化 Reels 帳號的創作者行列
             </p>
             <div class="cta-form">
-                <input type="email" class="cta-input" placeholder="輸入你的 Email">
-                <button class="btn btn-primary">免費開始</button>
+                <input type="email" class="cta-input" data-i18n-placeholder="cta.emailPlaceholder" placeholder="輸入你的 Email">
+                <button class="btn btn-primary" data-i18n="cta.freeStart">免費開始</button>
             </div>
-            <p class="cta-note">無需信用卡 • 30 秒內開始</p>
+            <p class="cta-note" data-i18n="cta.note">無需信用卡 · 30 秒內開始</p>
         </div>
     </section>
 
@@ -842,19 +899,19 @@
     <div class="footer-stats">
         <div class="footer-stat">
             <div class="footer-stat-value">2024</div>
-            <div class="footer-stat-label">上線年份</div>
+            <div class="footer-stat-label" data-i18n="footerStats.launchYear">上線年份</div>
         </div>
         <div class="footer-stat">
             <div class="footer-stat-value">5</div>
-            <div class="footer-stat-label">核心步驟</div>
+            <div class="footer-stat-label" data-i18n="footerStats.coreSteps">核心步驟</div>
         </div>
         <div class="footer-stat">
             <div class="footer-stat-value">∞</div>
-            <div class="footer-stat-label">無限可能</div>
+            <div class="footer-stat-label" data-i18n="footerStats.unlimited">無限可能</div>
         </div>
         <div class="footer-stat">
             <div class="footer-stat-value">100%</div>
-            <div class="footer-stat-label">全自動化</div>
+            <div class="footer-stat-label" data-i18n="footerStats.fullyAutomated">全自動化</div>
         </div>
     </div>
 
@@ -863,28 +920,328 @@
         <div class="footer-inner">
             <div class="footer-text">© 2024 AutoReels</div>
             <div class="footer-links">
-                <a href="#" class="footer-link">使用條款</a>
-                <a href="#" class="footer-link">隱私政策</a>
-                <a href="#" class="footer-link">聯絡我們</a>
+                <a href="#" class="footer-link" data-i18n="footer.terms">使用條款</a>
+                <a href="#" class="footer-link" data-i18n="footer.privacy">隱私政策</a>
+                <a href="#" class="footer-link" data-i18n="footer.contact">聯絡我們</a>
             </div>
         </div>
     </footer>
 
     <script>
-        // Initialize Lucide icons
-        lucide.createIcons();
-
-        // Smooth scroll for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
+        // ===== i18n Translations =====
+        const translations = {
+            zh: {
+                nav: {
+                    howItWorks: '如何運作',
+                    features: '功能特色',
+                    workbench: '工作台',
+                    getStarted: '立即開始'
+                },
+                hero: {
+                    label: '自動化內容創作',
+                    title: '5 步驟建立你的自動化 Reels 帳號',
+                    subtitle: '從抓取國外熱門影片、AI 智能翻譯、到排程自動發布 — AutoReels 幫你實現內容創作全自動化',
+                    getStarted: '開始使用',
+                    learnMore: '了解更多'
+                },
+                stats: {
+                    simpleSteps: '簡單步驟',
+                    timeSaved: '節省時間',
+                    autoRun: '自動運行',
+                    localRun: '本地運行'
+                },
+                howItWorks: {
+                    label: '如何運作',
+                    title: '5 步驟開始自動化',
+                    subtitle: '不需要任何技術背景，跟著步驟走，輕鬆建立你的自動化 Reels 帳號'
+                },
+                steps: {
+                    step1: {
+                        title: '創建帳號',
+                        desc: '連結你的 Instagram 帳號，設定發布權限'
+                    },
+                    step2: {
+                        title: '設定模板',
+                        desc: '選擇字幕風格、品牌浮水印、影片比例'
+                    },
+                    step3: {
+                        title: '抓取影片',
+                        desc: '輸入 YouTube 或 IG 網址，一鍵下載素材'
+                    },
+                    step4: {
+                        title: 'AI 翻譯',
+                        desc: 'Whisper 語音辨識 + GPT 智能翻譯'
+                    },
+                    step5: {
+                        title: '排程發布',
+                        desc: '設定發布時間，自動上傳到 IG Reels'
+                    },
+                    available: '可使用',
+                    comingSoon: '即將推出'
+                },
+                features: {
+                    label: '功能特色',
+                    title: '為什麼選擇 AutoReels',
+                    subtitle: '專為內容創作者設計，節省時間、提升效率',
+                    feature1: {
+                        title: '多平台素材來源',
+                        desc: '支援 YouTube、Instagram Reels、TikTok 等主流平台影片下載'
+                    },
+                    feature2: {
+                        title: 'AI 智能翻譯',
+                        desc: 'Whisper 語音辨識 + GPT-4 翻譯，準確度高達 95%'
+                    },
+                    feature3: {
+                        title: '一鍵套用模板',
+                        desc: '自訂字幕樣式、品牌浮水印，批量套用到所有影片'
+                    },
+                    feature4: {
+                        title: '智能排程發布',
+                        desc: '設定最佳發布時間，自動上傳到你的 IG 帳號'
+                    },
+                    feature5: {
+                        title: '數據分析儀表板',
+                        desc: '追蹤影片表現，優化發布策略，提升觸及率'
+                    },
+                    feature6: {
+                        title: '100% 本地安全',
+                        desc: '本地運行，資料不上傳雲端，保護你的帳號安全'
+                    }
+                },
+                cta: {
+                    label: '立即開始',
+                    title: '準備好自動化你的內容了嗎？',
+                    subtitle: '加入已經在使用 AutoReels 建立自動化 Reels 帳號的創作者行列',
+                    emailPlaceholder: '輸入你的 Email',
+                    freeStart: '免費開始',
+                    note: '無需信用卡 · 30 秒內開始'
+                },
+                footerStats: {
+                    launchYear: '上線年份',
+                    coreSteps: '核心步驟',
+                    unlimited: '無限可能',
+                    fullyAutomated: '全自動化'
+                },
+                footer: {
+                    terms: '使用條款',
+                    privacy: '隱私政策',
+                    contact: '聯絡我們'
                 }
+            },
+            en: {
+                nav: {
+                    howItWorks: 'How It Works',
+                    features: 'Features',
+                    workbench: 'Workbench',
+                    getStarted: 'Get Started'
+                },
+                hero: {
+                    label: 'Automated Content Creation',
+                    title: '5 Steps to Build Your Automated Reels Account',
+                    subtitle: 'From fetching trending videos, AI translation, to scheduled publishing — AutoReels helps you automate content creation',
+                    getStarted: 'Get Started',
+                    learnMore: 'Learn More'
+                },
+                stats: {
+                    simpleSteps: 'Simple Steps',
+                    timeSaved: 'Time Saved',
+                    autoRun: 'Auto Running',
+                    localRun: 'Local Run'
+                },
+                howItWorks: {
+                    label: 'How It Works',
+                    title: '5 Steps to Start Automation',
+                    subtitle: 'No technical background needed, follow the steps to easily build your automated Reels account'
+                },
+                steps: {
+                    step1: {
+                        title: 'Create Account',
+                        desc: 'Connect your Instagram account and set publishing permissions'
+                    },
+                    step2: {
+                        title: 'Set Template',
+                        desc: 'Choose subtitle style, brand watermark, video ratio'
+                    },
+                    step3: {
+                        title: 'Fetch Videos',
+                        desc: 'Enter YouTube or IG URL, one-click download'
+                    },
+                    step4: {
+                        title: 'AI Translation',
+                        desc: 'Whisper speech recognition + GPT translation'
+                    },
+                    step5: {
+                        title: 'Schedule Publish',
+                        desc: 'Set publish time, auto upload to IG Reels'
+                    },
+                    available: 'Available',
+                    comingSoon: 'Coming Soon'
+                },
+                features: {
+                    label: 'Features',
+                    title: 'Why Choose AutoReels',
+                    subtitle: 'Designed for content creators, save time and boost efficiency',
+                    feature1: {
+                        title: 'Multi-Platform Sources',
+                        desc: 'Support YouTube, Instagram Reels, TikTok and other mainstream platforms'
+                    },
+                    feature2: {
+                        title: 'AI Smart Translation',
+                        desc: 'Whisper speech recognition + GPT-4 translation, up to 95% accuracy'
+                    },
+                    feature3: {
+                        title: 'One-Click Template',
+                        desc: 'Custom subtitle styles, brand watermarks, batch apply to all videos'
+                    },
+                    feature4: {
+                        title: 'Smart Scheduling',
+                        desc: 'Set optimal publish time, auto upload to your IG account'
+                    },
+                    feature5: {
+                        title: 'Analytics Dashboard',
+                        desc: 'Track video performance, optimize strategy, boost reach'
+                    },
+                    feature6: {
+                        title: '100% Local & Secure',
+                        desc: 'Runs locally, no cloud upload, protect your account security'
+                    }
+                },
+                cta: {
+                    label: 'Get Started',
+                    title: 'Ready to Automate Your Content?',
+                    subtitle: 'Join creators who are already using AutoReels to build automated Reels accounts',
+                    emailPlaceholder: 'Enter your Email',
+                    freeStart: 'Start Free',
+                    note: 'No credit card required · Start in 30 seconds'
+                },
+                footerStats: {
+                    launchYear: 'Launch Year',
+                    coreSteps: 'Core Steps',
+                    unlimited: 'Unlimited',
+                    fullyAutomated: 'Fully Automated'
+                },
+                footer: {
+                    terms: 'Terms of Service',
+                    privacy: 'Privacy Policy',
+                    contact: 'Contact Us'
+                }
+            }
+        };
+
+        // ===== Theme System =====
+        const initTheme = () => {
+            const saved = localStorage.getItem('theme');
+            const system = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+            const theme = saved || system;
+            document.documentElement.dataset.theme = theme;
+            updateThemeIcon(theme);
+        };
+
+        const toggleTheme = () => {
+            const current = document.documentElement.dataset.theme;
+            const next = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.dataset.theme = next;
+            localStorage.setItem('theme', next);
+            updateThemeIcon(next);
+        };
+
+        const updateThemeIcon = (theme) => {
+            const sunIcon = document.getElementById('theme-icon-sun');
+            const moonIcon = document.getElementById('theme-icon-moon');
+            if (theme === 'dark') {
+                sunIcon.style.display = 'none';
+                moonIcon.style.display = 'block';
+            } else {
+                sunIcon.style.display = 'block';
+                moonIcon.style.display = 'none';
+            }
+        };
+
+        // ===== i18n System =====
+        let currentLang = localStorage.getItem('locale') || 'zh';
+
+        const t = (key) => {
+            const keys = key.split('.');
+            let result = translations[currentLang];
+            for (const k of keys) {
+                result = result?.[k];
+            }
+            return result || key;
+        };
+
+        const setLocale = (locale) => {
+            currentLang = locale;
+            localStorage.setItem('locale', locale);
+            applyTranslations();
+            updateLangButton();
+        };
+
+        const toggleLocale = () => {
+            const next = currentLang === 'zh' ? 'en' : 'zh';
+            setLocale(next);
+        };
+
+        const updateLangButton = () => {
+            const langBtn = document.getElementById('lang-toggle');
+            langBtn.textContent = currentLang === 'zh' ? 'EN' : '中';
+        };
+
+        const applyTranslations = () => {
+            // Apply text content translations
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                const translation = t(key);
+                if (translation && translation !== key) {
+                    el.textContent = translation;
+                }
+            });
+
+            // Apply placeholder translations
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                const key = el.getAttribute('data-i18n-placeholder');
+                const translation = t(key);
+                if (translation && translation !== key) {
+                    el.placeholder = translation;
+                }
+            });
+
+            // Update document title
+            document.title = currentLang === 'zh'
+                ? 'AutoReels - 自動化 IG Reels 創作平台'
+                : 'AutoReels - Automated IG Reels Creation Platform';
+        };
+
+        // ===== Initialize =====
+        // Initialize theme first (before DOM loads icons)
+        initTheme();
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize Lucide icons
+            lucide.createIcons();
+
+            // Update theme icon after Lucide initialization
+            updateThemeIcon(document.documentElement.dataset.theme || 'dark');
+
+            // Initialize language
+            updateLangButton();
+            applyTranslations();
+
+            // Event listeners
+            document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
+            document.getElementById('lang-toggle').addEventListener('click', toggleLocale);
+
+            // Smooth scroll for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
             });
         });
     </script>
