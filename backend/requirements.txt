@@ -1,0 +1,9 @@
+fastapi>=0.115.0
+uvicorn[standard]>=0.32.0
+sqlalchemy>=2.0.36
+aiosqlite>=0.20.0
+selenium>=4.27.0
+webdriver-manager>=4.0.2
+pydantic>=2.10.0
+python-multipart>=0.0.17
+yt-dlp>=2024.12.0

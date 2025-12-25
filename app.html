@@ -1,0 +1,1984 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>影片工作室 - Video Studio</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/design-system.css">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* ===== 頁面專屬樣式覆寫 ===== */
+
+        /* 底部導航欄樣式 */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 80px;
+            background: var(--surface-bg);
+            border-top: 1px solid var(--border-default);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 0 var(--space-4);
+            z-index: 100;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .bottom-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-1);
+            padding: var(--space-2) var(--space-4);
+            border-radius: var(--radius-lg);
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all var(--duration-fast) var(--ease-default);
+            min-width: 72px;
+            position: relative;
+        }
+
+        .bottom-nav-item:hover {
+            color: var(--text-secondary);
+            background: var(--gray-50);
+        }
+
+        .bottom-nav-item.active {
+            color: var(--primary-600);
+        }
+
+        .bottom-nav-item.active::before {
+            content: '';
+            position: absolute;
+            top: -1px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 3px;
+            background: var(--primary-600);
+            border-radius: 0 0 var(--radius-full) var(--radius-full);
+        }
+
+        .bottom-nav-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .bottom-nav-label {
+            font-size: var(--text-xs);
+            font-weight: var(--font-medium);
+        }
+
+        /* Dashboard */
+        .dashboard-welcome {
+            margin-bottom: var(--space-8);
+        }
+
+        .welcome-title {
+            font-size: var(--text-3xl);
+            font-weight: var(--font-bold);
+            color: var(--text-primary);
+            margin-bottom: var(--space-2);
+        }
+
+        .welcome-subtitle {
+            color: var(--text-secondary);
+            font-size: var(--text-base);
+        }
+
+        /* 專案卡片 */
+        .project-card {
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+        }
+
+        .project-card.face::before { background: var(--module-workflow); }
+        .project-card.translate::before { background: var(--module-subtitle); }
+
+        .project-card-content {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-4);
+        }
+
+        .project-title {
+            font-size: var(--text-xl);
+            font-weight: var(--font-semibold);
+            color: var(--text-primary);
+        }
+
+        .project-desc {
+            color: var(--text-secondary);
+            font-size: var(--text-sm);
+        }
+
+        /* 工具按鈕 */
+        .quick-tools {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-3);
+            margin-top: var(--space-6);
+        }
+
+        .tool-btn {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            padding: var(--space-3) var(--space-4);
+            background: var(--gray-100);
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-full);
+            color: var(--text-secondary);
+            font-size: var(--text-sm);
+            cursor: pointer;
+            transition: all 150ms ease;
+        }
+
+        .tool-btn:hover {
+            background: var(--gray-200);
+            color: var(--text-primary);
+        }
+
+        /* 工作流頁面 */
+        .workflow-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: var(--space-6);
+        }
+
+        .workflow-title {
+            font-size: var(--text-2xl);
+            font-weight: var(--font-bold);
+            color: var(--text-primary);
+            margin-bottom: var(--space-2);
+        }
+
+        .workflow-subtitle {
+            color: var(--text-secondary);
+        }
+
+        .execute-btn {
+            padding: var(--space-4) var(--space-8);
+            font-size: var(--text-base);
+            gap: var(--space-3);
+        }
+
+        /* 配置面板 */
+        .config-panel {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-4);
+            margin-bottom: var(--space-6);
+        }
+
+        .config-item {
+            background: var(--gray-50);
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-lg);
+            padding: var(--space-4);
+        }
+
+        .config-label {
+            font-size: var(--text-xs);
+            font-weight: var(--font-medium);
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: var(--space-2);
+        }
+
+        .config-value {
+            font-size: var(--text-sm);
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        .config-value input {
+            flex: 1;
+            background: var(--surface-bg);
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-md);
+            padding: var(--space-2) var(--space-3);
+            color: var(--text-primary);
+            font-size: var(--text-sm);
+        }
+
+        .config-value input:focus {
+            outline: none;
+            border-color: var(--primary-500);
+            box-shadow: 0 0 0 3px var(--primary-100);
+        }
+
+        .config-value .btn {
+            padding: var(--space-2) var(--space-3);
+            font-size: var(--text-xs);
+        }
+
+        /* 進度區 */
+        .progress-section {
+            background: var(--surface-elevated);
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-xl);
+            padding: var(--space-6);
+            margin-bottom: var(--space-6);
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: var(--space-4);
+            font-size: var(--text-sm);
+            color: var(--text-secondary);
+        }
+
+        .progress-bar-container {
+            background: var(--gray-200);
+            border-radius: var(--radius-full);
+            height: 8px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-500), var(--primary-400));
+            border-radius: var(--radius-full);
+            transition: width 300ms ease;
+        }
+
+        .progress-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-4);
+            margin-top: var(--space-4);
+        }
+
+        /* 下載頁面 */
+        .download-input {
+            width: 100%;
+            min-height: 140px;
+            background: var(--surface-bg);
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-lg);
+            padding: var(--space-4);
+            color: var(--text-primary);
+            font-size: var(--text-sm);
+            font-family: var(--font-sans);
+            resize: vertical;
+            transition: border-color 150ms ease;
+        }
+
+        .download-input:focus {
+            outline: none;
+            border-color: var(--primary-500);
+            box-shadow: 0 0 0 3px var(--primary-100);
+        }
+
+        .download-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .download-tabs {
+            display: flex;
+            gap: var(--space-1);
+            margin-bottom: var(--space-4);
+            border-bottom: 1px solid var(--border-default);
+        }
+
+        .download-tab {
+            padding: var(--space-3) var(--space-4);
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: var(--text-sm);
+            font-weight: var(--font-medium);
+            transition: color 150ms ease;
+            position: relative;
+        }
+
+        .download-tab:hover {
+            color: var(--text-secondary);
+        }
+
+        .download-tab.active {
+            color: var(--primary-600);
+        }
+
+        .download-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--primary-600);
+        }
+
+        /* 佇列項目 */
+        .queue-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+            padding: var(--space-3);
+            border-radius: var(--radius-md);
+            transition: background 150ms ease;
+        }
+
+        .queue-item:hover {
+            background: var(--gray-50);
+        }
+
+        .queue-item + .queue-item {
+            border-top: 1px solid var(--border-default);
+        }
+
+        .queue-icon {
+            font-size: var(--text-base);
+            width: 24px;
+            text-align: center;
+        }
+
+        .queue-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .queue-url {
+            font-size: var(--text-sm);
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .queue-status {
+            font-size: var(--text-xs);
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .status-pending { color: var(--text-muted); }
+        .status-processing { color: var(--warning-500); }
+        .status-completed { color: var(--success-500); }
+        .status-failed { color: var(--error-500); }
+
+        /* 設定行 */
+        .setting-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-4) 0;
+            border-bottom: 1px solid var(--border-default);
+        }
+
+        .setting-row:last-child {
+            border-bottom: none;
+        }
+
+        .setting-label {
+            font-size: var(--text-sm);
+            color: var(--text-primary);
+        }
+
+        .setting-value {
+            font-size: var(--text-sm);
+            color: var(--text-secondary);
+        }
+
+        /* Toggle 開關 */
+        .toggle {
+            position: relative;
+            width: 44px;
+            height: 24px;
+            display: inline-block;
+        }
+
+        .toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            inset: 0;
+            background: var(--gray-300);
+            border-radius: var(--radius-full);
+            transition: 200ms;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background: white;
+            border-radius: var(--radius-full);
+            box-shadow: var(--shadow-sm);
+            transition: 200ms;
+        }
+
+        .toggle input:checked + .toggle-slider {
+            background: var(--primary-500);
+        }
+
+        .toggle input:checked + .toggle-slider:before {
+            transform: translateX(20px);
+        }
+
+        /* YouTube 頁面 */
+        .yt-url-input {
+            flex: 1;
+            background: var(--surface-bg);
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-lg);
+            padding: var(--space-3) var(--space-4);
+            color: var(--text-primary);
+            font-size: var(--text-sm);
+        }
+
+        .yt-url-input:focus {
+            outline: none;
+            border-color: var(--primary-500);
+            box-shadow: 0 0 0 3px var(--primary-100);
+        }
+
+        .yt-video-info {
+            display: flex;
+            gap: var(--space-6);
+            margin-bottom: var(--space-6);
+        }
+
+        .yt-thumbnail {
+            width: 280px;
+            height: 158px;
+            object-fit: cover;
+            border-radius: var(--radius-lg);
+        }
+
+        .yt-video-details {
+            flex: 1;
+        }
+
+        .yt-video-title {
+            font-size: var(--text-xl);
+            font-weight: var(--font-semibold);
+            color: var(--text-primary);
+            margin-bottom: var(--space-2);
+            line-height: 1.4;
+        }
+
+        .yt-video-channel {
+            color: var(--text-secondary);
+            margin-bottom: var(--space-2);
+        }
+
+        .yt-video-meta {
+            color: var(--text-muted);
+            font-size: var(--text-sm);
+        }
+
+        .yt-options {
+            display: flex;
+            gap: var(--space-8);
+            padding: var(--space-4);
+            background: var(--gray-50);
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-lg);
+        }
+
+        .yt-option-group {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+
+        .yt-select {
+            background: var(--surface-bg);
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-md);
+            padding: var(--space-2) var(--space-4);
+            color: var(--text-primary);
+            font-size: var(--text-sm);
+            cursor: pointer;
+        }
+
+        .yt-select:focus {
+            outline: none;
+            border-color: var(--primary-500);
+        }
+
+        .yt-progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: var(--space-3);
+        }
+
+        .yt-progress-meta {
+            display: flex;
+            gap: var(--space-6);
+            margin-top: var(--space-3);
+            font-size: var(--text-sm);
+            color: var(--text-muted);
+        }
+
+        /* YouTube 下載進度增強 */
+        .yt-download-progress {
+            border-width: 2px;
+            border-color: var(--primary-500);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+            margin-bottom: 24px;
+        }
+
+        .yt-download-progress.status-parsing {
+            border-color: var(--primary-500);
+        }
+
+        .yt-download-progress.status-downloading {
+            border-color: var(--warning-500);
+        }
+
+        .yt-download-progress.status-processing {
+            border-color: var(--primary-600);
+        }
+
+        .yt-download-progress.status-completed {
+            border-color: var(--success-500);
+        }
+
+        .yt-download-progress.status-failed {
+            border-color: var(--error-500);
+        }
+
+        .yt-progress-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-4);
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+
+        .status-text {
+            font-size: var(--text-lg);
+            font-weight: var(--font-semibold);
+            color: var(--text-primary);
+        }
+
+        .status-percentage {
+            font-size: var(--text-2xl);
+            font-weight: var(--font-bold);
+            color: var(--primary-600);
+        }
+
+        .yt-progress-bar {
+            transition: width 0.5s ease, background 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .yt-progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .yt-progress-details {
+            background: var(--gray-50);
+            border-radius: var(--radius-md);
+            padding: var(--space-4);
+            margin-top: var(--space-4);
+        }
+
+        .yt-progress-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-2) 0;
+        }
+
+        .yt-progress-row + .yt-progress-row {
+            border-top: 1px solid var(--border-default);
+        }
+
+        .detail-label {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            font-size: var(--text-sm);
+            color: var(--text-secondary);
+            font-weight: var(--font-medium);
+        }
+
+        .detail-value {
+            font-size: var(--text-sm);
+            color: var(--text-primary);
+            font-weight: var(--font-medium);
+        }
+
+        .speed-value {
+            color: var(--primary-600);
+            font-family: var(--font-mono);
+        }
+
+        .eta-value {
+            color: var(--warning-600);
+        }
+
+        .yt-status-message {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            margin-top: var(--space-4);
+            padding: var(--space-3);
+            background: var(--primary-50);
+            border-left: 3px solid var(--primary-500);
+            border-radius: var(--radius-md);
+            font-size: var(--text-sm);
+            color: var(--text-secondary);
+        }
+
+        /* Spinning 動畫 */
+        .spinning-icon {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* 響應式調整 */
+        @media (max-width: 768px) {
+            .yt-video-info {
+                flex-direction: column;
+            }
+            .yt-thumbnail {
+                width: 100%;
+                height: auto;
+            }
+            .yt-options {
+                flex-direction: column;
+                gap: var(--space-4);
+            }
+
+            .config-panel {
+                grid-template-columns: 1fr;
+            }
+
+            .workflow-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: var(--space-4);
+            }
+
+            .execute-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app" class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-logo" @click="currentView = 'dashboard'">
+                <div class="header-logo-icon"><i data-lucide="video"></i></div>
+                <span>影片工作室</span>
+            </div>
+        </header>
+
+        <!-- Main -->
+        <main class="app-main">
+            <!-- Content -->
+            <div class="app-content">
+                <!-- Dashboard -->
+                <div v-if="currentView === 'dashboard'">
+                    <div class="dashboard-welcome">
+                        <h1 class="welcome-title">歡迎使用影片工作室</h1>
+                        <p class="welcome-subtitle">選擇專案開始工作，或使用下方快速工具</p>
+                    </div>
+
+                    <!-- 統計 -->
+                    <div class="section">
+                        <div class="grid grid-4">
+                            <div class="stat-card">
+                                <div class="stat-value">{{ stats.videos }}</div>
+                                <div class="stat-label">待處理影片</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">{{ stats.processed }}</div>
+                                <div class="stat-label">已處理</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">{{ stats.drafts }}</div>
+                                <div class="stat-label">剪映草稿</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">{{ stats.success }}%</div>
+                                <div class="stat-label">成功率</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 專案 -->
+                    <div class="section">
+                        <div class="section-header">
+                            <h2 class="section-title"><i data-lucide="rocket" style="width:20px;height:20px;"></i> 專案</h2>
+                        </div>
+                        <div class="grid grid-2">
+                            <div class="card project-card face" @click="selectProject('face'); currentView = 'workflow'">
+                                <div class="project-card-content">
+                                    <div class="card-icon workflow"><i data-lucide="user-circle" style="width:28px;height:28px;"></i></div>
+                                    <h3 class="project-title">面相專案</h3>
+                                    <p class="project-desc">批量替換影片中的人臉，自動生成剪映草稿</p>
+                                    <button class="btn btn-primary">開始工作</button>
+                                </div>
+                            </div>
+                            <div class="card project-card translate" @click="selectProject('translate'); currentView = 'workflow'">
+                                <div class="project-card-content">
+                                    <div class="card-icon subtitle"><i data-lucide="globe" style="width:28px;height:28px;"></i></div>
+                                    <h3 class="project-title">翻譯專案</h3>
+                                    <p class="project-desc">自動翻譯字幕並嵌入影片，支援多國語言</p>
+                                    <button class="btn btn-primary">開始工作</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 快速工具 -->
+                    <div class="section">
+                        <div class="section-header">
+                            <h2 class="section-title"><i data-lucide="wrench" style="width:20px;height:20px;"></i> 工具箱</h2>
+                        </div>
+                        <div class="quick-tools">
+                            <button class="tool-btn" @click="currentView = 'template'"><i data-lucide="file-text" style="width:14px;height:14px;"></i> 模板編輯</button>
+                            <button class="tool-btn" @click="currentView = 'subtitle'"><i data-lucide="captions" style="width:14px;height:14px;"></i> 字幕工具</button>
+                            <button class="tool-btn" @click="currentView = 'social'"><i data-lucide="share-2" style="width:14px;height:14px;"></i> IG 文案</button>
+                            <button class="tool-btn" @click="currentView = 'settings'"><i data-lucide="settings" style="width:14px;height:14px;"></i> 設定</button>
+                            <button class="tool-btn" @click="currentView = 'help'"><i data-lucide="help-circle" style="width:14px;height:14px;"></i> 使用說明</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Workflow -->
+                <div v-if="currentView === 'workflow'">
+                    <div class="workflow-header">
+                        <div>
+                            <h1 class="workflow-title">{{ currentProject === 'face' ? '面相專案' : '翻譯專案' }}</h1>
+                            <p class="workflow-subtitle">{{ currentProject === 'face' ? '批量替換影片人臉，自動生成剪映草稿' : '自動翻譯字幕並嵌入影片' }}</p>
+                        </div>
+                        <button class="btn btn-success execute-btn" @click="executeWorkflow" :disabled="isRunning">
+                            <i :data-lucide="isRunning ? 'loader-2' : 'play'" style="width:18px;height:18px;"></i>
+                            {{ isRunning ? '執行中...' : '開始執行' }}
+                        </button>
+                    </div>
+
+                    <!-- 配置 -->
+                    <div class="config-panel">
+                        <div class="config-item">
+                            <div class="config-label">影片資料夾</div>
+                            <div class="config-value">
+                                <input type="text" :value="config.videoFolder" readonly>
+                                <button class="btn btn-secondary">選擇</button>
+                            </div>
+                        </div>
+                        <div class="config-item">
+                            <div class="config-label">剪映草稿路徑</div>
+                            <div class="config-value">
+                                <input type="text" :value="config.draftFolder" readonly>
+                                <button class="btn btn-secondary">選擇</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 進度 -->
+                    <div class="progress-section">
+                        <div class="progress-header">
+                            <span>{{ progressText }}</span>
+                            <span>{{ progress }}%</span>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar" :style="{ width: progress + '%' }"></div>
+                        </div>
+                        <div class="progress-stats">
+                            <div class="stat-card">
+                                <div class="stat-value" style="color: var(--primary-500)">{{ stats.videos }}</div>
+                                <div class="stat-label">總影片</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" style="color: var(--success-500)">{{ stats.processed }}</div>
+                                <div class="stat-label">已處理</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" style="color: var(--warning-500)">{{ stats.pending }}</div>
+                                <div class="stat-label">處理中</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" style="color: var(--error-500)">{{ stats.errors }}</div>
+                                <div class="stat-label">錯誤</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 日誌 -->
+                    <div class="log-section">
+                        <div class="log-header">
+                            <span class="section-title"><i data-lucide="file-text" style="width:18px;height:18px;"></i> 執行日誌</span>
+                            <button class="btn btn-secondary" @click="clearLogs">清除</button>
+                        </div>
+                        <div class="log-content" ref="logContainer">
+                            <div v-for="(log, i) in logs" :key="i" class="log-line" :class="log.type">
+                                {{ log.text }}
+                            </div>
+                            <div v-if="logs.length === 0" class="log-line info">[系統] 等待執行...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Template -->
+                <div v-if="currentView === 'template'">
+                    <div class="workflow-header">
+                        <div>
+                            <h1 class="workflow-title">模板編輯器</h1>
+                            <p class="workflow-subtitle">編輯剪映草稿模板的文字內容</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <p style="color: var(--text-secondary); text-align: center; padding: 60px 0;">
+                            模板編輯器開發中...<br><br>
+                            <button class="btn btn-secondary" onclick="window.open('template-editor.html')">開啟舊版編輯器</button>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Subtitle -->
+                <div v-if="currentView === 'subtitle'">
+                    <div class="workflow-header">
+                        <div>
+                            <h1 class="workflow-title">字幕工具</h1>
+                            <p class="workflow-subtitle">字幕編輯、位置調整、批量取代</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-3">
+                        <div class="card" onclick="window.open('translate_editor.html')">
+                            <div class="card-icon subtitle"><i data-lucide="palette" style="width:28px;height:28px;"></i></div>
+                            <h3 class="project-title">字幕樣式</h3>
+                            <p class="project-desc">調整字幕字體、顏色、位置等樣式</p>
+                        </div>
+                        <div class="card" onclick="alert('開發中')">
+                            <div class="card-icon subtitle"><i data-lucide="move" style="width:28px;height:28px;"></i></div>
+                            <h3 class="project-title">位置調整</h3>
+                            <p class="project-desc">精確調整字幕在畫面中的位置</p>
+                        </div>
+                        <div class="card" onclick="alert('開發中')">
+                            <div class="card-icon subtitle"><i data-lucide="replace" style="width:28px;height:28px;"></i></div>
+                            <h3 class="project-title">批量取代</h3>
+                            <p class="project-desc">快速取代字幕中的特定文字</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Social -->
+                <div v-if="currentView === 'social'">
+                    <div class="workflow-header">
+                        <div>
+                            <h1 class="workflow-title">社群工具</h1>
+                            <p class="workflow-subtitle">社群媒體內容產生工具</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon social"><i data-lucide="instagram" style="width:28px;height:28px;"></i></div>
+                        <h3 class="project-title">IG 文案產生器</h3>
+                        <p class="project-desc">快速產生 Instagram 貼文文案</p>
+                        <button class="btn btn-primary" style="margin-top: 16px;" onclick="alert('開發中')">開啟工具</button>
+                    </div>
+                </div>
+
+                <!-- Download (ReelPull) -->
+                <div v-if="currentView === 'download'">
+                    <div class="workflow-header">
+                        <div>
+                            <h1 class="workflow-title">IG Reels 下載</h1>
+                            <p class="workflow-subtitle">批次下載 Instagram Reels 影片</p>
+                        </div>
+                        <div style="display: flex; gap: 12px;">
+                            <button v-if="!download.isRunning" class="btn btn-success" @click="startDownload" :disabled="download.queue.length === 0">
+                                <i data-lucide="play" style="width:16px;height:16px;"></i> 開始下載
+                            </button>
+                            <button v-else class="btn btn-secondary" @click="stopDownload" style="border-color: var(--error-500); color: var(--error-500);">
+                                <i data-lucide="square" style="width:16px;height:16px;"></i> 停止
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 輸入區 -->
+                    <div class="card" style="margin-bottom: 24px;">
+                        <h3 class="card-title" style="margin-bottom: 16px;"><i data-lucide="link" style="width:18px;height:18px;"></i> 輸入網址</h3>
+                        <textarea
+                            v-model="download.urlInput"
+                            class="download-input"
+                            placeholder="貼上 Instagram Reel 網址（每行一個）...
+
+例如：
+https://www.instagram.com/reel/xxxxx
+https://www.instagram.com/p/xxxxx"
+                            :disabled="download.isLoading"
+                        ></textarea>
+                        <div style="display: flex; gap: 12px; margin-top: 16px;">
+                            <button class="btn btn-primary" @click="addToQueue" :disabled="!download.urlInput.trim() || download.isLoading">
+                                {{ download.isLoading ? '加入中...' : '加入佇列' }}
+                            </button>
+                            <button class="btn btn-secondary" @click="download.urlInput = ''">清除</button>
+                        </div>
+                    </div>
+
+                    <!-- 即時進度 -->
+                    <div v-if="download.currentTask" class="card" style="margin-bottom: 24px; border-color: var(--warning-500);">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                            <span style="color: var(--text-secondary); font-size: 0.875rem;">{{ download.currentTask.url }}</span>
+                            <span style="color: var(--warning-500);">{{ download.currentTask.progress }}%</span>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar" :style="{ width: download.currentTask.progress + '%', background: 'var(--warning-500)' }"></div>
+                        </div>
+                        <div style="margin-top: 8px; font-size: 0.75rem; color: var(--text-muted);">{{ download.currentTask.step }}</div>
+                    </div>
+
+                    <!-- Tabs -->
+                    <div class="download-tabs">
+                        <button class="download-tab" :class="{ active: download.activeTab === 'queue' }" @click="download.activeTab = 'queue'">
+                            佇列 ({{ download.queue.length }})
+                        </button>
+                        <button class="download-tab" :class="{ active: download.activeTab === 'history' }" @click="download.activeTab = 'history'">
+                            歷史 ({{ download.history.length }})
+                        </button>
+                        <button class="download-tab" :class="{ active: download.activeTab === 'settings' }" @click="download.activeTab = 'settings'">
+                            設定
+                        </button>
+                    </div>
+
+                    <!-- Queue -->
+                    <div v-if="download.activeTab === 'queue'" class="card">
+                        <div v-if="download.queue.length === 0" style="text-align: center; padding: 48px; color: var(--text-muted);">
+                            <div style="margin-bottom: 12px;"><i data-lucide="inbox" style="width:48px;height:48px;stroke-width:1;"></i></div>
+                            <div>佇列是空的，貼上網址開始下載</div>
+                        </div>
+                        <div v-else>
+                            <div v-for="item in download.queue" :key="item.id" class="queue-item">
+                                <span class="queue-icon"><i :data-lucide="getStatusIcon(item.status)" style="width:18px;height:18px;" :style="{ color: item.status === 'completed' ? 'var(--success-500)' : item.status === 'failed' ? 'var(--error-500)' : item.status === 'processing' ? 'var(--warning-500)' : 'var(--text-muted)' }"></i></span>
+                                <div class="queue-content">
+                                    <div class="queue-url">{{ formatUrl(item.url) }}</div>
+                                    <div class="queue-status" :class="'status-' + item.status">
+                                        {{ getStatusText(item) }}
+                                    </div>
+                                </div>
+                                <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.75rem;" @click="removeFromQueue(item.id)" :disabled="item.status === 'processing'">
+                                    刪除
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- History -->
+                    <div v-if="download.activeTab === 'history'" class="card">
+                        <div v-if="download.history.length === 0" style="text-align: center; padding: 48px; color: var(--text-muted);">
+                            <div style="margin-bottom: 12px;"><i data-lucide="history" style="width:48px;height:48px;stroke-width:1;"></i></div>
+                            <div>沒有下載紀錄</div>
+                        </div>
+                        <div v-else>
+                            <div style="display: flex; justify-content: flex-end; margin-bottom: 16px;">
+                                <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.75rem;" @click="clearHistory">清除全部</button>
+                            </div>
+                            <div v-for="item in download.history" :key="item.id" class="queue-item">
+                                <span class="queue-icon"><i :data-lucide="getStatusIcon(item.status)" style="width:18px;height:18px;" :style="{ color: item.status === 'completed' ? 'var(--success-500)' : 'var(--error-500)' }"></i></span>
+                                <div class="queue-content">
+                                    <div class="queue-url">{{ formatUrl(item.url) }}</div>
+                                    <div class="queue-status" :class="'status-' + item.status">
+                                        {{ item.status === 'completed' ? item.filename : item.error_message }}
+                                    </div>
+                                </div>
+                                <button v-if="item.status === 'failed'" class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.75rem;" @click="retryDownload(item.id)">
+                                    重試
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Settings -->
+                    <div v-if="download.activeTab === 'settings'" class="card">
+                        <div class="setting-row">
+                            <span class="setting-label">下載路徑</span>
+                            <span class="setting-value">{{ download.settings.download_path }}</span>
+                        </div>
+                        <div class="setting-row">
+                            <span class="setting-label">下載完成後自動移除</span>
+                            <label class="toggle">
+                                <input type="checkbox" v-model="download.settings.auto_remove">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-row">
+                            <span class="setting-label">無頭模式（隱藏瀏覽器）</span>
+                            <label class="toggle">
+                                <input type="checkbox" v-model="download.settings.headless_mode">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- YouTube Download -->
+                <div v-if="currentView === 'youtube'">
+                    <div class="workflow-header">
+                        <div>
+                            <h1 class="workflow-title">YouTube 下載</h1>
+                            <p class="workflow-subtitle">使用 yt-dlp 下載 YouTube 影片</p>
+                        </div>
+                    </div>
+
+                    <!-- 輸入區 -->
+                    <div class="card" style="margin-bottom: 24px;">
+                        <h3 class="card-title" style="margin-bottom: 16px;"><i data-lucide="link" style="width:18px;height:18px;"></i> 輸入網址</h3>
+                        <div style="display: flex; gap: 12px;">
+                            <input
+                                type="text"
+                                v-model="youtube.urlInput"
+                                class="yt-url-input"
+                                placeholder="貼上 YouTube 網址..."
+                                @keyup.enter="getYoutubeInfo"
+                                :disabled="youtube.isLoading || youtube.isDownloading"
+                            >
+                            <button class="btn btn-primary" @click="getYoutubeInfo" :disabled="!youtube.urlInput.trim() || youtube.isLoading || youtube.isDownloading">
+                                <i :data-lucide="youtube.isLoading ? 'loader-2' : 'search'" style="width:16px;height:16px;" :class="{ 'spinning-icon': youtube.isLoading }"></i>
+                                {{ youtube.isLoading ? '解析中...' : '解析' }}
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 影片資訊 -->
+                    <div v-if="youtube.videoInfo" class="card" style="margin-bottom: 24px;">
+                        <div class="yt-video-info">
+                            <img :src="youtube.videoInfo.thumbnail" class="yt-thumbnail" alt="thumbnail">
+                            <div class="yt-video-details">
+                                <h3 class="yt-video-title">{{ youtube.videoInfo.title }}</h3>
+                                <p class="yt-video-channel">{{ youtube.videoInfo.channel }}</p>
+                                <p class="yt-video-meta">
+                                    {{ formatDuration(youtube.videoInfo.duration) }} ・
+                                    {{ formatViews(youtube.videoInfo.view_count) }} 次觀看
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="yt-options">
+                            <div class="yt-option-group">
+                                <label class="config-label">畫質</label>
+                                <select v-model="youtube.format" class="yt-select" :disabled="youtube.isDownloading">
+                                    <option value="best">最高畫質</option>
+                                    <option value="1080p">1080p</option>
+                                    <option value="720p">720p</option>
+                                    <option value="480p">480p</option>
+                                </select>
+                            </div>
+                            <div class="yt-option-group">
+                                <label class="toggle">
+                                    <input type="checkbox" v-model="youtube.audioOnly" :disabled="youtube.isDownloading">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <span style="margin-left: 8px;">僅下載音訊 (MP3)</span>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 20px;">
+                            <button class="btn btn-success btn-lg" @click="startYoutubeDownload" :disabled="youtube.isDownloading">
+                                <i :data-lucide="youtube.isDownloading ? 'loader-2' : 'download'" style="width:18px;height:18px;" :class="{ 'spinning-icon': youtube.isDownloading }"></i>
+                                {{ youtube.isDownloading ? '下載中...' : '開始下載' }}
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 下載進度 - 增強版 -->
+                    <div v-if="youtube.currentTask" class="card yt-download-progress" :class="'status-' + youtube.currentTask.status">
+                        <!-- 狀態標題 -->
+                        <div class="yt-progress-title">
+                            <div class="status-indicator">
+                                <i :data-lucide="getYoutubeStatusIcon(youtube.currentTask.status)"
+                                   style="width:20px;height:20px;"
+                                   :class="{ 'spinning-icon': ['parsing', 'downloading', 'processing'].includes(youtube.currentTask.status) }"></i>
+                                <span class="status-text">{{ getYoutubeStatusText(youtube.currentTask.status) }}</span>
+                            </div>
+                            <span class="status-percentage">{{ youtube.currentTask.progress?.toFixed(1) || 0 }}%</span>
+                        </div>
+
+                        <!-- 進度條 -->
+                        <div class="progress-bar-container" style="margin: 16px 0;">
+                            <div class="progress-bar yt-progress-bar"
+                                 :style="{
+                                     width: (youtube.currentTask.progress || 0) + '%',
+                                     background: getYoutubeProgressColor(youtube.currentTask.status)
+                                 }"></div>
+                        </div>
+
+                        <!-- 詳細資訊 -->
+                        <div class="yt-progress-details">
+                            <div class="yt-progress-row">
+                                <span class="detail-label">
+                                    <i data-lucide="file-text" style="width:14px;height:14px;"></i>
+                                    影片標題
+                                </span>
+                                <span class="detail-value">{{ youtube.currentTask.title || youtube.videoInfo?.title || '載入中...' }}</span>
+                            </div>
+
+                            <div v-if="youtube.currentTask.status === 'downloading'" class="yt-progress-row">
+                                <span class="detail-label">
+                                    <i data-lucide="gauge" style="width:14px;height:14px;"></i>
+                                    下載速度
+                                </span>
+                                <span class="detail-value speed-value">{{ youtube.currentTask.speed || '計算中...' }}</span>
+                            </div>
+
+                            <div v-if="youtube.currentTask.eta" class="yt-progress-row">
+                                <span class="detail-label">
+                                    <i data-lucide="clock" style="width:14px;height:14px;"></i>
+                                    預估剩餘時間
+                                </span>
+                                <span class="detail-value eta-value">{{ youtube.currentTask.eta }}</span>
+                            </div>
+
+                            <div v-if="youtube.currentTask.downloaded_bytes && youtube.currentTask.total_bytes" class="yt-progress-row">
+                                <span class="detail-label">
+                                    <i data-lucide="hard-drive" style="width:14px;height:14px;"></i>
+                                    檔案大小
+                                </span>
+                                <span class="detail-value">
+                                    {{ formatFileSize(youtube.currentTask.downloaded_bytes) }} / {{ formatFileSize(youtube.currentTask.total_bytes) }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- 狀態訊息 -->
+                        <div v-if="youtube.currentTask.message" class="yt-status-message">
+                            <i data-lucide="info" style="width:14px;height:14px;"></i>
+                            {{ youtube.currentTask.message }}
+                        </div>
+                    </div>
+
+                    <!-- Tabs -->
+                    <div class="download-tabs">
+                        <button class="download-tab" :class="{ active: youtube.activeTab === 'history' }" @click="youtube.activeTab = 'history'">
+                            歷史紀錄 ({{ youtube.history.length }})
+                        </button>
+                        <button class="download-tab" :class="{ active: youtube.activeTab === 'files' }" @click="youtube.activeTab = 'files'; loadYoutubeFiles()">
+                            已下載檔案
+                        </button>
+                    </div>
+
+                    <!-- History -->
+                    <div v-if="youtube.activeTab === 'history'" class="card">
+                        <div v-if="youtube.history.length === 0" style="text-align: center; padding: 48px; color: var(--text-muted);">
+                            <div style="margin-bottom: 12px;"><i data-lucide="history" style="width:48px;height:48px;stroke-width:1;"></i></div>
+                            <div>沒有下載紀錄</div>
+                        </div>
+                        <div v-else>
+                            <div v-for="item in youtube.history" :key="item.id" class="queue-item">
+                                <span class="queue-icon"><i :data-lucide="item.status === 'completed' ? 'check-circle' : 'x-circle'" style="width:18px;height:18px;" :style="{ color: item.status === 'completed' ? 'var(--success-500)' : 'var(--error-500)' }"></i></span>
+                                <div class="queue-content">
+                                    <div class="queue-url">{{ item.title || item.url }}</div>
+                                    <div class="queue-status" :class="'status-' + item.status">
+                                        {{ item.status === 'completed' ? item.filename : item.error }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Files -->
+                    <div v-if="youtube.activeTab === 'files'" class="card">
+                        <div v-if="youtube.files.length === 0" style="text-align: center; padding: 48px; color: var(--text-muted);">
+                            <div style="margin-bottom: 12px;"><i data-lucide="folder" style="width:48px;height:48px;stroke-width:1;"></i></div>
+                            <div>沒有已下載的檔案</div>
+                        </div>
+                        <div v-else>
+                            <div v-for="file in youtube.files" :key="file.filename" class="queue-item">
+                                <span class="queue-icon"><i data-lucide="film" style="width:18px;height:18px;"></i></span>
+                                <div class="queue-content">
+                                    <div class="queue-url">{{ file.filename }}</div>
+                                    <div class="queue-status">{{ formatFileSize(file.size) }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings -->
+                <div v-if="currentView === 'settings'">
+                    <div class="workflow-header">
+                        <div>
+                            <h1 class="workflow-title">設定</h1>
+                            <p class="workflow-subtitle">配置系統路徑和偏好設定</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3 class="card-title"><i data-lucide="folder" style="width:18px;height:18px;"></i> 路徑配置</h3>
+                        <div class="config-panel" style="margin-top: 16px;">
+                            <div class="config-item">
+                                <div class="config-label">專案根目錄</div>
+                                <div class="config-value">
+                                    <input type="text" :value="config.projectRoot">
+                                </div>
+                            </div>
+                            <div class="config-item">
+                                <div class="config-label">剪映草稿路徑</div>
+                                <div class="config-value">
+                                    <input type="text" :value="config.draftFolder">
+                                </div>
+                            </div>
+                        </div>
+                        <div style="margin-top: 24px;">
+                            <button class="btn btn-primary">儲存設定</button>
+                            <button class="btn btn-secondary" style="margin-left: 12px;">重新偵測</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Help -->
+                <div v-if="currentView === 'help'">
+                    <div class="workflow-header">
+                        <div>
+                            <h1 class="workflow-title">使用說明</h1>
+                            <p class="workflow-subtitle">快速入門指南和常見問題</p>
+                        </div>
+                    </div>
+                    <div class="card" style="margin-bottom: 24px;">
+                        <h3 class="card-title"><i data-lucide="book-open" style="width:18px;height:18px;"></i> 快速入門</h3>
+                        <div style="margin-top: 16px; color: var(--text-secondary);">
+                            <p><strong>1. 設定路徑</strong><br>配置影片資料夾和剪映草稿路徑</p>
+                            <p style="margin-top: 12px;"><strong>2. 放入影片</strong><br>將待處理影片放入 videos/raw 資料夾</p>
+                            <p style="margin-top: 12px;"><strong>3. 執行工作流</strong><br>點擊「開始執行」自動處理所有影片</p>
+                            <p style="margin-top: 12px;"><strong>4. 開啟剪映</strong><br>在剪映中查看和編輯生成的草稿</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3 class="card-title"><i data-lucide="help-circle" style="width:18px;height:18px;"></i> 常見問題</h3>
+                        <div style="margin-top: 16px; color: var(--text-secondary);">
+                            <p><strong>Q: 找不到剪映草稿？</strong><br>A: 請確認剪映已安裝並至少開啟過一次，草稿路徑會自動偵測。</p>
+                            <p style="margin-top: 12px;"><strong>Q: 處理失敗怎麼辦？</strong><br>A: 檢查日誌中的錯誤訊息，通常是影片格式不支援或路徑有問題。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- 底部導航欄 (App Tab Bar) -->
+        <nav class="bottom-nav">
+            <div class="bottom-nav-item" :class="{ active: currentView === 'dashboard' }" @click="currentView = 'dashboard'">
+                <div class="bottom-nav-icon">
+                    <i data-lucide="home" style="width:24px;height:24px;"></i>
+                </div>
+                <span class="bottom-nav-label">首頁</span>
+            </div>
+
+            <div class="bottom-nav-item" :class="{ active: currentView === 'workflow' }" @click="currentView = 'workflow'">
+                <div class="bottom-nav-icon">
+                    <i data-lucide="play-circle" style="width:24px;height:24px;"></i>
+                </div>
+                <span class="bottom-nav-label">工作流</span>
+            </div>
+
+            <div class="bottom-nav-item" :class="{ active: currentView === 'download' }" @click="currentView = 'download'">
+                <div class="bottom-nav-icon">
+                    <i data-lucide="instagram" style="width:24px;height:24px;"></i>
+                </div>
+                <span class="bottom-nav-label">IG下載</span>
+            </div>
+
+            <div class="bottom-nav-item" :class="{ active: currentView === 'youtube' }" @click="currentView = 'youtube'">
+                <div class="bottom-nav-icon">
+                    <i data-lucide="youtube" style="width:24px;height:24px;"></i>
+                </div>
+                <span class="bottom-nav-label">YT下載</span>
+            </div>
+
+            <div class="bottom-nav-item" :class="{ active: currentView === 'settings' }" @click="currentView = 'settings'">
+                <div class="bottom-nav-icon">
+                    <i data-lucide="settings" style="width:24px;height:24px;"></i>
+                </div>
+                <span class="bottom-nav-label">設定</span>
+            </div>
+        </nav>
+
+        <!-- Toast 通知 -->
+        <div class="toast-container">
+            <div v-for="toast in toasts" :key="toast.id" class="toast" :class="'toast-' + toast.type">
+                <span class="toast-icon">
+                    <i :data-lucide="toast.type === 'success' ? 'check-circle' : toast.type === 'error' ? 'x-circle' : toast.type === 'warning' ? 'alert-triangle' : 'info'" style="width:18px;height:18px;"></i>
+                </span>
+                <span class="toast-message">{{ toast.message }}</span>
+                <button class="toast-close" @click="removeToast(toast.id)">×</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const { createApp, ref, computed, onMounted, onUpdated, nextTick, watch } = Vue;
+
+        createApp({
+            setup() {
+                // 狀態
+                const currentView = ref('dashboard');
+                const currentProject = ref('face');
+                const sidebarCollapsed = ref(false);
+                const sidebarOpen = ref(false);
+                const isRunning = ref(false);
+                const progress = ref(0);
+                const progressText = ref('等待執行...');
+                const logs = ref([]);
+                const logContainer = ref(null);
+
+                // 配置
+                const config = ref({
+                    projectRoot: 'C:\\face-vid-template',
+                    videoFolder: 'C:\\face-vid-template\\videos\\raw',
+                    draftFolder: 'C:\\Users\\...\\JianyingPro\\...',
+                });
+
+                // 統計
+                const stats = ref({
+                    videos: 0,
+                    processed: 0,
+                    drafts: 0,
+                    success: 100,
+                    pending: 0,
+                    errors: 0,
+                });
+
+                // 下載模組狀態
+                const download = ref({
+                    urlInput: '',
+                    queue: [],
+                    history: [],
+                    activeTab: 'queue',
+                    isRunning: false,
+                    isLoading: false,
+                    currentTask: null,
+                    settings: {
+                        download_path: './downloads',
+                        auto_remove: true,
+                        headless_mode: false,
+                    }
+                });
+
+                // Toast 通知
+                const toasts = ref([]);
+                let toastId = 0;
+
+                // YouTube 模組狀態
+                const youtube = ref({
+                    urlInput: '',
+                    videoInfo: null,
+                    format: 'best',
+                    audioOnly: false,
+                    isLoading: false,
+                    isDownloading: false,
+                    currentTask: null,
+                    history: [],
+                    files: [],
+                    activeTab: 'history',
+                });
+
+                // 系統狀態
+                const systemStatus = computed(() => {
+                    if (isRunning.value) return 'running';
+                    return 'idle';
+                });
+
+                const statusText = computed(() => {
+                    if (isRunning.value) return '處理中...';
+                    return '就緒';
+                });
+
+                // 方法
+                const selectProject = (project) => {
+                    currentProject.value = project;
+                };
+
+                const executeWorkflow = async () => {
+                    if (isRunning.value) return;
+
+                    isRunning.value = true;
+                    progress.value = 0;
+                    progressText.value = '正在初始化...';
+                    logs.value = [];
+
+                    addLog('info', '[系統] 開始執行工作流...');
+                    addLog('info', `[系統] 當前專案: ${currentProject.value === 'face' ? '面相專案' : '翻譯專案'}`);
+
+                    // 模擬執行
+                    for (let i = 0; i <= 100; i += 10) {
+                        await new Promise(r => setTimeout(r, 300));
+                        progress.value = i;
+                        progressText.value = `處理中... ${i}%`;
+
+                        if (i === 30) addLog('info', '[處理] 載入影片檔案...');
+                        if (i === 60) addLog('info', '[處理] 生成草稿...');
+                        if (i === 90) addLog('info', '[處理] 完成輸出...');
+                    }
+
+                    addLog('success', '[完成] 工作流執行成功！');
+                    progressText.value = '執行完成';
+                    isRunning.value = false;
+                };
+
+                const addLog = (type, text) => {
+                    const time = new Date().toLocaleTimeString();
+                    logs.value.push({ type, text: `[${time}] ${text}` });
+                    nextTick(() => {
+                        if (logContainer.value) {
+                            logContainer.value.scrollTop = logContainer.value.scrollHeight;
+                        }
+                    });
+                };
+
+                const clearLogs = () => {
+                    logs.value = [];
+                };
+
+                const openSettings = () => {
+                    currentView.value = 'settings';
+                };
+
+                const openDraftFolder = () => {
+                    alert('開啟草稿資料夾功能需要後端支援');
+                };
+
+                // ===== 下載功能 =====
+                const API_BASE = 'http://localhost:8000';
+                let downloadWs = null;
+
+                const showToast = (message, type = 'info', duration = 3000) => {
+                    const id = ++toastId;
+                    toasts.value.push({ id, message, type });
+                    if (duration > 0) {
+                        setTimeout(() => {
+                            toasts.value = toasts.value.filter(t => t.id !== id);
+                        }, duration);
+                    }
+                };
+
+                const removeToast = (id) => {
+                    toasts.value = toasts.value.filter(t => t.id !== id);
+                };
+
+                // WebSocket 連接
+                const connectDownloadWs = () => {
+                    downloadWs = new WebSocket('ws://localhost:8000/ws');
+
+                    downloadWs.onopen = () => console.log('Download WebSocket connected');
+
+                    downloadWs.onmessage = (event) => {
+                        const msg = JSON.parse(event.data);
+                        handleWsMessage(msg);
+                    };
+
+                    downloadWs.onclose = () => {
+                        console.log('Download WebSocket disconnected');
+                        setTimeout(connectDownloadWs, 3000);
+                    };
+                };
+
+                const handleWsMessage = (msg) => {
+                    // Instagram 下載事件
+                    if (msg.type === 'status_update') {
+                        const data = msg.data;
+                        const item = download.value.queue.find(q => q.id === data.id);
+                        if (item) {
+                            Object.assign(item, data);
+                            if (data.status === 'processing') {
+                                download.value.currentTask = {
+                                    url: data.url,
+                                    progress: data.progress_percent || 0,
+                                    step: data.progress || '處理中...'
+                                };
+                            }
+                            if (data.status === 'completed') {
+                                showToast(`下載完成：${data.filename}`, 'success');
+                                download.value.history.unshift({ ...item, ...data });
+                                if (download.value.settings.auto_remove) {
+                                    download.value.queue = download.value.queue.filter(q => q.id !== item.id);
+                                }
+                            }
+                            if (data.status === 'failed') {
+                                showToast(`下載失敗：${data.error_message}`, 'error');
+                                download.value.history.unshift({ ...item, ...data });
+                                if (download.value.settings.auto_remove) {
+                                    download.value.queue = download.value.queue.filter(q => q.id !== item.id);
+                                }
+                            }
+                        }
+                    }
+                    if (msg.type === 'download_started') {
+                        download.value.isRunning = true;
+                        showToast('開始下載...', 'info');
+                    }
+                    if (msg.type === 'download_finished') {
+                        download.value.isRunning = false;
+                        download.value.currentTask = null;
+                        loadDownloadData();
+                    }
+
+                    // YouTube 下載事件
+                    if (msg.type === 'yt_started') {
+                        youtube.value.isDownloading = true;
+                        youtube.value.currentTask = {
+                            status: 'parsing',
+                            progress: 0,
+                            message: '開始解析影片資訊...'
+                        };
+                        showToast('開始下載 YouTube 影片...', 'info');
+                    }
+                    if (msg.type === 'yt_progress') {
+                        youtube.value.currentTask = msg.data;
+                        // 在關鍵進度點顯示通知
+                        if (msg.data.progress === 0 && msg.data.status === 'downloading') {
+                            showToast('開始下載影片檔案...', 'info');
+                        } else if (msg.data.progress >= 50 && msg.data.progress < 51 && msg.data.status === 'downloading') {
+                            showToast('下載進度已過半！', 'info');
+                        } else if (msg.data.status === 'processing') {
+                            showToast('下載完成，正在處理影片...', 'info');
+                        }
+                    }
+                    if (msg.type === 'yt_completed') {
+                        youtube.value.isDownloading = false;
+                        youtube.value.currentTask = null;
+                        youtube.value.videoInfo = null;
+                        youtube.value.urlInput = '';
+                        showToast(`下載完成：${msg.data.title || msg.data.filename}`, 'success', 5000);
+                        loadYoutubeHistory();
+                    }
+                    if (msg.type === 'yt_error') {
+                        youtube.value.isDownloading = false;
+                        youtube.value.currentTask = null;
+                        showToast(`下載失敗：${msg.data.error}`, 'error', 8000);
+                        loadYoutubeHistory();
+                    }
+                };
+
+                const addToQueue = async () => {
+                    const urls = download.value.urlInput.split('\n').filter(u => u.trim());
+                    if (urls.length === 0) {
+                        showToast('請輸入至少一個網址', 'warning');
+                        return;
+                    }
+
+                    download.value.isLoading = true;
+                    try {
+                        const res = await fetch(`${API_BASE}/api/queue`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ urls })
+                        });
+                        const added = await res.json();
+                        if (added.length > 0) {
+                            download.value.queue.push(...added);
+                            download.value.urlInput = '';
+                            showToast(`已加入 ${added.length} 個網址`, 'success');
+                        } else {
+                            showToast('網址已存在於佇列中', 'warning');
+                        }
+                    } catch (e) {
+                        showToast('加入失敗：' + e.message, 'error');
+                    } finally {
+                        download.value.isLoading = false;
+                    }
+                };
+
+                const removeFromQueue = async (id) => {
+                    try {
+                        await fetch(`${API_BASE}/api/queue/${id}`, { method: 'DELETE' });
+                        download.value.queue = download.value.queue.filter(q => q.id !== id);
+                        showToast('已從佇列移除', 'info');
+                    } catch (e) {
+                        showToast('移除失敗', 'error');
+                    }
+                };
+
+                const startDownload = async () => {
+                    if (download.value.queue.length === 0) {
+                        showToast('佇列是空的', 'warning');
+                        return;
+                    }
+                    try {
+                        const res = await fetch(`${API_BASE}/api/download/start`, { method: 'POST' });
+                        const result = await res.json();
+                        if (!result.success) {
+                            showToast(result.message || '啟動失敗', 'warning');
+                        }
+                    } catch (e) {
+                        showToast('啟動失敗：' + e.message, 'error');
+                    }
+                };
+
+                const stopDownload = async () => {
+                    try {
+                        await fetch(`${API_BASE}/api/download/stop`, { method: 'POST' });
+                        download.value.isRunning = false;
+                        download.value.currentTask = null;
+                        showToast('已停止下載', 'warning');
+                    } catch (e) {
+                        showToast('停止失敗', 'error');
+                    }
+                };
+
+                const clearHistory = async () => {
+                    try {
+                        await fetch(`${API_BASE}/api/history`, { method: 'DELETE' });
+                        download.value.history = [];
+                        showToast('歷史紀錄已清除', 'info');
+                    } catch (e) {
+                        showToast('清除失敗', 'error');
+                    }
+                };
+
+                const retryDownload = async (id) => {
+                    try {
+                        const res = await fetch(`${API_BASE}/api/queue/${id}/retry`, { method: 'POST' });
+                        const item = await res.json();
+                        download.value.history = download.value.history.filter(h => h.id !== id);
+                        download.value.queue.push(item);
+                        showToast('已加入重試佇列', 'info');
+                    } catch (e) {
+                        showToast('重試失敗', 'error');
+                    }
+                };
+
+                const loadDownloadData = async () => {
+                    try {
+                        const [queueRes, historyRes, settingsRes, statusRes] = await Promise.all([
+                            fetch(`${API_BASE}/api/queue`),
+                            fetch(`${API_BASE}/api/history`),
+                            fetch(`${API_BASE}/api/settings`),
+                            fetch(`${API_BASE}/api/download/status`)
+                        ]);
+                        download.value.queue = await queueRes.json();
+                        download.value.history = await historyRes.json();
+                        download.value.settings = await settingsRes.json();
+                        const status = await statusRes.json();
+                        download.value.isRunning = status.is_running;
+                    } catch (e) {
+                        console.log('下載模組後端未啟動');
+                    }
+                };
+
+                const getStatusIcon = (status) => {
+                    // 返回 HTML 以便渲染 Lucide 圖標
+                    switch (status) {
+                        case 'pending': return 'clock';
+                        case 'processing': return 'loader-2';
+                        case 'completed': return 'check-circle';
+                        case 'failed': return 'x-circle';
+                        default: return 'help-circle';
+                    }
+                };
+
+                const getStatusText = (item) => {
+                    switch (item.status) {
+                        case 'pending': return '等待中';
+                        case 'processing': return '處理中...';
+                        case 'completed': return item.filename || '完成';
+                        case 'failed': return item.error_message || '失敗';
+                        default: return '';
+                    }
+                };
+
+                const formatUrl = (url) => {
+                    return url.length > 50 ? url.substring(0, 50) + '...' : url;
+                };
+
+                // ===== YouTube 功能 =====
+                const getYoutubeInfo = async () => {
+                    if (!youtube.value.urlInput.trim()) return;
+
+                    youtube.value.isLoading = true;
+                    youtube.value.videoInfo = null;
+
+                    showToast('正在解析 YouTube 網址...', 'info');
+
+                    try {
+                        const res = await fetch(`${API_BASE}/api/youtube/info`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ url: youtube.value.urlInput.trim() })
+                        });
+
+                        if (!res.ok) {
+                            const err = await res.json();
+                            throw new Error(err.detail || '解析失敗');
+                        }
+
+                        youtube.value.videoInfo = await res.json();
+                        showToast(`解析成功：${youtube.value.videoInfo.title}`, 'success', 4000);
+                    } catch (e) {
+                        showToast('解析失敗：' + e.message, 'error', 5000);
+                    } finally {
+                        youtube.value.isLoading = false;
+                    }
+                };
+
+                const startYoutubeDownload = async () => {
+                    if (!youtube.value.videoInfo) return;
+
+                    youtube.value.isDownloading = true;
+
+                    // 顯示下載設定資訊
+                    const formatText = youtube.value.audioOnly ? 'MP3 音訊' : `${youtube.value.format} 影片`;
+                    showToast(`準備下載 ${formatText}...`, 'info');
+
+                    try {
+                        const res = await fetch(`${API_BASE}/api/youtube/download`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                url: youtube.value.urlInput.trim(),
+                                format: youtube.value.format,
+                                audio_only: youtube.value.audioOnly,
+                            })
+                        });
+
+                        if (!res.ok) {
+                            const err = await res.json();
+                            throw new Error(err.detail || '下載失敗');
+                        }
+
+                        // 初始化進度顯示
+                        youtube.value.currentTask = {
+                            status: 'parsing',
+                            progress: 0,
+                            title: youtube.value.videoInfo.title,
+                            message: '正在準備下載...'
+                        };
+                    } catch (e) {
+                        showToast('下載失敗：' + e.message, 'error', 5000);
+                        youtube.value.isDownloading = false;
+                        youtube.value.currentTask = null;
+                    }
+                };
+
+                const loadYoutubeHistory = async () => {
+                    try {
+                        const res = await fetch(`${API_BASE}/api/youtube/history`);
+                        youtube.value.history = await res.json();
+                    } catch (e) {
+                        console.log('載入 YouTube 歷史失敗');
+                    }
+                };
+
+                const loadYoutubeFiles = async () => {
+                    try {
+                        const res = await fetch(`${API_BASE}/api/youtube/files`);
+                        youtube.value.files = await res.json();
+                    } catch (e) {
+                        console.log('載入 YouTube 檔案列表失敗');
+                    }
+                };
+
+                const formatDuration = (seconds) => {
+                    if (!seconds) return '未知';
+                    const h = Math.floor(seconds / 3600);
+                    const m = Math.floor((seconds % 3600) / 60);
+                    const s = seconds % 60;
+                    if (h > 0) return `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+                    return `${m}:${String(s).padStart(2, '0')}`;
+                };
+
+                const formatViews = (views) => {
+                    if (!views) return '未知';
+                    if (views >= 1000000) return (views / 1000000).toFixed(1) + 'M';
+                    if (views >= 1000) return (views / 1000).toFixed(1) + 'K';
+                    return views.toString();
+                };
+
+                const formatFileSize = (bytes) => {
+                    if (!bytes) return '未知';
+                    if (bytes < 1024) return bytes + ' B';
+                    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+                    if (bytes < 1024 * 1024 * 1024) return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+                    return (bytes / (1024 * 1024 * 1024)).toFixed(2) + ' GB';
+                };
+
+                // YouTube 狀態輔助函數
+                const getYoutubeStatusIcon = (status) => {
+                    const icons = {
+                        'parsing': 'search',
+                        'downloading': 'download',
+                        'processing': 'cpu',
+                        'completed': 'check-circle',
+                        'failed': 'x-circle'
+                    };
+                    return icons[status] || 'help-circle';
+                };
+
+                const getYoutubeStatusText = (status) => {
+                    const texts = {
+                        'parsing': '解析影片資訊中',
+                        'downloading': '正在下載',
+                        'processing': '正在處理',
+                        'completed': '下載完成',
+                        'failed': '下載失敗'
+                    };
+                    return texts[status] || '未知狀態';
+                };
+
+                const getYoutubeProgressColor = (status) => {
+                    const colors = {
+                        'parsing': 'linear-gradient(90deg, var(--primary-500), var(--primary-400))',
+                        'downloading': 'linear-gradient(90deg, var(--warning-500), var(--warning-400))',
+                        'processing': 'linear-gradient(90deg, var(--primary-600), var(--primary-500))',
+                        'completed': 'linear-gradient(90deg, var(--success-500), var(--success-400))',
+                        'failed': 'linear-gradient(90deg, var(--error-500), var(--error-400))'
+                    };
+                    return colors[status] || 'linear-gradient(90deg, var(--gray-400), var(--gray-300))';
+                };
+
+                // 初始化 Lucide 圖標的函數
+                const initIcons = () => {
+                    nextTick(() => {
+                        if (window.lucide) {
+                            lucide.createIcons();
+                        }
+                    });
+                };
+
+                // 載入配置
+                onMounted(async () => {
+                    // 初始化 Lucide 圖標
+                    initIcons();
+
+                    // 載入工作流配置
+                    try {
+                        const res = await fetch('/api/config');
+                        if (res.ok) {
+                            const data = await res.json();
+                            if (data.project_root) config.value.projectRoot = data.project_root;
+                            if (data.videos_raw_folder) config.value.videoFolder = data.videos_raw_folder;
+                            if (data.jianying_draft_folder) config.value.draftFolder = data.jianying_draft_folder;
+                        }
+                    } catch (e) {
+                        console.log('無法載入配置，使用預設值');
+                    }
+
+                    // 載入下載模組數據
+                    await loadDownloadData();
+
+                    // 載入 YouTube 歷史紀錄
+                    await loadYoutubeHistory();
+
+                    // 連接 WebSocket
+                    connectDownloadWs();
+
+                    // 再次初始化圖標（數據載入後）
+                    initIcons();
+                });
+
+                // 監視視圖變化，重新初始化圖標
+                watch(currentView, () => {
+                    nextTick(() => initIcons());
+                });
+
+                // 每次更新後初始化圖標
+                onUpdated(() => {
+                    initIcons();
+                });
+
+                return {
+                    currentView,
+                    currentProject,
+                    sidebarCollapsed,
+                    sidebarOpen,
+                    isRunning,
+                    progress,
+                    progressText,
+                    logs,
+                    logContainer,
+                    config,
+                    stats,
+                    systemStatus,
+                    statusText,
+                    selectProject,
+                    executeWorkflow,
+                    clearLogs,
+                    openSettings,
+                    openDraftFolder,
+                    // 下載功能
+                    download,
+                    toasts,
+                    showToast,
+                    removeToast,
+                    addToQueue,
+                    removeFromQueue,
+                    startDownload,
+                    stopDownload,
+                    clearHistory,
+                    retryDownload,
+                    getStatusIcon,
+                    getStatusText,
+                    formatUrl,
+                    // YouTube 功能
+                    youtube,
+                    getYoutubeInfo,
+                    startYoutubeDownload,
+                    loadYoutubeHistory,
+                    loadYoutubeFiles,
+                    formatDuration,
+                    formatViews,
+                    formatFileSize,
+                    // YouTube 狀態輔助
+                    getYoutubeStatusIcon,
+                    getYoutubeStatusText,
+                    getYoutubeProgressColor,
+                };
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>

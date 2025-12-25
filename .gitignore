@@ -21,4 +21,5 @@ videos/raw/*.webm
 !videos/raw/.gitkeep
 
 # 構建輸出資料夾
-dist/
+dist/backend/downloads/
+*.db
