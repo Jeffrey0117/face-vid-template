@@ -1,50 +1,65 @@
 @echo off
 chcp 65001 >nul
+title YouTube 翻譯工作流程
+
+echo ================================================
+echo   YouTube 影片翻譯工作流程
+echo   Whisper 語音識別 + DeepSeek 翻譯 + 剪映字幕
+echo ================================================
+echo.
+
 cd /d "%~dp0"
 
-echo =====================================
-echo   YouTube 翻譯工作流程啟動器
-echo =====================================
-echo.
-echo   此工具將協助您：
-echo   1. 配置字幕樣式
-echo   2. 選擇要處理的影片
-echo   3. 執行 Whisper 語音識別
-echo   4. 翻譯字幕為繁體中文
-echo   5. 生成剪映草稿
-echo.
-echo =====================================
-echo.
-
-REM 檢查 Python 是否安裝
+:: 檢查 Python
 python --version >nul 2>&1
 if errorlevel 1 (
-    echo [錯誤] 找不到 Python，請先安裝 Python 3.8+
+    echo [錯誤] 找不到 Python，請先安裝 Python
     pause
     exit /b 1
 )
 
-REM 檢查設定檔
-if not exist "translation_config.json" (
-    echo [Info] 首次執行，將創建預設設定檔...
-)
-
-REM 檢查影片資料夾
-if not exist "backend\downloads\youtube" (
-    echo [Warning] 找不到 YouTube 下載資料夾
-    echo [Info] 請先使用 start-studio.bat 下載 YouTube 影片
+:: 檢查 DEEPSEEK_API_KEY
+if "%DEEPSEEK_API_KEY%"=="" (
+    echo [警告] 未設定 DEEPSEEK_API_KEY 環境變數
     echo.
-    pause
+    set /p DEEPSEEK_API_KEY="請輸入 DeepSeek API Key: "
 )
 
-echo [Info] 啟動翻譯編輯器伺服器...
-echo [Info] 伺服器將在 http://localhost:8081 運行
-echo [Info] 編輯器將自動開啟瀏覽器
+:: 檢查影片資料夾
+if not exist "backend\downloads\youtube" (
+    mkdir "backend\downloads\youtube"
+    echo [提示] 已建立影片資料夾: backend\downloads\youtube
+)
+
+:: 顯示待處理影片
 echo.
-echo 按 Ctrl+C 關閉伺服器
-echo =====================================
+echo [待處理影片]
+dir /b "backend\downloads\youtube\*.mp4" 2>nul
+dir /b "backend\downloads\youtube\*.mkv" 2>nul
+dir /b "backend\downloads\youtube\*.mov" 2>nul
 echo.
 
-python translate_editor_server.py
+:: 選擇模式
+echo 請選擇執行模式：
+echo   1. 批量處理所有影片
+echo   2. 開啟翻譯編輯器（GUI）
+echo   3. 退出
+echo.
+set /p choice="請輸入選項 (1/2/3): "
+
+if "%choice%"=="1" (
+    echo.
+    echo [開始批量翻譯]
+    python translate_video.py
+    echo.
+    echo 處理完成！請開啟剪映查看草稿。
+) else if "%choice%"=="2" (
+    echo.
+    echo [啟動翻譯編輯器]
+    start "" http://localhost:8081/translate_editor.html
+    python translate_editor_server.py
+) else (
+    echo 已退出
+)
 
 pause

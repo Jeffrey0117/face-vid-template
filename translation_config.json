@@ -6,12 +6,11 @@
   "paths": {
     "source_video_folder": "backend/downloads/youtube",
     "output_folder": "videos/translated",
-    "draft_template": "翻譯專案",
-    "long_video_template": "長片專案"
+    "draft_template": "長片翻譯專案"
   },
 
   "whisper": {
-    "model": "base",
+    "model": "medium",
     "language": "en",
     "task": "transcribe",
     "temperature": 0,
@@ -19,10 +18,11 @@
   },
 
   "translation": {
-    "service": "openai",
+    "service": "deepseek",
+    "base_url": "https://api.deepseek.com",
     "source_language": "en",
     "target_language": "zh-TW",
-    "model": "gpt-3.5-turbo",
+    "model": "deepseek-chat",
     "prompt_template": "將以下英文字幕翻譯成繁體中文，保持專業術語準確，語氣自然流暢：\n\n{text}"
   },
 
@@ -36,18 +36,17 @@
     "stroke_color": "#000000",
     "bold": true,
     "shadow": true,
-    "line_max_width": 0.82
+    "line_max_width": 0.85
   },
 
   "jianying": {
-    "canvas_width": 1080,
-    "canvas_height": 1920,
-    "canvas_ratio": "original",
+    "canvas_width": 1920,
+    "canvas_height": 1080,
+    "canvas_ratio": "16:9",
     "fps": 30
   },
 
   "workflow": {
-    "auto_download_youtube": true,
     "auto_transcribe": true,
     "auto_translate": true,
     "auto_generate_draft": true,
