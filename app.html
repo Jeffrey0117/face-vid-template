@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>影片工作室 - Video Studio</title>
+    <title>AutoReels - 自動化 IG Reels 創作平台</title>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -723,9 +723,11 @@
     <div id="app" class="app-container">
         <!-- Header -->
         <header class="app-header">
-            <div class="header-logo" @click="currentView = 'dashboard'">
-                <div class="header-logo-icon"><i data-lucide="video"></i></div>
-                <span>影片工作室</span>
+            <div class="header-inner">
+                <a class="header-logo" href="autoreels.html">
+                    <div class="header-logo-icon"><i data-lucide="clapperboard"></i></div>
+                    <span>AutoReels</span>
+                </a>
             </div>
         </header>
 
@@ -1312,39 +1314,41 @@ https://www.instagram.com/p/xxxxx"
 
         <!-- 底部導航欄 (App Tab Bar) -->
         <nav class="bottom-nav">
-            <div class="bottom-nav-item" :class="{ active: currentView === 'dashboard' }" @click="currentView = 'dashboard'">
-                <div class="bottom-nav-icon">
-                    <i data-lucide="home" style="width:24px;height:24px;"></i>
-                </div>
-                <span class="bottom-nav-label">首頁</span>
-            </div>
+            <div class="nav-inner">
+                <a class="bottom-nav-item" href="autoreels.html">
+                    <div class="bottom-nav-icon">
+                        <i data-lucide="home" style="width:24px;height:24px;"></i>
+                    </div>
+                    <span class="bottom-nav-label">首頁</span>
+                </a>
 
-            <div class="bottom-nav-item" :class="{ active: currentView === 'workflow' }" @click="currentView = 'workflow'">
-                <div class="bottom-nav-icon">
-                    <i data-lucide="play-circle" style="width:24px;height:24px;"></i>
+                <div class="bottom-nav-item" :class="{ active: currentView === 'workflow' }" @click="currentView = 'workflow'">
+                    <div class="bottom-nav-icon">
+                        <i data-lucide="play-circle" style="width:24px;height:24px;"></i>
+                    </div>
+                    <span class="bottom-nav-label">工作流</span>
                 </div>
-                <span class="bottom-nav-label">工作流</span>
-            </div>
 
-            <div class="bottom-nav-item" :class="{ active: currentView === 'download' }" @click="currentView = 'download'">
-                <div class="bottom-nav-icon">
-                    <i data-lucide="instagram" style="width:24px;height:24px;"></i>
+                <div class="bottom-nav-item" :class="{ active: currentView === 'download' }" @click="currentView = 'download'">
+                    <div class="bottom-nav-icon">
+                        <i data-lucide="instagram" style="width:24px;height:24px;"></i>
+                    </div>
+                    <span class="bottom-nav-label">IG下載</span>
                 </div>
-                <span class="bottom-nav-label">IG下載</span>
-            </div>
 
-            <div class="bottom-nav-item" :class="{ active: currentView === 'youtube' }" @click="currentView = 'youtube'">
-                <div class="bottom-nav-icon">
-                    <i data-lucide="youtube" style="width:24px;height:24px;"></i>
+                <div class="bottom-nav-item" :class="{ active: currentView === 'youtube' }" @click="currentView = 'youtube'">
+                    <div class="bottom-nav-icon">
+                        <i data-lucide="youtube" style="width:24px;height:24px;"></i>
+                    </div>
+                    <span class="bottom-nav-label">YT下載</span>
                 </div>
-                <span class="bottom-nav-label">YT下載</span>
-            </div>
 
-            <div class="bottom-nav-item" :class="{ active: currentView === 'settings' }" @click="currentView = 'settings'">
-                <div class="bottom-nav-icon">
-                    <i data-lucide="settings" style="width:24px;height:24px;"></i>
+                <div class="bottom-nav-item" :class="{ active: currentView === 'settings' }" @click="currentView = 'settings'">
+                    <div class="bottom-nav-icon">
+                        <i data-lucide="settings" style="width:24px;height:24px;"></i>
+                    </div>
+                    <span class="bottom-nav-label">設定</span>
                 </div>
-                <span class="bottom-nav-label">設定</span>
             </div>
         </nav>
 
@@ -1366,7 +1370,7 @@ https://www.instagram.com/p/xxxxx"
         createApp({
             setup() {
                 // 狀態
-                const currentView = ref('dashboard');
+                const currentView = ref('workflow');
                 const currentProject = ref('face');
                 const sidebarCollapsed = ref(false);
                 const sidebarOpen = ref(false);
