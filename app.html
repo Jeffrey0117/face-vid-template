@@ -14,21 +14,17 @@
     <style>
         /* ===== 頁面專屬樣式覆寫 ===== */
 
-        /* 底部導航欄樣式 */
+        /* 底部導航欄樣式 - Swiss Design */
         .bottom-nav {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
-            height: 80px;
-            background: var(--surface-bg);
+            height: 72px;
+            background: var(--bg-card);
             border-top: 1px solid var(--border-default);
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            padding: 0 var(--space-4);
+            padding: 0 var(--space-6);
             z-index: 100;
-            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
         }
 
         .bottom-nav-item {
@@ -38,7 +34,6 @@
             justify-content: center;
             gap: var(--space-1);
             padding: var(--space-2) var(--space-4);
-            border-radius: var(--radius-lg);
             color: var(--text-muted);
             cursor: pointer;
             transition: all var(--duration-fast) var(--ease-default);
@@ -48,23 +43,22 @@
 
         .bottom-nav-item:hover {
             color: var(--text-secondary);
-            background: var(--gray-50);
+            background: var(--bg-card-hover);
         }
 
         .bottom-nav-item.active {
-            color: var(--primary-600);
+            color: var(--text-primary);
         }
 
         .bottom-nav-item.active::before {
             content: '';
             position: absolute;
-            top: -1px;
+            top: 0;
             left: 50%;
             transform: translateX(-50%);
             width: 40px;
-            height: 3px;
-            background: var(--primary-600);
-            border-radius: 0 0 var(--radius-full) var(--radius-full);
+            height: 2px;
+            background: var(--text-primary);
         }
 
         .bottom-nav-icon {
@@ -146,9 +140,8 @@
             align-items: center;
             gap: var(--space-2);
             padding: var(--space-3) var(--space-4);
-            background: var(--gray-100);
+            background: transparent;
             border: 1px solid var(--border-default);
-            border-radius: var(--radius-full);
             color: var(--text-secondary);
             font-size: var(--text-sm);
             cursor: pointer;
@@ -156,7 +149,8 @@
         }
 
         .tool-btn:hover {
-            background: var(--gray-200);
+            background: var(--bg-card);
+            border-color: var(--border-hover);
             color: var(--text-primary);
         }
 
@@ -194,9 +188,8 @@
         }
 
         .config-item {
-            background: var(--gray-50);
+            background: var(--bg-card);
             border: 1px solid var(--border-default);
-            border-radius: var(--radius-lg);
             padding: var(--space-4);
         }
 
@@ -219,9 +212,8 @@
 
         .config-value input {
             flex: 1;
-            background: var(--surface-bg);
+            background: var(--bg-primary);
             border: 1px solid var(--border-default);
-            border-radius: var(--radius-md);
             padding: var(--space-2) var(--space-3);
             color: var(--text-primary);
             font-size: var(--text-sm);
@@ -229,8 +221,7 @@
 
         .config-value input:focus {
             outline: none;
-            border-color: var(--primary-500);
-            box-shadow: 0 0 0 3px var(--primary-100);
+            border-color: var(--text-primary);
         }
 
         .config-value .btn {
@@ -240,9 +231,8 @@
 
         /* 進度區 */
         .progress-section {
-            background: var(--surface-elevated);
+            background: var(--bg-card);
             border: 1px solid var(--border-default);
-            border-radius: var(--radius-xl);
             padding: var(--space-6);
             margin-bottom: var(--space-6);
         }
@@ -256,16 +246,14 @@
         }
 
         .progress-bar-container {
-            background: var(--gray-200);
-            border-radius: var(--radius-full);
-            height: 8px;
+            background: var(--border-default);
+            height: 4px;
             overflow: hidden;
         }
 
         .progress-bar {
             height: 100%;
-            background: linear-gradient(90deg, var(--primary-500), var(--primary-400));
-            border-radius: var(--radius-full);
+            background: var(--text-primary);
             transition: width 300ms ease;
         }
 
@@ -280,9 +268,8 @@
         .download-input {
             width: 100%;
             min-height: 140px;
-            background: var(--surface-bg);
+            background: var(--bg-card);
             border: 1px solid var(--border-default);
-            border-radius: var(--radius-lg);
             padding: var(--space-4);
             color: var(--text-primary);
             font-size: var(--text-sm);
@@ -293,8 +280,7 @@
 
         .download-input:focus {
             outline: none;
-            border-color: var(--primary-500);
-            box-shadow: 0 0 0 3px var(--primary-100);
+            border-color: var(--text-primary);
         }
 
         .download-input::placeholder {
@@ -325,7 +311,7 @@
         }
 
         .download-tab.active {
-            color: var(--primary-600);
+            color: var(--text-primary);
         }
 
         .download-tab.active::after {
@@ -335,7 +321,7 @@
             left: 0;
             right: 0;
             height: 2px;
-            background: var(--primary-600);
+            background: var(--text-primary);
         }
 
         /* 佇列項目 */
@@ -344,12 +330,11 @@
             align-items: center;
             gap: var(--space-4);
             padding: var(--space-3);
-            border-radius: var(--radius-md);
             transition: background 150ms ease;
         }
 
         .queue-item:hover {
-            background: var(--gray-50);
+            background: var(--bg-card);
         }
 
         .queue-item + .queue-item {
@@ -382,9 +367,9 @@
         }
 
         .status-pending { color: var(--text-muted); }
-        .status-processing { color: var(--warning-500); }
-        .status-completed { color: var(--success-500); }
-        .status-failed { color: var(--error-500); }
+        .status-processing { color: var(--text-secondary); }
+        .status-completed { color: var(--text-primary); }
+        .status-failed { color: #ef4444; }
 
         /* 設定行 */
         .setting-row {
@@ -427,8 +412,8 @@
             position: absolute;
             cursor: pointer;
             inset: 0;
-            background: var(--gray-300);
-            border-radius: var(--radius-full);
+            background: var(--border-default);
+            border-radius: 0;
             transition: 200ms;
         }
 
@@ -439,14 +424,13 @@
             width: 18px;
             left: 3px;
             bottom: 3px;
-            background: white;
-            border-radius: var(--radius-full);
-            box-shadow: var(--shadow-sm);
+            background: var(--text-primary);
+            border-radius: 0;
             transition: 200ms;
         }
 
         .toggle input:checked + .toggle-slider {
-            background: var(--primary-500);
+            background: var(--text-primary);
         }
 
         .toggle input:checked + .toggle-slider:before {
@@ -456,9 +440,9 @@
         /* YouTube 頁面 */
         .yt-url-input {
             flex: 1;
-            background: var(--surface-bg);
+            background: var(--bg-card);
             border: 1px solid var(--border-default);
-            border-radius: var(--radius-lg);
+            border-radius: 0;
             padding: var(--space-3) var(--space-4);
             color: var(--text-primary);
             font-size: var(--text-sm);
@@ -466,8 +450,7 @@
 
         .yt-url-input:focus {
             outline: none;
-            border-color: var(--primary-500);
-            box-shadow: 0 0 0 3px var(--primary-100);
+            border-color: var(--text-primary);
         }
 
         .yt-video-info {
@@ -480,7 +463,7 @@
             width: 280px;
             height: 158px;
             object-fit: cover;
-            border-radius: var(--radius-lg);
+            border-radius: 0;
         }
 
         .yt-video-details {
@@ -509,9 +492,9 @@
             display: flex;
             gap: var(--space-8);
             padding: var(--space-4);
-            background: var(--gray-50);
+            background: var(--bg-card);
             border: 1px solid var(--border-default);
-            border-radius: var(--radius-lg);
+            border-radius: 0;
         }
 
         .yt-option-group {
@@ -521,9 +504,9 @@
         }
 
         .yt-select {
-            background: var(--surface-bg);
+            background: var(--bg-card);
             border: 1px solid var(--border-default);
-            border-radius: var(--radius-md);
+            border-radius: 0;
             padding: var(--space-2) var(--space-4);
             color: var(--text-primary);
             font-size: var(--text-sm);
@@ -532,7 +515,7 @@
 
         .yt-select:focus {
             outline: none;
-            border-color: var(--primary-500);
+            border-color: var(--text-primary);
         }
 
         .yt-progress-header {
@@ -551,30 +534,29 @@
 
         /* YouTube 下載進度增強 */
         .yt-download-progress {
-            border-width: 2px;
-            border-color: var(--primary-500);
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+            border-width: 1px;
+            border-color: var(--border-default);
             margin-bottom: 24px;
         }
 
         .yt-download-progress.status-parsing {
-            border-color: var(--primary-500);
+            border-color: var(--text-muted);
         }
 
         .yt-download-progress.status-downloading {
-            border-color: var(--warning-500);
+            border-color: var(--text-secondary);
         }
 
         .yt-download-progress.status-processing {
-            border-color: var(--primary-600);
+            border-color: var(--text-secondary);
         }
 
         .yt-download-progress.status-completed {
-            border-color: var(--success-500);
+            border-color: var(--text-primary);
         }
 
         .yt-download-progress.status-failed {
-            border-color: var(--error-500);
+            border-color: #ef4444;
         }
 
         .yt-progress-title {
@@ -599,7 +581,7 @@
         .status-percentage {
             font-size: var(--text-2xl);
             font-weight: var(--font-bold);
-            color: var(--primary-600);
+            color: var(--text-primary);
         }
 
         .yt-progress-bar {
@@ -609,26 +591,15 @@
         }
 
         .yt-progress-bar::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-            animation: shimmer 2s infinite;
-        }
-
-        @keyframes shimmer {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
+            display: none;
         }
 
         .yt-progress-details {
-            background: var(--gray-50);
-            border-radius: var(--radius-md);
+            background: var(--bg-card);
+            border-radius: 0;
             padding: var(--space-4);
             margin-top: var(--space-4);
+            border: 1px solid var(--border-default);
         }
 
         .yt-progress-row {
@@ -658,12 +629,12 @@
         }
 
         .speed-value {
-            color: var(--primary-600);
+            color: var(--text-primary);
             font-family: var(--font-mono);
         }
 
         .eta-value {
-            color: var(--warning-600);
+            color: var(--text-secondary);
         }
 
         .yt-status-message {
@@ -672,9 +643,9 @@
             gap: var(--space-2);
             margin-top: var(--space-4);
             padding: var(--space-3);
-            background: var(--primary-50);
-            border-left: 3px solid var(--primary-500);
-            border-radius: var(--radius-md);
+            background: var(--bg-card);
+            border-left: 2px solid var(--text-primary);
+            border-radius: 0;
             font-size: var(--text-sm);
             color: var(--text-secondary);
         }
@@ -738,7 +709,7 @@
                 <!-- Dashboard -->
                 <div v-if="currentView === 'dashboard'">
                     <div class="dashboard-welcome">
-                        <h1 class="welcome-title">歡迎使用影片工作室</h1>
+                        <h1 class="welcome-title">歡迎使用 AutoReels</h1>
                         <p class="welcome-subtitle">選擇專案開始工作，或使用下方快速工具</p>
                     </div>
 
@@ -846,19 +817,19 @@
                         </div>
                         <div class="progress-stats">
                             <div class="stat-card">
-                                <div class="stat-value" style="color: var(--primary-500)">{{ stats.videos }}</div>
+                                <div class="stat-value" style="color: var(--text-primary)">{{ stats.videos }}</div>
                                 <div class="stat-label">總影片</div>
                             </div>
                             <div class="stat-card">
-                                <div class="stat-value" style="color: var(--success-500)">{{ stats.processed }}</div>
+                                <div class="stat-value" style="color: var(--text-primary)">{{ stats.processed }}</div>
                                 <div class="stat-label">已處理</div>
                             </div>
                             <div class="stat-card">
-                                <div class="stat-value" style="color: var(--warning-500)">{{ stats.pending }}</div>
+                                <div class="stat-value" style="color: var(--text-secondary)">{{ stats.pending }}</div>
                                 <div class="stat-label">處理中</div>
                             </div>
                             <div class="stat-card">
-                                <div class="stat-value" style="color: var(--error-500)">{{ stats.errors }}</div>
+                                <div class="stat-value" style="color: #ef4444">{{ stats.errors }}</div>
                                 <div class="stat-label">錯誤</div>
                             </div>
                         </div>
@@ -949,7 +920,7 @@
                             <button v-if="!download.isRunning" class="btn btn-success" @click="startDownload" :disabled="download.queue.length === 0">
                                 <i data-lucide="play" style="width:16px;height:16px;"></i> 開始下載
                             </button>
-                            <button v-else class="btn btn-secondary" @click="stopDownload" style="border-color: var(--error-500); color: var(--error-500);">
+                            <button v-else class="btn btn-secondary" @click="stopDownload" style="border-color: #ef4444; color: #ef4444;">
                                 <i data-lucide="square" style="width:16px;height:16px;"></i> 停止
                             </button>
                         </div>
@@ -977,13 +948,13 @@ https://www.instagram.com/p/xxxxx"
                     </div>
 
                     <!-- 即時進度 -->
-                    <div v-if="download.currentTask" class="card" style="margin-bottom: 24px; border-color: var(--warning-500);">
+                    <div v-if="download.currentTask" class="card" style="margin-bottom: 24px; border-color: var(--text-secondary);">
                         <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
                             <span style="color: var(--text-secondary); font-size: 0.875rem;">{{ download.currentTask.url }}</span>
-                            <span style="color: var(--warning-500);">{{ download.currentTask.progress }}%</span>
+                            <span style="color: var(--text-primary);">{{ download.currentTask.progress }}%</span>
                         </div>
                         <div class="progress-bar-container">
-                            <div class="progress-bar" :style="{ width: download.currentTask.progress + '%', background: 'var(--warning-500)' }"></div>
+                            <div class="progress-bar" :style="{ width: download.currentTask.progress + '%', background: 'var(--text-primary)' }"></div>
                         </div>
                         <div style="margin-top: 8px; font-size: 0.75rem; color: var(--text-muted);">{{ download.currentTask.step }}</div>
                     </div>
@@ -1009,7 +980,7 @@ https://www.instagram.com/p/xxxxx"
                         </div>
                         <div v-else>
                             <div v-for="item in download.queue" :key="item.id" class="queue-item">
-                                <span class="queue-icon"><i :data-lucide="getStatusIcon(item.status)" style="width:18px;height:18px;" :style="{ color: item.status === 'completed' ? 'var(--success-500)' : item.status === 'failed' ? 'var(--error-500)' : item.status === 'processing' ? 'var(--warning-500)' : 'var(--text-muted)' }"></i></span>
+                                <span class="queue-icon"><i :data-lucide="getStatusIcon(item.status)" style="width:18px;height:18px;" :style="{ color: item.status === 'completed' ? 'var(--text-primary)' : item.status === 'failed' ? '#ef4444' : item.status === 'processing' ? 'var(--text-secondary)' : 'var(--text-muted)' }"></i></span>
                                 <div class="queue-content">
                                     <div class="queue-url">{{ formatUrl(item.url) }}</div>
                                     <div class="queue-status" :class="'status-' + item.status">
@@ -1034,7 +1005,7 @@ https://www.instagram.com/p/xxxxx"
                                 <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.75rem;" @click="clearHistory">清除全部</button>
                             </div>
                             <div v-for="item in download.history" :key="item.id" class="queue-item">
-                                <span class="queue-icon"><i :data-lucide="getStatusIcon(item.status)" style="width:18px;height:18px;" :style="{ color: item.status === 'completed' ? 'var(--success-500)' : 'var(--error-500)' }"></i></span>
+                                <span class="queue-icon"><i :data-lucide="getStatusIcon(item.status)" style="width:18px;height:18px;" :style="{ color: item.status === 'completed' ? 'var(--text-primary)' : '#ef4444' }"></i></span>
                                 <div class="queue-content">
                                     <div class="queue-url">{{ formatUrl(item.url) }}</div>
                                     <div class="queue-status" :class="'status-' + item.status">
@@ -1224,7 +1195,7 @@ https://www.instagram.com/p/xxxxx"
                         </div>
                         <div v-else>
                             <div v-for="item in youtube.history" :key="item.id" class="queue-item">
-                                <span class="queue-icon"><i :data-lucide="item.status === 'completed' ? 'check-circle' : 'x-circle'" style="width:18px;height:18px;" :style="{ color: item.status === 'completed' ? 'var(--success-500)' : 'var(--error-500)' }"></i></span>
+                                <span class="queue-icon"><i :data-lucide="item.status === 'completed' ? 'check-circle' : 'x-circle'" style="width:18px;height:18px;" :style="{ color: item.status === 'completed' ? 'var(--text-primary)' : '#ef4444' }"></i></span>
                                 <div class="queue-content">
                                     <div class="queue-url">{{ item.title || item.url }}</div>
                                     <div class="queue-status" :class="'status-' + item.status">
@@ -1875,13 +1846,13 @@ https://www.instagram.com/p/xxxxx"
 
                 const getYoutubeProgressColor = (status) => {
                     const colors = {
-                        'parsing': 'linear-gradient(90deg, var(--primary-500), var(--primary-400))',
-                        'downloading': 'linear-gradient(90deg, var(--warning-500), var(--warning-400))',
-                        'processing': 'linear-gradient(90deg, var(--primary-600), var(--primary-500))',
-                        'completed': 'linear-gradient(90deg, var(--success-500), var(--success-400))',
-                        'failed': 'linear-gradient(90deg, var(--error-500), var(--error-400))'
+                        'parsing': 'var(--text-muted)',
+                        'downloading': 'var(--text-secondary)',
+                        'processing': 'var(--text-secondary)',
+                        'completed': 'var(--text-primary)',
+                        'failed': '#ef4444'
                     };
-                    return colors[status] || 'linear-gradient(90deg, var(--gray-400), var(--gray-300))';
+                    return colors[status] || 'var(--text-muted)';
                 };
 
                 // 初始化 Lucide 圖標的函數

@@ -10,40 +10,20 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         :root {
-            /* 品牌色 - 年輕潮流漸變 */
-            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            --gradient-accent: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            --gradient-warm: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-            --gradient-cool: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            /* Swiss Design - 極簡色系 */
+            --bg-primary: #030303;
+            --bg-secondary: #0a0a0a;
+            --bg-card: #111111;
+            --bg-card-hover: #1a1a1a;
 
-            /* 純色 */
-            --primary-500: #667eea;
-            --primary-600: #5a67d8;
-            --secondary-500: #764ba2;
-            --accent-500: #00f2fe;
+            --text-primary: #ffffff;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
 
-            /* 中性色 */
-            --gray-50: #fafafa;
-            --gray-100: #f4f4f5;
-            --gray-200: #e4e4e7;
-            --gray-300: #d4d4d8;
-            --gray-400: #a1a1aa;
-            --gray-500: #71717a;
-            --gray-600: #52525b;
-            --gray-700: #3f3f46;
-            --gray-800: #27272a;
-            --gray-900: #18181b;
+            --border-default: #27272a;
+            --border-light: #3f3f46;
 
-            /* 表面 */
-            --surface-bg: #ffffff;
-            --surface-card: #ffffff;
-            --surface-elevated: rgba(255, 255, 255, 0.8);
-
-            /* 文字 */
-            --text-primary: #18181b;
-            --text-secondary: #52525b;
-            --text-muted: #a1a1aa;
+            --accent: #ffffff;
 
             /* 間距 */
             --space-1: 0.25rem;
@@ -57,17 +37,10 @@
             --space-12: 3rem;
             --space-16: 4rem;
             --space-20: 5rem;
-
-            /* 圓角 */
-            --radius-md: 0.5rem;
-            --radius-lg: 0.75rem;
-            --radius-xl: 1rem;
-            --radius-2xl: 1.5rem;
-            --radius-3xl: 2rem;
-            --radius-full: 9999px;
+            --space-24: 6rem;
 
             /* 字體 */
-            --font-sans: 'Inter', 'Noto Sans TC', system-ui, sans-serif;
+            --font-sans: 'Inter', 'Noto Sans TC', 'Helvetica Neue', Helvetica, Arial, sans-serif;
         }
 
         * {
@@ -82,10 +55,26 @@
 
         body {
             font-family: var(--font-sans);
-            background: var(--surface-bg);
+            background: var(--bg-primary);
             color: var(--text-primary);
             line-height: 1.6;
             overflow-x: hidden;
+        }
+
+        /* ===== Typography ===== */
+        .label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        /* ===== Container ===== */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--space-6);
         }
 
         /* ===== Header ===== */
@@ -96,9 +85,9 @@
             right: 0;
             z-index: 100;
             padding: var(--space-4) var(--space-6);
-            background: rgba(255, 255, 255, 0.8);
+            background: rgba(3, 3, 3, 0.8);
             backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            border-bottom: 1px solid var(--border-default);
         }
 
         .header-inner {
@@ -113,28 +102,11 @@
             display: flex;
             align-items: center;
             gap: var(--space-3);
-            font-weight: 800;
-            font-size: 1.5rem;
+            font-weight: 700;
+            font-size: 1.25rem;
             text-decoration: none;
             color: var(--text-primary);
-        }
-
-        .logo-icon {
-            width: 40px;
-            height: 40px;
-            background: var(--gradient-primary);
-            border-radius: var(--radius-xl);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-        }
-
-        .logo-text {
-            background: var(--gradient-primary);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            letter-spacing: -0.02em;
         }
 
         .header-nav {
@@ -147,7 +119,7 @@
             color: var(--text-secondary);
             text-decoration: none;
             font-weight: 500;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             transition: color 0.2s;
         }
 
@@ -160,39 +132,41 @@
             align-items: center;
             justify-content: center;
             gap: var(--space-2);
-            padding: var(--space-3) var(--space-6);
-            border-radius: var(--radius-full);
+            padding: var(--space-3) var(--space-5);
             font-weight: 600;
-            font-size: 0.95rem;
+            font-size: 0.85rem;
             text-decoration: none;
-            border: none;
+            border: 1px solid var(--border-light);
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
         }
 
         .btn-primary {
-            background: var(--gradient-primary);
-            color: white;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            background: var(--text-primary);
+            color: var(--bg-primary);
+            border-color: var(--text-primary);
         }
 
         .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+            background: transparent;
+            color: var(--text-primary);
         }
 
         .btn-secondary {
-            background: var(--gray-100);
+            background: transparent;
             color: var(--text-primary);
         }
 
         .btn-secondary:hover {
-            background: var(--gray-200);
+            background: var(--text-primary);
+            color: var(--bg-primary);
         }
 
         .btn-lg {
             padding: var(--space-4) var(--space-8);
-            font-size: 1.1rem;
+            font-size: 0.9rem;
         }
 
         /* ===== Hero Section ===== */
@@ -200,364 +174,385 @@
             min-height: 100vh;
             display: flex;
             align-items: center;
-            justify-content: center;
-            padding: var(--space-20) var(--space-6);
+            padding: var(--space-24) var(--space-6);
             position: relative;
-            overflow: hidden;
         }
 
-        .hero-bg {
-            position: absolute;
-            inset: 0;
-            background:
-                radial-gradient(ellipse at 20% 20%, rgba(102, 126, 234, 0.15) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 80%, rgba(240, 147, 251, 0.15) 0%, transparent 50%),
-                radial-gradient(ellipse at 50% 50%, rgba(79, 172, 254, 0.1) 0%, transparent 70%);
-            z-index: -1;
+        .hero-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-16);
+            align-items: center;
         }
 
         .hero-content {
-            max-width: 900px;
-            text-align: center;
+            max-width: 560px;
         }
 
-        .hero-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: var(--space-2);
-            padding: var(--space-2) var(--space-4);
-            background: var(--gradient-cool);
-            border-radius: var(--radius-full);
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--gray-700);
+        .hero-label {
+            display: inline-block;
             margin-bottom: var(--space-6);
+            padding-bottom: var(--space-4);
+            border-bottom: 1px solid var(--border-default);
         }
 
         .hero-title {
-            font-size: clamp(2.5rem, 6vw, 4rem);
-            font-weight: 800;
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 700;
             line-height: 1.1;
             margin-bottom: var(--space-6);
-            letter-spacing: -0.02em;
-        }
-
-        .hero-title-gradient {
-            background: var(--gradient-primary);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            letter-spacing: -0.03em;
         }
 
         .hero-subtitle {
-            font-size: 1.25rem;
+            font-size: 1.1rem;
             color: var(--text-secondary);
             margin-bottom: var(--space-10);
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
+            line-height: 1.7;
         }
 
         .hero-cta {
             display: flex;
             gap: var(--space-4);
-            justify-content: center;
-            flex-wrap: wrap;
+        }
+
+        .hero-visual {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-6);
         }
 
         .hero-stats {
-            display: flex;
-            justify-content: center;
-            gap: var(--space-12);
-            margin-top: var(--space-16);
-            padding-top: var(--space-8);
-            border-top: 1px solid var(--gray-200);
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-6);
         }
 
-        .stat-item {
-            text-align: center;
+        .stat-card {
+            padding: var(--space-6);
+            border: 1px solid var(--border-default);
+            background: var(--bg-card);
         }
 
         .stat-value {
-            font-size: 2rem;
-            font-weight: 800;
-            background: var(--gradient-primary);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            font-size: 3rem;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            line-height: 1;
+            margin-bottom: var(--space-2);
         }
 
         .stat-label {
-            font-size: 0.9rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
             color: var(--text-muted);
-            margin-top: var(--space-1);
         }
 
-        /* ===== How It Works ===== */
+        /* ===== Principles Section ===== */
         .section {
-            padding: var(--space-20) var(--space-6);
+            padding: var(--space-24) var(--space-6);
+            border-top: 1px solid var(--border-default);
         }
 
         .section-header {
-            text-align: center;
             margin-bottom: var(--space-16);
         }
 
-        .section-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: var(--space-2);
-            padding: var(--space-2) var(--space-4);
-            background: var(--gray-100);
-            border-radius: var(--radius-full);
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--primary-500);
+        .section-label {
+            display: block;
             margin-bottom: var(--space-4);
         }
 
         .section-title {
-            font-size: clamp(2rem, 4vw, 2.75rem);
-            font-weight: 800;
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 700;
+            letter-spacing: -0.03em;
             margin-bottom: var(--space-4);
-            letter-spacing: -0.02em;
         }
 
         .section-subtitle {
             font-size: 1.1rem;
             color: var(--text-secondary);
             max-width: 600px;
-            margin: 0 auto;
+            line-height: 1.7;
         }
 
-        /* Steps */
-        .steps-container {
-            max-width: 1100px;
-            margin: 0 auto;
+        .principles-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-6);
         }
 
+        .principle-card {
+            padding: var(--space-8);
+            border: 1px solid var(--border-default);
+            background: var(--bg-card);
+            transition: all 0.2s ease;
+        }
+
+        .principle-card:hover {
+            background: var(--bg-card-hover);
+            border-color: var(--border-light);
+        }
+
+        .principle-number {
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-bottom: var(--space-6);
+        }
+
+        .principle-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: var(--space-3);
+            letter-spacing: -0.02em;
+        }
+
+        .principle-desc {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* ===== Steps Section ===== */
         .steps-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
             gap: var(--space-4);
-            position: relative;
-        }
-
-        .steps-line {
-            position: absolute;
-            top: 60px;
-            left: 10%;
-            right: 10%;
-            height: 2px;
-            background: var(--gradient-primary);
-            z-index: 0;
         }
 
         .step-card {
-            position: relative;
-            z-index: 1;
-            text-align: center;
             padding: var(--space-6);
-            background: var(--surface-card);
-            border: 1px solid var(--gray-200);
-            border-radius: var(--radius-2xl);
-            transition: all 0.3s ease;
+            border: 1px solid var(--border-default);
+            background: var(--bg-card);
+            transition: all 0.2s ease;
+            text-align: center;
         }
 
         .step-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            border-color: var(--primary-500);
+            background: var(--bg-card-hover);
+            border-color: var(--border-light);
         }
 
         .step-number {
-            width: 48px;
-            height: 48px;
-            margin: 0 auto var(--space-4);
-            background: var(--gradient-primary);
-            border-radius: var(--radius-full);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 800;
-            font-size: 1.25rem;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        .step-icon {
-            width: 64px;
-            height: 64px;
-            margin: 0 auto var(--space-4);
-            background: var(--gray-100);
-            border-radius: var(--radius-xl);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--primary-500);
-        }
-
-        .step-card:nth-child(1) .step-icon { background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%); }
-        .step-card:nth-child(2) .step-icon { background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%); }
-        .step-card:nth-child(3) .step-icon { background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); }
-        .step-card:nth-child(4) .step-icon { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); }
-        .step-card:nth-child(5) .step-icon { background: linear-gradient(135deg, #cffafe 0%, #a5f3fc 100%); }
-
-        .step-title {
-            font-size: 1.1rem;
+            font-size: 2.5rem;
             font-weight: 700;
-            margin-bottom: var(--space-2);
+            letter-spacing: -0.03em;
+            margin-bottom: var(--space-4);
+            color: var(--text-muted);
+        }
+
+        .step-card:hover .step-number {
             color: var(--text-primary);
         }
 
-        .step-desc {
-            font-size: 0.9rem;
+        .step-icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto var(--space-4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
             color: var(--text-secondary);
+        }
+
+        .step-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: var(--space-2);
+            letter-spacing: -0.01em;
+        }
+
+        .step-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
             line-height: 1.5;
+            margin-bottom: var(--space-4);
         }
 
         .step-status {
             display: inline-flex;
             align-items: center;
             gap: var(--space-1);
-            margin-top: var(--space-3);
             padding: var(--space-1) var(--space-3);
-            background: var(--gray-100);
-            border-radius: var(--radius-full);
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             font-weight: 600;
-            color: var(--text-muted);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            border: 1px solid var(--border-default);
         }
 
         .step-status.ready {
-            background: #d1fae5;
-            color: #059669;
+            border-color: #22c55e;
+            color: #22c55e;
         }
 
         .step-status.coming {
-            background: #fef3c7;
-            color: #d97706;
+            border-color: var(--text-muted);
+            color: var(--text-muted);
         }
 
         /* ===== Features Section ===== */
-        .features-section {
-            background: var(--gray-50);
-        }
-
         .features-grid {
-            max-width: 1100px;
-            margin: 0 auto;
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(2, 1fr);
             gap: var(--space-6);
         }
 
         .feature-card {
             padding: var(--space-8);
-            background: var(--surface-card);
-            border-radius: var(--radius-2xl);
-            border: 1px solid var(--gray-200);
-            transition: all 0.3s ease;
+            border: 1px solid var(--border-default);
+            background: var(--bg-card);
+            display: flex;
+            gap: var(--space-6);
+            transition: all 0.2s ease;
         }
 
         .feature-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+            background: var(--bg-card-hover);
+            border-color: var(--border-light);
         }
 
-        .feature-icon {
-            width: 56px;
-            height: 56px;
-            background: var(--gradient-primary);
-            border-radius: var(--radius-xl);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            margin-bottom: var(--space-5);
+        .feature-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            min-width: 40px;
+        }
+
+        .feature-content {
+            flex: 1;
         }
 
         .feature-title {
-            font-size: 1.25rem;
-            font-weight: 700;
-            margin-bottom: var(--space-3);
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: var(--space-2);
+            letter-spacing: -0.01em;
         }
 
         .feature-desc {
             color: var(--text-secondary);
             font-size: 0.95rem;
+            line-height: 1.6;
         }
 
         /* ===== CTA Section ===== */
         .cta-section {
-            padding: var(--space-20) var(--space-6);
-            background: var(--gradient-primary);
+            padding: var(--space-24) var(--space-6);
+            border-top: 1px solid var(--border-default);
             text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .cta-section::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-            opacity: 0.5;
         }
 
         .cta-content {
-            position: relative;
-            z-index: 1;
-            max-width: 700px;
+            max-width: 600px;
             margin: 0 auto;
         }
 
         .cta-title {
-            font-size: clamp(2rem, 4vw, 2.75rem);
-            font-weight: 800;
-            color: white;
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 700;
+            letter-spacing: -0.03em;
             margin-bottom: var(--space-4);
         }
 
         .cta-subtitle {
             font-size: 1.1rem;
-            color: rgba(255, 255, 255, 0.9);
-            margin-bottom: var(--space-8);
+            color: var(--text-secondary);
+            margin-bottom: var(--space-10);
+            line-height: 1.7;
         }
 
-        .btn-white {
-            background: white;
-            color: var(--primary-600);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        .cta-form {
+            display: flex;
+            gap: var(--space-3);
+            max-width: 480px;
+            margin: 0 auto var(--space-4);
         }
 
-        .btn-white:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+        .cta-input {
+            flex: 1;
+            padding: var(--space-4) var(--space-5);
+            background: var(--bg-card);
+            border: 1px solid var(--border-default);
+            color: var(--text-primary);
+            font-family: var(--font-sans);
+            font-size: 0.9rem;
+        }
+
+        .cta-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .cta-input:focus {
+            outline: none;
+            border-color: var(--text-primary);
+        }
+
+        .cta-note {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        /* ===== Footer Stats ===== */
+        .footer-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            border-top: 1px solid var(--border-default);
+        }
+
+        .footer-stat {
+            padding: var(--space-8) var(--space-6);
+            text-align: center;
+            border-right: 1px solid var(--border-default);
+        }
+
+        .footer-stat:last-child {
+            border-right: none;
+        }
+
+        .footer-stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            margin-bottom: var(--space-1);
+        }
+
+        .footer-stat-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-muted);
         }
 
         /* ===== Footer ===== */
         .footer {
-            padding: var(--space-12) var(--space-6);
-            background: var(--gray-900);
-            color: var(--gray-400);
+            padding: var(--space-8) var(--space-6);
+            border-top: 1px solid var(--border-default);
         }
 
         .footer-inner {
-            max-width: 1100px;
+            max-width: 1200px;
             margin: 0 auto;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .footer-logo {
-            display: flex;
-            align-items: center;
-            gap: var(--space-3);
-            color: white;
-            font-weight: 700;
-            font-size: 1.25rem;
+        .footer-text {
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: var(--text-muted);
         }
 
         .footer-links {
@@ -566,26 +561,47 @@
         }
 
         .footer-link {
-            color: var(--gray-400);
+            color: var(--text-muted);
             text-decoration: none;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             transition: color 0.2s;
         }
 
         .footer-link:hover {
-            color: white;
+            color: var(--text-primary);
         }
 
         /* ===== Responsive ===== */
         @media (max-width: 1024px) {
+            .hero-grid {
+                grid-template-columns: 1fr;
+                gap: var(--space-12);
+            }
+            .hero-content {
+                max-width: 100%;
+                text-align: center;
+            }
+            .hero-cta {
+                justify-content: center;
+            }
+            .principles-grid {
+                grid-template-columns: 1fr;
+            }
             .steps-grid {
                 grid-template-columns: repeat(3, 1fr);
             }
-            .steps-line {
-                display: none;
-            }
             .features-grid {
+                grid-template-columns: 1fr;
+            }
+            .footer-stats {
                 grid-template-columns: repeat(2, 1fr);
+            }
+            .footer-stat:nth-child(2) {
+                border-right: none;
+            }
+            .footer-stat:nth-child(3),
+            .footer-stat:nth-child(4) {
+                border-top: 1px solid var(--border-default);
             }
         }
 
@@ -593,41 +609,36 @@
             .header-nav {
                 display: none;
             }
-            .hero-stats {
-                gap: var(--space-6);
+            .hero {
+                padding: var(--space-20) var(--space-4);
             }
-            .stat-value {
-                font-size: 1.5rem;
+            .section {
+                padding: var(--space-16) var(--space-4);
+            }
+            .hero-stats {
+                grid-template-columns: 1fr;
             }
             .steps-grid {
                 grid-template-columns: 1fr;
-                max-width: 400px;
-                margin: 0 auto;
             }
-            .features-grid {
-                grid-template-columns: 1fr;
+            .cta-form {
+                flex-direction: column;
             }
             .footer-inner {
                 flex-direction: column;
                 gap: var(--space-6);
                 text-align: center;
             }
-        }
-
-        /* ===== Animations ===== */
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-
-        .step-card:nth-child(1) { animation: float 3s ease-in-out infinite; animation-delay: 0s; }
-        .step-card:nth-child(2) { animation: float 3s ease-in-out infinite; animation-delay: 0.2s; }
-        .step-card:nth-child(3) { animation: float 3s ease-in-out infinite; animation-delay: 0.4s; }
-        .step-card:nth-child(4) { animation: float 3s ease-in-out infinite; animation-delay: 0.6s; }
-        .step-card:nth-child(5) { animation: float 3s ease-in-out infinite; animation-delay: 0.8s; }
-
-        .step-card:hover {
-            animation-play-state: paused;
+            .footer-stats {
+                grid-template-columns: 1fr;
+            }
+            .footer-stat {
+                border-right: none;
+                border-bottom: 1px solid var(--border-default);
+            }
+            .footer-stat:last-child {
+                border-bottom: none;
+            }
         }
     </style>
 </head>
@@ -635,59 +646,49 @@
     <!-- Header -->
     <header class="header">
         <div class="header-inner">
-            <a href="#" class="logo">
-                <div class="logo-icon">
-                    <i data-lucide="play" style="width: 20px; height: 20px;"></i>
-                </div>
-                <span class="logo-text">AutoReels</span>
-            </a>
+            <a href="#" class="logo">AutoReels</a>
             <nav class="header-nav">
                 <a href="#how-it-works" class="nav-link">如何運作</a>
                 <a href="#features" class="nav-link">功能特色</a>
                 <a href="app.html" class="nav-link">工作台</a>
-                <a href="#" class="btn btn-primary">開始使用</a>
+                <a href="app.html" class="btn btn-primary">立即開始</a>
             </nav>
         </div>
     </header>
 
     <!-- Hero -->
     <section class="hero">
-        <div class="hero-bg"></div>
-        <div class="hero-content">
-            <div class="hero-badge">
-                <i data-lucide="sparkles" style="width: 16px; height: 16px;"></i>
-                全自動化 IG Reels 創作流程
-            </div>
-            <h1 class="hero-title">
-                5 步驟建立你的<br>
-                <span class="hero-title-gradient">自動化 Reels 帳號</span>
-            </h1>
-            <p class="hero-subtitle">
-                從抓取外國熱門影片、AI 自動翻譯、到排程發布，
-                AutoReels 幫你實現內容創作自動化
-            </p>
-            <div class="hero-cta">
-                <a href="#how-it-works" class="btn btn-primary btn-lg">
-                    <i data-lucide="rocket" style="width: 20px; height: 20px;"></i>
-                    立即開始
-                </a>
-                <a href="#" class="btn btn-secondary btn-lg">
-                    <i data-lucide="play-circle" style="width: 20px; height: 20px;"></i>
-                    觀看教學
-                </a>
-            </div>
-            <div class="hero-stats">
-                <div class="stat-item">
-                    <div class="stat-value">5</div>
-                    <div class="stat-label">簡單步驟</div>
+        <div class="hero-grid">
+            <div class="hero-content">
+                <span class="label hero-label">自動化內容創作</span>
+                <h1 class="hero-title">5 步驟建立你的自動化 Reels 帳號</h1>
+                <p class="hero-subtitle">
+                    從抓取國外熱門影片、AI 智能翻譯、到排程自動發布
+                    — AutoReels 幫你實現內容創作全自動化
+                </p>
+                <div class="hero-cta">
+                    <a href="app.html" class="btn btn-primary btn-lg">開始使用</a>
+                    <a href="#how-it-works" class="btn btn-secondary btn-lg">了解更多</a>
                 </div>
-                <div class="stat-item">
-                    <div class="stat-value">90%</div>
-                    <div class="stat-label">時間節省</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value">24/7</div>
-                    <div class="stat-label">自動運行</div>
+            </div>
+            <div class="hero-visual">
+                <div class="hero-stats">
+                    <div class="stat-card">
+                        <div class="stat-value">5</div>
+                        <div class="stat-label">簡單步驟</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">90%</div>
+                        <div class="stat-label">節省時間</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">24/7</div>
+                        <div class="stat-label">自動運行</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">100%</div>
+                        <div class="stat-label">本地運行</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -695,153 +696,128 @@
 
     <!-- How It Works -->
     <section id="how-it-works" class="section">
-        <div class="section-header">
-            <div class="section-badge">
-                <i data-lucide="workflow" style="width: 16px; height: 16px;"></i>
-                HOW IT WORKS
+        <div class="container">
+            <div class="section-header">
+                <span class="label section-label">如何運作</span>
+                <h2 class="section-title">5 步驟開始自動化</h2>
+                <p class="section-subtitle">
+                    不需要任何技術背景，跟著步驟走，輕鬆建立你的自動化 Reels 帳號
+                </p>
             </div>
-            <h2 class="section-title">簡單 5 步驟，開始自動化</h2>
-            <p class="section-subtitle">
-                不需要任何技術背景，跟著步驟走，輕鬆建立你的自動化 Reels 帳號
-            </p>
-        </div>
 
-        <div class="steps-container">
-            <div class="steps-line"></div>
             <div class="steps-grid">
-                <!-- Step 1 -->
                 <div class="step-card">
-                    <div class="step-number">1</div>
+                    <div class="step-number">01</div>
                     <div class="step-icon">
-                        <i data-lucide="user-plus" style="width: 28px; height: 28px;"></i>
+                        <i data-lucide="user-plus" style="width: 32px; height: 32px;"></i>
                     </div>
                     <h3 class="step-title">創建帳號</h3>
                     <p class="step-desc">連結你的 Instagram 帳號，設定發布權限</p>
-                    <span class="step-status coming">
-                        <i data-lucide="clock" style="width: 12px; height: 12px;"></i>
-                        即將推出
-                    </span>
+                    <span class="step-status coming">即將推出</span>
                 </div>
 
-                <!-- Step 2 -->
                 <div class="step-card">
-                    <div class="step-number">2</div>
+                    <div class="step-number">02</div>
                     <div class="step-icon">
-                        <i data-lucide="palette" style="width: 28px; height: 28px;"></i>
+                        <i data-lucide="palette" style="width: 32px; height: 32px;"></i>
                     </div>
                     <h3 class="step-title">設定模板</h3>
                     <p class="step-desc">選擇字幕風格、品牌浮水印、影片比例</p>
-                    <span class="step-status ready">
-                        <i data-lucide="check" style="width: 12px; height: 12px;"></i>
-                        可使用
-                    </span>
+                    <span class="step-status ready">可使用</span>
                 </div>
 
-                <!-- Step 3 -->
                 <div class="step-card">
-                    <div class="step-number">3</div>
+                    <div class="step-number">03</div>
                     <div class="step-icon">
-                        <i data-lucide="download" style="width: 28px; height: 28px;"></i>
+                        <i data-lucide="download" style="width: 32px; height: 32px;"></i>
                     </div>
                     <h3 class="step-title">抓取影片</h3>
                     <p class="step-desc">輸入 YouTube 或 IG 網址，一鍵下載素材</p>
-                    <span class="step-status ready">
-                        <i data-lucide="check" style="width: 12px; height: 12px;"></i>
-                        可使用
-                    </span>
+                    <span class="step-status ready">可使用</span>
                 </div>
 
-                <!-- Step 4 -->
                 <div class="step-card">
-                    <div class="step-number">4</div>
+                    <div class="step-number">04</div>
                     <div class="step-icon">
-                        <i data-lucide="languages" style="width: 28px; height: 28px;"></i>
+                        <i data-lucide="languages" style="width: 32px; height: 32px;"></i>
                     </div>
                     <h3 class="step-title">AI 翻譯</h3>
-                    <p class="step-desc">Whisper 語音辨識 + GPT 翻譯成繁體中文</p>
-                    <span class="step-status ready">
-                        <i data-lucide="check" style="width: 12px; height: 12px;"></i>
-                        可使用
-                    </span>
+                    <p class="step-desc">Whisper 語音辨識 + GPT 智能翻譯</p>
+                    <span class="step-status ready">可使用</span>
                 </div>
 
-                <!-- Step 5 -->
                 <div class="step-card">
-                    <div class="step-number">5</div>
+                    <div class="step-number">05</div>
                     <div class="step-icon">
-                        <i data-lucide="send" style="width: 28px; height: 28px;"></i>
+                        <i data-lucide="send" style="width: 32px; height: 32px;"></i>
                     </div>
                     <h3 class="step-title">排程發布</h3>
                     <p class="step-desc">設定發布時間，自動上傳到 IG Reels</p>
-                    <span class="step-status coming">
-                        <i data-lucide="clock" style="width: 12px; height: 12px;"></i>
-                        即將推出
-                    </span>
+                    <span class="step-status coming">即將推出</span>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Features -->
-    <section id="features" class="section features-section">
-        <div class="section-header">
-            <div class="section-badge">
-                <i data-lucide="zap" style="width: 16px; height: 16px;"></i>
-                FEATURES
-            </div>
-            <h2 class="section-title">強大功能，簡單操作</h2>
-            <p class="section-subtitle">
-                專為內容創作者設計，節省時間、提升效率
-            </p>
-        </div>
-
-        <div class="features-grid">
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i data-lucide="globe" style="width: 28px; height: 28px;"></i>
-                </div>
-                <h3 class="feature-title">多平台素材來源</h3>
-                <p class="feature-desc">支援 YouTube、Instagram Reels、TikTok 等主流平台影片下載</p>
+    <section id="features" class="section">
+        <div class="container">
+            <div class="section-header">
+                <span class="label section-label">功能特色</span>
+                <h2 class="section-title">為什麼選擇 AutoReels</h2>
+                <p class="section-subtitle">
+                    專為內容創作者設計，節省時間、提升效率
+                </p>
             </div>
 
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i data-lucide="brain" style="width: 28px; height: 28px;"></i>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-number">01</div>
+                    <div class="feature-content">
+                        <h3 class="feature-title">多平台素材來源</h3>
+                        <p class="feature-desc">支援 YouTube、Instagram Reels、TikTok 等主流平台影片下載</p>
+                    </div>
                 </div>
-                <h3 class="feature-title">AI 智能翻譯</h3>
-                <p class="feature-desc">Whisper 語音辨識 + GPT-4 翻譯，準確度高達 95%</p>
-            </div>
 
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i data-lucide="wand-2" style="width: 28px; height: 28px;"></i>
+                <div class="feature-card">
+                    <div class="feature-number">02</div>
+                    <div class="feature-content">
+                        <h3 class="feature-title">AI 智能翻譯</h3>
+                        <p class="feature-desc">Whisper 語音辨識 + GPT-4 翻譯，準確度高達 95%</p>
+                    </div>
                 </div>
-                <h3 class="feature-title">一鍵套用模板</h3>
-                <p class="feature-desc">自訂字幕樣式、品牌浮水印，批量套用到所有影片</p>
-            </div>
 
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i data-lucide="calendar" style="width: 28px; height: 28px;"></i>
+                <div class="feature-card">
+                    <div class="feature-number">03</div>
+                    <div class="feature-content">
+                        <h3 class="feature-title">一鍵套用模板</h3>
+                        <p class="feature-desc">自訂字幕樣式、品牌浮水印，批量套用到所有影片</p>
+                    </div>
                 </div>
-                <h3 class="feature-title">智能排程發布</h3>
-                <p class="feature-desc">設定最佳發布時間，自動上傳到你的 IG 帳號</p>
-            </div>
 
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i data-lucide="bar-chart-3" style="width: 28px; height: 28px;"></i>
+                <div class="feature-card">
+                    <div class="feature-number">04</div>
+                    <div class="feature-content">
+                        <h3 class="feature-title">智能排程發布</h3>
+                        <p class="feature-desc">設定最佳發布時間，自動上傳到你的 IG 帳號</p>
+                    </div>
                 </div>
-                <h3 class="feature-title">數據分析</h3>
-                <p class="feature-desc">追蹤影片表現，優化發布策略，提升觸及率</p>
-            </div>
 
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i data-lucide="shield-check" style="width: 28px; height: 28px;"></i>
+                <div class="feature-card">
+                    <div class="feature-number">05</div>
+                    <div class="feature-content">
+                        <h3 class="feature-title">數據分析儀表板</h3>
+                        <p class="feature-desc">追蹤影片表現，優化發布策略，提升觸及率</p>
+                    </div>
                 </div>
-                <h3 class="feature-title">安全可靠</h3>
-                <p class="feature-desc">本地運行，資料不上傳雲端，保護你的帳號安全</p>
+
+                <div class="feature-card">
+                    <div class="feature-number">06</div>
+                    <div class="feature-content">
+                        <h3 class="feature-title">100% 本地安全</h3>
+                        <p class="feature-desc">本地運行，資料不上傳雲端，保護你的帳號安全</p>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -849,24 +825,43 @@
     <!-- CTA -->
     <section class="cta-section">
         <div class="cta-content">
-            <h2 class="cta-title">準備好開始了嗎？</h2>
+            <span class="label section-label">立即開始</span>
+            <h2 class="cta-title">準備好自動化你的內容了嗎？</h2>
             <p class="cta-subtitle">
-                立即體驗 AutoReels，讓 AI 幫你自動化內容創作
+                加入已經在使用 AutoReels 建立自動化 Reels 帳號的創作者行列
             </p>
-            <a href="app.html" class="btn btn-white btn-lg">
-                <i data-lucide="arrow-right" style="width: 20px; height: 20px;"></i>
-                進入工作台
-            </a>
+            <div class="cta-form">
+                <input type="email" class="cta-input" placeholder="輸入你的 Email">
+                <button class="btn btn-primary">免費開始</button>
+            </div>
+            <p class="cta-note">無需信用卡 • 30 秒內開始</p>
         </div>
     </section>
+
+    <!-- Footer Stats -->
+    <div class="footer-stats">
+        <div class="footer-stat">
+            <div class="footer-stat-value">2024</div>
+            <div class="footer-stat-label">上線年份</div>
+        </div>
+        <div class="footer-stat">
+            <div class="footer-stat-value">5</div>
+            <div class="footer-stat-label">核心步驟</div>
+        </div>
+        <div class="footer-stat">
+            <div class="footer-stat-value">∞</div>
+            <div class="footer-stat-label">無限可能</div>
+        </div>
+        <div class="footer-stat">
+            <div class="footer-stat-value">100%</div>
+            <div class="footer-stat-label">全自動化</div>
+        </div>
+    </div>
 
     <!-- Footer -->
     <footer class="footer">
         <div class="footer-inner">
-            <div class="footer-logo">
-                <i data-lucide="play" style="width: 24px; height: 24px;"></i>
-                AutoReels
-            </div>
+            <div class="footer-text">© 2024 AutoReels</div>
             <div class="footer-links">
                 <a href="#" class="footer-link">使用條款</a>
                 <a href="#" class="footer-link">隱私政策</a>
