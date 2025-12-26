@@ -18,12 +18,7 @@ if errorlevel 1 (
     exit /b 1
 )
 
-:: 檢查 DEEPSEEK_API_KEY
-if "%DEEPSEEK_API_KEY%"=="" (
-    echo [警告] 未設定 DEEPSEEK_API_KEY 環境變數
-    echo.
-    set /p DEEPSEEK_API_KEY="請輸入 DeepSeek API Key: "
-)
+:: API Key 從 translation_config.json 讀取
 
 :: 檢查影片資料夾
 if not exist "backend\downloads\youtube" (

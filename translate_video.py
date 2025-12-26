@@ -52,9 +52,10 @@ class TranslationWorkflow:
     def init_deepseek(self):
         """初始化 DeepSeek API 客戶端"""
         if self.deepseek_client is None:
-            api_key = os.environ.get("DEEPSEEK_API_KEY")
+            # 優先從 config 讀取，其次環境變數
+            api_key = self.config["translation"].get("api_key") or os.environ.get("DEEPSEEK_API_KEY")
             if not api_key:
-                raise ValueError("請設定環境變數 DEEPSEEK_API_KEY")
+                raise ValueError("請在 translation_config.json 的 translation.api_key 填入 DeepSeek API Key")
 
             self.deepseek_client = OpenAI(
                 api_key=api_key,
