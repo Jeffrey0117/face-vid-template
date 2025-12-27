@@ -6,6 +6,7 @@ import asyncio
 from models import init_db
 from api.routes import router
 from api.youtube_routes import router as youtube_router
+from api.ig_ytdlp_routes import router as ig_ytdlp_router
 from api.websocket import manager
 from services.downloader import download_service
 
@@ -27,10 +28,17 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# CORS 設定 - 允許所有來源（支持 file:// 協議和本地開發）
+# CORS 設定 - 允許本地開發來源
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "http://localhost:5500",
+        "http://localhost:5501",
+        "http://127.0.0.1:5500",
+        "http://127.0.0.1:5501",
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -39,6 +47,7 @@ app.add_middleware(
 # 註冊 API 路由
 app.include_router(router)
 app.include_router(youtube_router)
+app.include_router(ig_ytdlp_router)  # IG yt-dlp 備案路由
 
 
 # WebSocket 端點

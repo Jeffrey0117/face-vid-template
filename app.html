@@ -687,6 +687,165 @@
             color: var(--text-primary);
         }
 
+        /* 後端狀態指示器 */
+        .backend-status {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            padding: var(--space-2) var(--space-3);
+            border: 1px solid var(--border-default);
+            font-size: var(--text-xs);
+            cursor: pointer;
+            transition: all var(--duration-fast) var(--ease-default);
+        }
+
+        .backend-status:hover {
+            background: var(--bg-card);
+        }
+
+        .backend-status .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .backend-status.connected .status-dot {
+            background: #22c55e;
+            box-shadow: 0 0 8px #22c55e;
+        }
+
+        .backend-status.disconnected .status-dot {
+            background: #ef4444;
+            box-shadow: 0 0 8px #ef4444;
+            animation: none;
+        }
+
+        .backend-status.connecting .status-dot {
+            background: #eab308;
+            box-shadow: 0 0 8px #eab308;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* 後端未啟動提示 Modal */
+        .backend-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-4);
+        }
+
+        .backend-modal {
+            background: var(--bg-card);
+            border: 1px solid var(--border-default);
+            max-width: 520px;
+            width: 100%;
+            padding: var(--space-8);
+        }
+
+        .backend-modal-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            margin-bottom: var(--space-6);
+        }
+
+        .backend-modal-header .icon {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+        }
+
+        .backend-modal-title {
+            font-size: var(--text-xl);
+            font-weight: var(--font-bold);
+            color: var(--text-primary);
+        }
+
+        .backend-modal-subtitle {
+            font-size: var(--text-sm);
+            color: var(--text-muted);
+            margin-top: var(--space-1);
+        }
+
+        .backend-modal-content {
+            margin-bottom: var(--space-6);
+        }
+
+        .backend-modal-step {
+            display: flex;
+            gap: var(--space-3);
+            padding: var(--space-3) 0;
+            border-bottom: 1px solid var(--border-default);
+        }
+
+        .backend-modal-step:last-child {
+            border-bottom: none;
+        }
+
+        .step-number {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--text-primary);
+            color: var(--bg-primary);
+            font-size: var(--text-xs);
+            font-weight: var(--font-bold);
+            flex-shrink: 0;
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step-title {
+            font-size: var(--text-sm);
+            font-weight: var(--font-medium);
+            color: var(--text-primary);
+            margin-bottom: var(--space-1);
+        }
+
+        .step-desc {
+            font-size: var(--text-xs);
+            color: var(--text-muted);
+        }
+
+        .step-code {
+            margin-top: var(--space-2);
+            padding: var(--space-2) var(--space-3);
+            background: var(--bg-primary);
+            border: 1px solid var(--border-default);
+            font-family: var(--font-mono);
+            font-size: var(--text-xs);
+            color: var(--text-secondary);
+            user-select: all;
+            cursor: pointer;
+        }
+
+        .backend-modal-actions {
+            display: flex;
+            gap: var(--space-3);
+        }
+
+        .backend-modal-actions .btn {
+            flex: 1;
+        }
+
         /* 響應式調整 */
         @media (max-width: 768px) {
             .yt-video-info {
@@ -727,6 +886,11 @@
                     <span>AutoReels</span>
                 </a>
                 <div class="header-actions">
+                    <!-- 後端狀態指示器 -->
+                    <div class="backend-status" :class="backendStatus" @click="showBackendModal = true" :title="getBackendStatusTitle()">
+                        <span class="status-dot"></span>
+                        <span>{{ getBackendStatusText() }}</span>
+                    </div>
                     <button class="header-btn" @click="toggleTheme" :title="theme === 'dark' ? '切換淺色模式' : '切換深色模式'">
                         <i :data-lucide="theme === 'dark' ? 'sun' : 'moon'" style="width:20px;height:20px;"></i>
                     </button>
@@ -1368,6 +1532,69 @@ https://www.instagram.com/p/xxxxx"
                 <button class="toast-close" @click="removeToast(toast.id)">×</button>
             </div>
         </div>
+
+        <!-- 後端未啟動 Modal -->
+        <div v-if="showBackendModal" class="backend-modal-overlay" @click.self="showBackendModal = false">
+            <div class="backend-modal">
+                <div class="backend-modal-header">
+                    <div class="icon">
+                        <i :data-lucide="backendStatus === 'connected' ? 'check-circle' : 'wifi-off'" style="width:24px;height:24px;"></i>
+                    </div>
+                    <div>
+                        <div class="backend-modal-title">
+                            {{ backendStatus === 'connected' ? '後端服務運行中' : '後端服務未啟動' }}
+                        </div>
+                        <div class="backend-modal-subtitle">
+                            {{ backendStatus === 'connected' ? 'YT/IG 下載功能正常運作' : 'YT/IG 下載功能需要後端服務' }}
+                        </div>
+                    </div>
+                </div>
+
+                <div v-if="backendStatus !== 'connected'" class="backend-modal-content">
+                    <div class="backend-modal-step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <div class="step-title">雙擊啟動腳本（推薦）</div>
+                            <div class="step-desc">在專案資料夾中找到並雙擊執行</div>
+                            <div class="step-code" @click="copyToClipboard('start-backend.bat')">start-backend.bat</div>
+                        </div>
+                    </div>
+                    <div class="backend-modal-step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <div class="step-title">或手動啟動</div>
+                            <div class="step-desc">在終端機中執行以下命令</div>
+                            <div class="step-code" @click="copyToClipboard('cd backend && python main.py')">cd backend && python main.py</div>
+                        </div>
+                    </div>
+                    <div class="backend-modal-step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <div class="step-title">等待連線</div>
+                            <div class="step-desc">啟動後頁面會自動偵測並連線，狀態燈會變綠色</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div v-else class="backend-modal-content">
+                    <div class="backend-modal-step">
+                        <div class="step-number" style="background: #22c55e;">✓</div>
+                        <div class="step-content">
+                            <div class="step-title">連線正常</div>
+                            <div class="step-desc">後端服務運行於 http://localhost:8000</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="backend-modal-actions">
+                    <button class="btn btn-secondary" @click="showBackendModal = false">關閉</button>
+                    <button v-if="backendStatus !== 'connected'" class="btn btn-primary" @click="retryBackendConnection">
+                        <i data-lucide="refresh-cw" style="width:14px;height:14px;"></i>
+                        重新連線
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -1609,6 +1836,11 @@ https://www.instagram.com/p/xxxxx"
                 const toasts = ref([]);
                 let toastId = 0;
 
+                // 後端連線狀態
+                const backendStatus = ref('disconnected'); // connected, disconnected, connecting
+                const showBackendModal = ref(false);
+                let backendCheckInterval = null;
+
                 // YouTube 模組狀態
                 const youtube = ref({
                     urlInput: '',
@@ -1714,20 +1946,112 @@ https://www.instagram.com/p/xxxxx"
                     toasts.value = toasts.value.filter(t => t.id !== id);
                 };
 
+                // 檢查後端狀態
+                const checkBackendStatus = async () => {
+                    try {
+                        const controller = new AbortController();
+                        const timeout = setTimeout(() => controller.abort(), 3000);
+
+                        const res = await fetch(`${API_BASE}/api/download/status`, {
+                            signal: controller.signal
+                        });
+                        clearTimeout(timeout);
+
+                        if (res.ok) {
+                            if (backendStatus.value !== 'connected') {
+                                backendStatus.value = 'connected';
+                                showToast('後端服務已連線', 'success');
+                            }
+                            return true;
+                        }
+                    } catch (e) {
+                        if (backendStatus.value === 'connected') {
+                            backendStatus.value = 'disconnected';
+                            showToast('後端服務已斷線', 'error');
+                        } else if (backendStatus.value !== 'disconnected') {
+                            backendStatus.value = 'disconnected';
+                        }
+                    }
+                    return false;
+                };
+
+                // 重試後端連線
+                const retryBackendConnection = async () => {
+                    backendStatus.value = 'connecting';
+                    showToast('正在嘗試連線...', 'info');
+
+                    const connected = await checkBackendStatus();
+                    if (connected) {
+                        showBackendModal.value = false;
+                        await loadDownloadData();
+                        await loadYoutubeHistory();
+                        connectDownloadWs();
+                    } else {
+                        showToast('連線失敗，請確認後端已啟動', 'error');
+                    }
+                };
+
+                // 取得後端狀態文字
+                const getBackendStatusText = () => {
+                    switch (backendStatus.value) {
+                        case 'connected': return '已連線';
+                        case 'connecting': return '連線中...';
+                        default: return '未連線';
+                    }
+                };
+
+                const getBackendStatusTitle = () => {
+                    switch (backendStatus.value) {
+                        case 'connected': return '後端服務運行中，點擊查看詳情';
+                        case 'connecting': return '正在連線後端服務...';
+                        default: return '後端服務未啟動，點擊查看啟動方式';
+                    }
+                };
+
+                // 複製到剪貼簿
+                const copyToClipboard = async (text) => {
+                    try {
+                        await navigator.clipboard.writeText(text);
+                        showToast('已複製到剪貼簿', 'success');
+                    } catch (e) {
+                        showToast('複製失敗', 'error');
+                    }
+                };
+
                 // WebSocket 連接
                 const connectDownloadWs = () => {
+                    if (backendStatus.value === 'disconnected') {
+                        backendStatus.value = 'connecting';
+                    }
+
                     downloadWs = new WebSocket('ws://localhost:8000/ws');
 
-                    downloadWs.onopen = () => console.log('Download WebSocket connected');
+                    downloadWs.onopen = () => {
+                        console.log('Download WebSocket connected');
+                        backendStatus.value = 'connected';
+                    };
 
                     downloadWs.onmessage = (event) => {
                         const msg = JSON.parse(event.data);
                         handleWsMessage(msg);
                     };
 
+                    downloadWs.onerror = () => {
+                        console.log('Download WebSocket error');
+                        backendStatus.value = 'disconnected';
+                    };
+
                     downloadWs.onclose = () => {
                         console.log('Download WebSocket disconnected');
-                        setTimeout(connectDownloadWs, 3000);
+                        backendStatus.value = 'disconnected';
+                        // 只有在非刻意斷線時才重連
+                        setTimeout(() => {
+                            if (backendStatus.value === 'disconnected') {
+                                checkBackendStatus().then(connected => {
+                                    if (connected) connectDownloadWs();
+                                });
+                            }
+                        }, 5000);
                     };
                 };
 
@@ -2114,14 +2438,33 @@ https://www.instagram.com/p/xxxxx"
                         console.log('無法載入配置，使用預設值');
                     }
 
-                    // 載入下載模組數據
-                    await loadDownloadData();
+                    // 先檢查後端狀態
+                    backendStatus.value = 'connecting';
+                    const isBackendUp = await checkBackendStatus();
 
-                    // 載入 YouTube 歷史紀錄
-                    await loadYoutubeHistory();
+                    if (isBackendUp) {
+                        // 後端已啟動，載入數據並連接 WebSocket
+                        await loadDownloadData();
+                        await loadYoutubeHistory();
+                        connectDownloadWs();
+                    } else {
+                        // 後端未啟動，顯示提示
+                        backendStatus.value = 'disconnected';
+                        showToast('後端服務未啟動，YT/IG 下載功能無法使用', 'warning', 5000);
 
-                    // 連接 WebSocket
-                    connectDownloadWs();
+                        // 設定定期檢查（每 10 秒檢查一次）
+                        backendCheckInterval = setInterval(async () => {
+                            if (backendStatus.value === 'disconnected') {
+                                const connected = await checkBackendStatus();
+                                if (connected) {
+                                    clearInterval(backendCheckInterval);
+                                    await loadDownloadData();
+                                    await loadYoutubeHistory();
+                                    connectDownloadWs();
+                                }
+                            }
+                        }, 10000);
+                    }
 
                     // 再次初始化圖標（數據載入後）
                     initIcons();
@@ -2190,6 +2533,14 @@ https://www.instagram.com/p/xxxxx"
                     getYoutubeStatusIcon,
                     getYoutubeStatusText,
                     getYoutubeProgressColor,
+                    // 後端連線狀態
+                    backendStatus,
+                    showBackendModal,
+                    checkBackendStatus,
+                    retryBackendConnection,
+                    getBackendStatusText,
+                    getBackendStatusTitle,
+                    copyToClipboard,
                 };
             }
         }).mount('#app');
