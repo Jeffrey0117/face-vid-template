@@ -1,14 +1,24 @@
 {
+  "subtitle_style": {
+    "font_size": 7,
+    "text_color": "#FFFFFF",
+    "background_color": "#000000",
+    "background_alpha": 0,
+    "position_y": -0.75,
+    "stroke_width": 2,
+    "stroke_color": "#000000",
+    "bold": false,
+    "shadow": true,
+    "line_max_width": 0.85
+  },
   "version": "1.0",
   "project_name": "YouTube翻譯專案",
   "project_type": "youtube_translate",
-
   "paths": {
     "source_video_folder": "backend/downloads/youtube",
     "output_folder": "videos/translated",
     "draft_template": "長片翻譯專案"
   },
-
   "whisper": {
     "model": "medium",
     "language": "en",
@@ -16,36 +26,21 @@
     "temperature": 0,
     "word_timestamps": true
   },
-
   "translation": {
     "service": "deepseek",
     "base_url": "https://api.deepseek.com",
+    "api_key": "sk-e03b98a257bd4e38a238c5862eb63d97",
     "source_language": "en",
     "target_language": "zh-TW",
     "model": "deepseek-chat",
-    "prompt_template": "將以下英文字幕翻譯成繁體中文，保持專業術語準確，語氣自然流暢：\n\n{text}"
+    "batch_size": 50
   },
-
-  "subtitle_style": {
-    "font_size": 10,
-    "text_color": "#FFFFFF",
-    "background_color": "#000000",
-    "background_alpha": 0.7,
-    "position_y": -0.75,
-    "stroke_width": 2,
-    "stroke_color": "#000000",
-    "bold": true,
-    "shadow": true,
-    "line_max_width": 0.85
-  },
-
   "jianying": {
     "canvas_width": 1920,
     "canvas_height": 1080,
     "canvas_ratio": "16:9",
     "fps": 30
   },
-
   "workflow": {
     "auto_transcribe": true,
     "auto_translate": true,

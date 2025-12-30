@@ -87,49 +87,90 @@ class TranslationWorkflow:
         print(f"    識別完成: {len(segments)} 個片段")
         return segments
 
-    def translate_text(self, text: str) -> str:
-        """使用 DeepSeek 翻譯文字"""
+    def translate_batch(self, texts: list) -> list:
+        """批次翻譯多句文字"""
         client = self.init_deepseek()
 
-        prompt = self.config["translation"]["prompt_template"].format(text=text)
+        # 用編號格式組合多句
+        numbered_text = "\n".join([f"{i+1}. {t}" for i, t in enumerate(texts)])
+
+        prompt = f"""將以下英文字幕翻譯成繁體中文，保持編號格式，每行一句：
+
+{numbered_text}
+
+注意：
+- 保持原本的編號格式（1. 2. 3. ...）
+- 翻譯要簡潔、口語化
+- 每句獨立一行"""
 
         response = client.chat.completions.create(
             model=self.config["translation"]["model"],
             messages=[
-                {"role": "system", "content": "你是專業的字幕翻譯員，翻譯要簡潔、口語化、符合繁體中文習慣。"},
+                {"role": "system", "content": "你是專業的字幕翻譯員，翻譯要簡潔、口語化、符合繁體中文習慣。請保持編號格式輸出。"},
                 {"role": "user", "content": prompt}
             ],
             temperature=0.3
         )
 
-        return response.choices[0].message.content.strip()
+        result = response.choices[0].message.content.strip()
+
+        # 解析結果
+        translations = []
+        for line in result.split("\n"):
+            line = line.strip()
+            if not line:
+                continue
+            # 移除編號 "1. ", "2. " 等
+            import re
+            match = re.match(r'^\d+\.\s*(.+)$', line)
+            if match:
+                translations.append(match.group(1))
+            elif line and not line[0].isdigit():
+                translations.append(line)
+
+        # 確保數量匹配
+        while len(translations) < len(texts):
+            translations.append(texts[len(translations)])  # 用原文填充
+
+        return translations[:len(texts)]
 
     def translate_segments(self, segments: list) -> list:
-        """翻譯所有片段"""
+        """批次翻譯所有片段"""
         print(f"[2/4] 翻譯字幕: {len(segments)} 個片段")
 
+        batch_size = self.config.get("translation", {}).get("batch_size", 20)
         translated = []
-        for i, seg in enumerate(segments):
-            try:
-                translated_text = self.translate_text(seg["text"])
-                translated.append({
-                    "start": seg["start"],
-                    "end": seg["end"],
-                    "original": seg["text"],
-                    "text": translated_text
-                })
 
-                if (i + 1) % 10 == 0:
-                    print(f"    進度: {i + 1}/{len(segments)}")
+        # 分批處理
+        for batch_start in range(0, len(segments), batch_size):
+            batch_end = min(batch_start + batch_size, len(segments))
+            batch = segments[batch_start:batch_end]
+
+            texts = [seg["text"] for seg in batch]
+
+            try:
+                translated_texts = self.translate_batch(texts)
+
+                for i, seg in enumerate(batch):
+                    translated.append({
+                        "start": seg["start"],
+                        "end": seg["end"],
+                        "original": seg["text"],
+                        "text": translated_texts[i] if i < len(translated_texts) else seg["text"]
+                    })
+
+                print(f"    進度: {batch_end}/{len(segments)}")
 
             except Exception as e:
-                print(f"    翻譯錯誤 [{i}]: {e}")
-                translated.append({
-                    "start": seg["start"],
-                    "end": seg["end"],
-                    "original": seg["text"],
-                    "text": seg["text"]  # 失敗時保留原文
-                })
+                print(f"    批次翻譯錯誤: {e}")
+                # 失敗時保留原文
+                for seg in batch:
+                    translated.append({
+                        "start": seg["start"],
+                        "end": seg["end"],
+                        "original": seg["text"],
+                        "text": seg["text"]
+                    })
 
         print(f"    翻譯完成")
         return translated
@@ -156,6 +197,11 @@ class TranslationWorkflow:
         print(f"    SRT 已儲存")
         return output_path
 
+    def get_jianying_drafts_path(self) -> Path:
+        """取得剪映草稿資料夾路徑"""
+        return Path(self.config.get("jianying_draft_folder",
+            Path.home() / "AppData/Local/JianyingPro/User Data/Projects/com.lveditor.draft"))
+
     def create_jianying_draft(self, video_path: Path, srt_path: Path) -> Path:
         """創建剪映草稿並添加字幕"""
         print(f"[4/4] 生成剪映草稿")
@@ -163,11 +209,11 @@ class TranslationWorkflow:
         from pyJianYingDraft import DraftFolder, ScriptFile, Intro_type
         from pyJianYingDraft import trange, tim
         from pyJianYingDraft import VideoMaterial, TrackType, ClipSettings, TextStyle
+        from moviepy.editor import VideoFileClip
 
         # 複製模板
         draft_name = f"翻譯_{video_path.stem}"
-        jianying_drafts = Path(self.config.get("jianying_draft_folder",
-            Path.home() / "AppData/Local/JianyingPro/User Data/Projects/com.lveditor.draft"))
+        jianying_drafts = self.get_jianying_drafts_path()
 
         output_draft = jianying_drafts / draft_name
 
@@ -175,20 +221,50 @@ class TranslationWorkflow:
             shutil.rmtree(output_draft)
         shutil.copytree(self.template_folder, output_draft)
 
+        # 取得影片實際時長
+        try:
+            clip = VideoFileClip(str(video_path))
+            video_duration = clip.duration
+            clip.close()
+            print(f"    影片時長: {video_duration:.1f} 秒")
+        except Exception as e:
+            print(f"    無法取得影片時長: {e}")
+            video_duration = None
+
         # 載入草稿
         draft_json = output_draft / "draft_content.json"
         script = ScriptFile.load_template(str(draft_json))
 
-        # 替換影片素材
-        video_material = VideoMaterial(str(video_path))
+        # 替換影片素材 (必須用絕對路徑)
+        video_material = VideoMaterial(str(video_path.resolve()))
         video_track = script.get_imported_track(TrackType.video, index=0)
         script.replace_material_by_seg(video_track, 0, video_material)
 
+        # 更新草稿時長（直接修改 JSON）
+        if video_duration:
+            duration_us = int(video_duration * 1_000_000)  # 轉換為微秒
+            script.data["duration"] = duration_us
+            # 更新影片軌道的時長
+            for track in script.data.get("tracks", []):
+                if track.get("type") == "video":
+                    for seg in track.get("segments", []):
+                        seg["source_timerange"] = {"start": 0, "duration": duration_us}
+                        seg["target_timerange"] = {"start": 0, "duration": duration_us}
+
         # 導入 SRT 字幕
         style = self.config["subtitle_style"]
+
+        # 轉換顏色格式: "#FFFFFF" -> (1.0, 1.0, 1.0)
+        def hex_to_rgb(hex_color: str) -> tuple:
+            hex_color = hex_color.lstrip('#')
+            r = int(hex_color[0:2], 16) / 255.0
+            g = int(hex_color[2:4], 16) / 255.0
+            b = int(hex_color[4:6], 16) / 255.0
+            return (r, g, b)
+
         text_style = TextStyle(
             size=style["font_size"],
-            color=style["text_color"],
+            color=hex_to_rgb(style["text_color"]),
             align=1,
             auto_wrapping=True
         )
@@ -212,6 +288,20 @@ class TranslationWorkflow:
         print(f"\n{'='*50}")
         print(f"處理影片: {video_path.name}")
         print(f"{'='*50}")
+
+        # 檢查是否跳過已存在的草稿
+        draft_name = f"翻譯_{video_path.stem}"
+        output_draft = self.get_jianying_drafts_path() / draft_name
+
+        skip_existing = self.config.get("workflow", {}).get("skip_existing", False)
+        if skip_existing and output_draft.exists():
+            print(f"[跳過] 草稿已存在: {draft_name}")
+            return {
+                "success": True,
+                "video": video_path.name,
+                "skipped": True,
+                "draft": str(output_draft)
+            }
 
         try:
             # 1. 語音識別
@@ -275,11 +365,12 @@ def main():
     print("YouTube 影片翻譯工作流程")
     print("=" * 50)
 
-    # 檢查 API Key
-    if not os.environ.get("DEEPSEEK_API_KEY"):
-        print("[錯誤] 請設定環境變數 DEEPSEEK_API_KEY")
-        print("  Windows: set DEEPSEEK_API_KEY=sk-...")
-        print("  或在 .env 檔案中設定")
+    # 檢查 API Key（從配置檔或環境變數）
+    config = load_config()
+    api_key = config.get("translation", {}).get("api_key") or os.environ.get("DEEPSEEK_API_KEY")
+    if not api_key:
+        print("[錯誤] 請在 translation_config.json 設定 api_key")
+        print("  或設定環境變數 DEEPSEEK_API_KEY")
         sys.exit(1)
 
     workflow = TranslationWorkflow()
