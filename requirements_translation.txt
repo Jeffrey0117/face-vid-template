@@ -1,0 +1,17 @@
+# 翻譯影片工作流程依賴
+
+# 語音識別 (Whisper)
+openai-whisper>=20231117
+torch>=2.0.0
+
+# 翻譯 API
+openai>=1.0.0
+
+# 字幕處理
+pysrt>=1.1.2
+
+# 可選: Google 翻譯 (免費但不穩定)
+# googletrans==4.0.0rc1
+
+# 可選: DeepL 翻譯
+# deepl>=1.16.0

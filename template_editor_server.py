@@ -112,14 +112,14 @@ def main():
     print()
     print(f"  模板路徑: {TEMPLATE_PATH.absolute()}")
     print(f"  伺服器網址: http://localhost:{PORT}")
-    print(f"  編輯器網址: http://localhost:{PORT}/template-editor.html")
+    print(f"  編輯器網址: http://localhost:{PORT}/template_editor.html")
     print()
     print("  按 Ctrl+C 關閉伺服器")
     print("=" * 50)
     print()
 
     # 自動開啟瀏覽器
-    webbrowser.open(f'http://localhost:{PORT}/template-editor.html')
+    webbrowser.open(f'http://localhost:{PORT}/template_editor.html')
 
     # 啟動伺服器
     server = HTTPServer(('localhost', PORT), EditorHandler)
