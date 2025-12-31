@@ -6,17 +6,21 @@ YouTube 影片翻譯工作流程
 """
 
 import os
+import re
 import sys
 import json
 import shutil
+import time
 from pathlib import Path
 from datetime import datetime
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # 設置路徑
 sys.path.insert(0, str(Path(__file__).parent))
 
-import whisper
+from faster_whisper import WhisperModel
 from openai import OpenAI
+from utils.color_utils import hex_to_rgb
 
 # 載入設定
 CONFIG_FILE = Path(__file__).parent / "translation_config.json"
@@ -25,6 +29,9 @@ def load_config():
     """載入翻譯設定"""
     with open(CONFIG_FILE, "r", encoding="utf-8") as f:
         return json.load(f)
+
+# 預編譯正則表達式
+TEXT_NUMBER_PATTERN = re.compile(r'^\d+\.\s*(.+)$')
 
 class TranslationWorkflow:
     def __init__(self):
@@ -46,7 +53,7 @@ class TranslationWorkflow:
         if self.whisper_model is None:
             model_name = self.config["whisper"]["model"]
             print(f"[Whisper] 載入模型: {model_name}")
-            self.whisper_model = whisper.load_model(model_name)
+            self.whisper_model = WhisperModel(model_name, device="cuda", compute_type="float16")
         return self.whisper_model
 
     def init_deepseek(self):
@@ -68,27 +75,28 @@ class TranslationWorkflow:
         print(f"[1/4] 語音識別: {video_path.name}")
 
         model = self.init_whisper()
-        result = model.transcribe(
+        segments_generator, info = model.transcribe(
             str(video_path),
             language=self.config["whisper"]["language"],
             task=self.config["whisper"]["task"],
             temperature=self.config["whisper"]["temperature"],
-            word_timestamps=self.config["whisper"]["word_timestamps"]
+            word_timestamps=self.config["whisper"]["word_timestamps"],
+            vad_filter=True
         )
 
         segments = []
-        for seg in result["segments"]:
+        for segment in segments_generator:
             segments.append({
-                "start": seg["start"],
-                "end": seg["end"],
-                "text": seg["text"].strip()
+                "start": segment.start,
+                "end": segment.end,
+                "text": segment.text.strip()
             })
 
         print(f"    識別完成: {len(segments)} 個片段")
         return segments
 
-    def translate_batch(self, texts: list) -> list:
-        """批次翻譯多句文字"""
+    def translate_batch(self, texts: list, max_retries: int = 3) -> list:
+        """批次翻譯多句文字（含重試機制）"""
         client = self.init_deepseek()
 
         # 用編號格式組合多句
@@ -103,16 +111,27 @@ class TranslationWorkflow:
 - 翻譯要簡潔、口語化
 - 每句獨立一行"""
 
-        response = client.chat.completions.create(
-            model=self.config["translation"]["model"],
-            messages=[
-                {"role": "system", "content": "你是專業的字幕翻譯員，翻譯要簡潔、口語化、符合繁體中文習慣。請保持編號格式輸出。"},
-                {"role": "user", "content": prompt}
-            ],
-            temperature=0.3
-        )
-
-        result = response.choices[0].message.content.strip()
+        last_error = None
+        for attempt in range(max_retries):
+            try:
+                response = client.chat.completions.create(
+                    model=self.config["translation"]["model"],
+                    messages=[
+                        {"role": "system", "content": "你是專業的字幕翻譯員，翻譯要簡潔、口語化、符合繁體中文習慣。請保持編號格式輸出。"},
+                        {"role": "user", "content": prompt}
+                    ],
+                    temperature=0.3
+                )
+                result = response.choices[0].message.content.strip()
+                break  # 成功則跳出重試迴圈
+            except Exception as e:
+                last_error = e
+                if attempt < max_retries - 1:
+                    wait_time = 2 ** attempt  # 指數退避: 1s, 2s, 4s
+                    print(f"    API 錯誤，{wait_time} 秒後重試 ({attempt + 1}/{max_retries}): {e}")
+                    time.sleep(wait_time)
+                else:
+                    raise last_error
 
         # 解析結果
         translations = []
@@ -121,8 +140,7 @@ class TranslationWorkflow:
             if not line:
                 continue
             # 移除編號 "1. ", "2. " 等
-            import re
-            match = re.match(r'^\d+\.\s*(.+)$', line)
+            match = TEXT_NUMBER_PATTERN.match(line)
             if match:
                 translations.append(match.group(1))
             elif line and not line[0].isdigit():
@@ -254,14 +272,6 @@ class TranslationWorkflow:
         # 導入 SRT 字幕
         style = self.config["subtitle_style"]
 
-        # 轉換顏色格式: "#FFFFFF" -> (1.0, 1.0, 1.0)
-        def hex_to_rgb(hex_color: str) -> tuple:
-            hex_color = hex_color.lstrip('#')
-            r = int(hex_color[0:2], 16) / 255.0
-            g = int(hex_color[2:4], 16) / 255.0
-            b = int(hex_color[4:6], 16) / 255.0
-            return (r, g, b)
-
         text_style = TextStyle(
             size=style["font_size"],
             color=hex_to_rgb(style["text_color"]),
@@ -332,8 +342,8 @@ class TranslationWorkflow:
                 "error": str(e)
             }
 
-    def batch_process(self):
-        """批量處理所有影片"""
+    def batch_process(self, max_workers: int = 2):
+        """批量處理所有影片（並行）"""
         video_exts = {".mp4", ".mov", ".avi", ".mkv", ".webm"}
         videos = [
             f for f in self.source_folder.iterdir()
@@ -344,15 +354,33 @@ class TranslationWorkflow:
             print(f"[警告] 沒有找到影片: {self.source_folder}")
             return []
 
-        print(f"找到 {len(videos)} 個影片待處理")
+        print(f"找到 {len(videos)} 個影片待處理（並行數: {max_workers}）")
 
         results = []
-        for video in videos:
-            result = self.process_video(video)
-            results.append(result)
+
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            # 提交所有任務
+            future_to_video = {
+                executor.submit(self.process_video, video): video
+                for video in videos
+            }
+
+            # 收集結果
+            for future in as_completed(future_to_video):
+                video = future_to_video[future]
+                try:
+                    result = future.result()
+                    results.append(result)
+                except Exception as e:
+                    print(f"[錯誤] {video.name}: {e}")
+                    results.append({
+                        "success": False,
+                        "video": video.name,
+                        "error": str(e)
+                    })
 
         # 統計結果
-        success = sum(1 for r in results if r["success"])
+        success = sum(1 for r in results if r.get("success"))
         print(f"\n{'='*50}")
         print(f"處理完成: {success}/{len(results)} 成功")
         print(f"{'='*50}")
