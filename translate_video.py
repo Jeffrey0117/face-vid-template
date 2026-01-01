@@ -237,6 +237,8 @@ class TranslationWorkflow:
         from pyJianYingDraft import DraftFolder, ScriptFile, Intro_type
         from pyJianYingDraft import trange, tim
         from pyJianYingDraft import VideoMaterial, TrackType, ClipSettings, TextStyle
+        from pyJianYingDraft.template_mode import ExtendMode
+        from pyJianYingDraft.time_util import Timerange
         from moviepy import VideoFileClip
 
         # 複製模板
@@ -266,18 +268,24 @@ class TranslationWorkflow:
         # 替換影片素材 (必須用絕對路徑)
         video_material = VideoMaterial(str(video_path.resolve()))
         video_track = script.get_imported_track(TrackType.video, index=0)
-        script.replace_material_by_seg(video_track, 0, video_material)
+
+        # 計算完整的素材時間範圍
+        if video_duration:
+            duration_us = int(video_duration * 1_000_000)  # 轉換為微秒
+            source_timerange = Timerange(0, duration_us)
+        else:
+            source_timerange = None  # 使用素材的完整時長
+
+        # 替換素材，使用 push_tail 模式確保完整長度
+        script.replace_material_by_seg(
+            video_track, 0, video_material,
+            source_timerange=source_timerange,
+            handle_extend=ExtendMode.push_tail
+        )
 
         # 更新草稿時長
         if video_duration:
-            duration_us = int(video_duration * 1_000_000)  # 轉換為微秒
             script.duration = duration_us
-            # 更新影片軌道的時長
-            for track in script.imported_tracks:
-                if track.track_type == TrackType.video:
-                    for seg in track.raw_data.get("segments", []):
-                        seg["source_timerange"] = {"start": 0, "duration": duration_us}
-                        seg["target_timerange"] = {"start": 0, "duration": duration_us}
 
         # 導入 SRT 字幕
         style = self.config["subtitle_style"]
