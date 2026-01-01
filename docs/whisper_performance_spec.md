@@ -106,6 +106,148 @@ pip install torch --index-url https://download.pytorch.org/whl/cu121
 
 ---
 
+## CPU 模式優化
+
+當系統沒有可用的 GPU 或 CUDA 環境時，Whisper 會自動回退到 CPU 模式運行。以下說明如何優化 CPU 模式下的效能表現。
+
+### CPU 多線程設定
+
+faster-whisper 提供兩個重要的 CPU 多線程參數：
+
+| 參數 | 說明 | 預設值 | 建議設定 |
+|------|------|--------|---------|
+| `cpu_threads` | 單一推論任務使用的線程數 | 4 | CPU 核心數的 50-75% |
+| `num_workers` | 並行處理的工作者數量 | 1 | 1-2（避免記憶體過載） |
+
+#### 使用方式
+
+```python
+from faster_whisper import WhisperModel
+
+# 根據 CPU 核心數設定線程
+import os
+cpu_count = os.cpu_count() or 4
+
+model = WhisperModel(
+    "medium",
+    device="cpu",
+    compute_type="int8",           # CPU 建議使用 int8 量化
+    cpu_threads=max(1, cpu_count // 2),  # 使用一半的核心數
+    num_workers=1                   # 單一工作者避免記憶體競爭
+)
+```
+
+#### 參數調優建議
+
+- **cpu_threads**：設定過高可能導致線程競爭，反而降低效能。建議從核心數的 50% 開始測試。
+- **num_workers**：多工作者會增加記憶體使用量，在記憶體有限的環境建議保持為 1。
+- **compute_type**：CPU 模式下務必使用 `int8` 量化，可大幅減少運算量與記憶體使用。
+
+### CPU 降級模型策略
+
+當 GPU 不可用時，建議自動降級使用較小的模型以維持可接受的處理速度：
+
+| 原始設定 | 降級模型 | 原因 |
+|---------|---------|------|
+| large-v3 | medium | large 模型在 CPU 上過慢 |
+| medium | small | 平衡速度與準確度 |
+| small | small | 維持原設定 |
+| base/tiny | 維持原設定 | 已是輕量模型 |
+
+#### 自動降級實作範例
+
+```python
+import torch
+from faster_whisper import WhisperModel
+
+def get_optimal_model(preferred_model: str = "medium") -> tuple[str, str, str]:
+    """
+    根據硬體環境自動選擇最佳模型配置
+
+    Returns:
+        tuple: (model_name, device, compute_type)
+    """
+    if torch.cuda.is_available():
+        # GPU 可用，使用偏好設定
+        return preferred_model, "cuda", "float16"
+
+    # CPU 模式：降級模型
+    cpu_model_map = {
+        "large-v3": "medium",
+        "large": "medium",
+        "medium": "small",
+    }
+
+    actual_model = cpu_model_map.get(preferred_model, preferred_model)
+
+    if actual_model != preferred_model:
+        print(f"[警告] GPU 不可用，模型從 {preferred_model} 降級為 {actual_model}")
+
+    return actual_model, "cpu", "int8"
+
+# 使用範例
+model_name, device, compute_type = get_optimal_model("medium")
+model = WhisperModel(model_name, device=device, compute_type=compute_type)
+```
+
+### CPU 多線程效能預估
+
+以下為不同線程數配置下的預估加速比（基準：單線程處理 10 分鐘影片）：
+
+| CPU 線程數 | 相對加速比 | 預估處理時間 | 備註 |
+|-----------|-----------|-------------|------|
+| 1 | 1.0x | ~25 分鐘 | 基準線 |
+| 2 | 1.7x | ~15 分鐘 | 明顯提升 |
+| 4 | 2.8x | ~9 分鐘 | **建議值（4核心CPU）** |
+| 8 | 4.0x | ~6 分鐘 | 適合 8 核心以上 CPU |
+| 16 | 5.5x | ~4.5 分鐘 | 高階 CPU，收益遞減 |
+
+> **注意事項**：
+> - 以上數據為使用 `small` 模型搭配 `int8` 量化的預估值
+> - 實際效能受 CPU 型號、記憶體頻寬、系統負載等因素影響
+> - 超過物理核心數的線程設定通常不會帶來額外加速
+
+### CPU 模式完整配置範例
+
+```python
+import os
+import torch
+from faster_whisper import WhisperModel
+
+def create_cpu_optimized_model():
+    """建立針對 CPU 優化的 Whisper 模型"""
+
+    cpu_count = os.cpu_count() or 4
+    optimal_threads = max(1, int(cpu_count * 0.75))
+
+    print(f"[CPU 模式] 偵測到 {cpu_count} 核心，使用 {optimal_threads} 線程")
+
+    model = WhisperModel(
+        "small",                    # CPU 建議使用 small 模型
+        device="cpu",
+        compute_type="int8",        # 強制使用 int8 量化
+        cpu_threads=optimal_threads,
+        num_workers=1
+    )
+
+    return model
+
+def transcribe_with_cpu_optimization(model, audio_path):
+    """使用 CPU 優化參數進行轉錄"""
+
+    segments, info = model.transcribe(
+        audio_path,
+        language="en",
+        word_timestamps=True,
+        vad_filter=True,            # 跳過靜音加速處理
+        condition_on_previous_text=False
+    )
+
+    return list(segments), info
+```
+
+---
+
 ## 快速檢測腳本
 
 ```python

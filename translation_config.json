@@ -21,6 +21,8 @@
   },
   "whisper": {
     "model": "medium",
+    "cpu_fallback_model": "small",
+    "cpu_threads": 0,
     "language": "en",
     "task": "transcribe",
     "temperature": 0,

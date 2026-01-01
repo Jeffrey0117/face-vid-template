@@ -61,8 +61,23 @@ class TranslationWorkflow:
             except Exception as e:
                 print(f"[Whisper] GPU 初始化失敗: {e}")
                 print(f"[Whisper] 降級到 CPU 模式...")
-                self.whisper_model = WhisperModel(model_name, device="cpu", compute_type="int8")
-                print("[Whisper] CPU 模式已啟用（速度較慢）")
+
+                # 讀取 CPU 專用設定
+                cpu_model = self.config["whisper"].get("cpu_fallback_model", model_name)
+                config_threads = self.config["whisper"].get("cpu_threads", 0)
+                cpu_threads = config_threads if config_threads > 0 else (os.cpu_count() or 4)
+
+                if cpu_model != model_name:
+                    print(f"[Whisper] 模型降級: {model_name} -> {cpu_model}")
+
+                self.whisper_model = WhisperModel(
+                    cpu_model,
+                    device="cpu",
+                    compute_type="int8",
+                    cpu_threads=cpu_threads,
+                    num_workers=2
+                )
+                print(f"[Whisper] CPU 模式已啟用（模型: {cpu_model}, {cpu_threads} 線程）")
 
         return self.whisper_model
 
