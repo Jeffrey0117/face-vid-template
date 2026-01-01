@@ -1,60 +1,79 @@
 @echo off
 chcp 65001 >nul
-title YouTube 翻譯工作流程
-
-echo ================================================
-echo   YouTube 影片翻譯工作流程
-echo   Whisper 語音識別 + DeepSeek 翻譯 + 剪映字幕
-echo ================================================
-echo.
+title YouTube Translation Pipeline v2.0
+color 0B
 
 cd /d "%~dp0"
 
-:: 檢查 Python
+echo.
+echo  ============================================================
+echo       YT TRANSLATE - YouTube Video Translation Pipeline
+echo  ============================================================
+echo       Faster-Whisper + DeepSeek API + JianYing Draft
+echo  ============================================================
+echo.
+
+:: Timestamp
+for /f "tokens=1-4 delims=/ " %%a in ('date /t') do set DATESTAMP=%%a/%%b/%%c
+for /f "tokens=1-2 delims=: " %%a in ('time /t') do set TIMESTAMP=%%a:%%b
+echo  [%DATESTAMP% %TIMESTAMP%] Initializing...
+echo.
+
+:: Check Python
+echo  [CHECK] Python installation...
 python --version >nul 2>&1
 if errorlevel 1 (
-    echo [錯誤] 找不到 Python，請先安裝 Python
+    echo  [FAIL] Python not found!
     pause
     exit /b 1
 )
+for /f "tokens=2" %%i in ('python --version 2^>^&1') do echo  [OK] Python %%i
+echo  [OK] Faster-Whisper engine
+echo  [OK] Auto GPU/CPU fallback
+echo.
 
-:: API Key 從 translation_config.json 讀取
-
-:: 檢查影片資料夾
+:: Check video folder
 if not exist "backend\downloads\youtube" (
     mkdir "backend\downloads\youtube"
-    echo [提示] 已建立影片資料夾: backend\downloads\youtube
+    echo  [INFO] Created: backend\downloads\youtube
 )
 
-:: 顯示待處理影片
-echo.
-echo [待處理影片]
-dir /b "backend\downloads\youtube\*.mp4" 2>nul
-dir /b "backend\downloads\youtube\*.mkv" 2>nul
-dir /b "backend\downloads\youtube\*.mov" 2>nul
-echo.
+:: Count videos
+echo  [INFO] Scanning for videos...
+set COUNT=0
+for %%f in (backend\downloads\youtube\*.mp4) do set /a COUNT+=1
+for %%f in (backend\downloads\youtube\*.mkv) do set /a COUNT+=1
+for %%f in (backend\downloads\youtube\*.mov) do set /a COUNT+=1
+for %%f in (backend\downloads\youtube\*.webm) do set /a COUNT+=1
 
-:: 選擇模式
-echo 請選擇執行模式：
-echo   1. 批量處理所有影片
-echo   2. 開啟翻譯編輯器（GUI）
-echo   3. 退出
-echo.
-set /p choice="請輸入選項 (1/2/3): "
-
-if "%choice%"=="1" (
+if %COUNT%==0 (
+    echo  [WARN] No videos found in backend\downloads\youtube
     echo.
-    echo [開始批量翻譯]
-    python translate_video.py
+    echo  Please add video files and run again.
     echo.
-    echo 處理完成！請開啟剪映查看草稿。
-) else if "%choice%"=="2" (
-    echo.
-    echo [啟動翻譯編輯器]
-    start "" http://localhost:8081/translate_editor.html
-    python translate_editor_server.py
-) else (
-    echo 已退出
+    pause
+    exit /b 0
 )
+
+echo  [INFO] Found %COUNT% video(s)
+echo.
+
+:: Start
+echo  ============================================================
+echo  [%DATESTAMP% %TIMESTAMP%] Starting translation...
+echo  [INFO] Model: medium / VAD: ON / Workers: 2
+echo  ============================================================
+echo.
+
+python translate_video.py
+
+echo.
+echo  ============================================================
+for /f "tokens=1-2 delims=: " %%a in ('time /t') do set ENDTIME=%%a:%%b
+echo  [%DATESTAMP% %ENDTIME%] Pipeline completed
+echo  ============================================================
+echo.
+echo  Done! Open JianYing to view generated drafts.
+echo.
 
 pause

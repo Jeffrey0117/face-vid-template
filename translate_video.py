@@ -49,11 +49,21 @@ class TranslationWorkflow:
         self.output_folder.mkdir(parents=True, exist_ok=True)
 
     def init_whisper(self):
-        """初始化 Whisper 模型"""
+        """初始化 Whisper 模型（自動降級：CUDA 失敗時使用 CPU）"""
         if self.whisper_model is None:
             model_name = self.config["whisper"]["model"]
-            print(f"[Whisper] 載入模型: {model_name}")
-            self.whisper_model = WhisperModel(model_name, device="cuda", compute_type="float16")
+
+            # 嘗試 GPU，失敗則降級到 CPU
+            try:
+                print(f"[Whisper] 載入模型: {model_name} (GPU)")
+                self.whisper_model = WhisperModel(model_name, device="cuda", compute_type="float16")
+                print("[Whisper] GPU 加速已啟用")
+            except Exception as e:
+                print(f"[Whisper] GPU 初始化失敗: {e}")
+                print(f"[Whisper] 降級到 CPU 模式...")
+                self.whisper_model = WhisperModel(model_name, device="cpu", compute_type="int8")
+                print("[Whisper] CPU 模式已啟用（速度較慢）")
+
         return self.whisper_model
 
     def init_deepseek(self):
@@ -227,7 +237,7 @@ class TranslationWorkflow:
         from pyJianYingDraft import DraftFolder, ScriptFile, Intro_type
         from pyJianYingDraft import trange, tim
         from pyJianYingDraft import VideoMaterial, TrackType, ClipSettings, TextStyle
-        from moviepy.editor import VideoFileClip
+        from moviepy import VideoFileClip
 
         # 複製模板
         draft_name = f"翻譯_{video_path.stem}"
@@ -258,14 +268,14 @@ class TranslationWorkflow:
         video_track = script.get_imported_track(TrackType.video, index=0)
         script.replace_material_by_seg(video_track, 0, video_material)
 
-        # 更新草稿時長（直接修改 JSON）
+        # 更新草稿時長
         if video_duration:
             duration_us = int(video_duration * 1_000_000)  # 轉換為微秒
-            script.data["duration"] = duration_us
+            script.duration = duration_us
             # 更新影片軌道的時長
-            for track in script.data.get("tracks", []):
-                if track.get("type") == "video":
-                    for seg in track.get("segments", []):
+            for track in script.imported_tracks:
+                if track.track_type == TrackType.video:
+                    for seg in track.raw_data.get("segments", []):
                         seg["source_timerange"] = {"start": 0, "duration": duration_us}
                         seg["target_timerange"] = {"start": 0, "duration": duration_us}
 
@@ -314,15 +324,21 @@ class TranslationWorkflow:
             }
 
         try:
-            # 1. 語音識別
-            segments = self.transcribe(video_path)
-
-            # 2. 翻譯
-            translated = self.translate_segments(segments)
-
-            # 3. 生成 SRT
+            # 檢查是否已有 SRT 檔案（跳過語音識別和翻譯）
             srt_path = self.output_folder / f"{video_path.stem}.srt"
-            self.generate_srt(translated, srt_path)
+
+            if srt_path.exists():
+                print(f"[快取] 發現已存在的 SRT: {srt_path.name}")
+                print(f"[跳過] 語音識別和翻譯（使用快取）")
+            else:
+                # 1. 語音識別
+                segments = self.transcribe(video_path)
+
+                # 2. 翻譯
+                translated = self.translate_segments(segments)
+
+                # 3. 生成 SRT
+                self.generate_srt(translated, srt_path)
 
             # 4. 生成剪映草稿
             draft_path = self.create_jianying_draft(video_path, srt_path)
