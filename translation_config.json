@@ -20,6 +20,8 @@
     "draft_template": "長片翻譯專案"
   },
   "whisper": {
+    "engine": "faster-whisper",
+    "whisper_cpp_model_path": "",
     "model": "medium",
     "cpu_fallback_model": "small",
     "cpu_threads": 0,

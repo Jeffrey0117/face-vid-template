@@ -37,6 +37,7 @@ class TranslationWorkflow:
     def __init__(self):
         self.config = load_config()
         self.whisper_model = None
+        self.whisper_engine = None
         self.deepseek_client = None
 
         # 路徑設定
@@ -52,11 +53,23 @@ class TranslationWorkflow:
         """初始化 Whisper 模型（自動降級：CUDA 失敗時使用 CPU）"""
         if self.whisper_model is None:
             model_name = self.config["whisper"]["model"]
+            engine = self.config["whisper"].get("engine", "faster-whisper")
 
+            # whisper-cpp 引擎
+            if engine == "whisper-cpp":
+                from pywhispercpp.model import Model as WhisperCppModel
+                print(f"[Whisper] 載入模型: {model_name} (whisper-cpp)")
+                self.whisper_model = WhisperCppModel(model_name)
+                self.whisper_engine = "whisper-cpp"
+                print("[Whisper] whisper-cpp 引擎已啟用")
+                return self.whisper_model
+
+            # faster-whisper 引擎（預設）
             # 嘗試 GPU，失敗則降級到 CPU
             try:
                 print(f"[Whisper] 載入模型: {model_name} (GPU)")
                 self.whisper_model = WhisperModel(model_name, device="cuda", compute_type="float16")
+                self.whisper_engine = "faster-whisper"
                 print("[Whisper] GPU 加速已啟用")
             except Exception as e:
                 print(f"[Whisper] GPU 初始化失敗: {e}")
@@ -77,6 +90,7 @@ class TranslationWorkflow:
                     cpu_threads=cpu_threads,
                     num_workers=2
                 )
+                self.whisper_engine = "faster-whisper"
                 print(f"[Whisper] CPU 模式已啟用（模型: {cpu_model}, {cpu_threads} 線程）")
 
         return self.whisper_model
@@ -100,6 +114,15 @@ class TranslationWorkflow:
         print(f"[1/4] 語音識別: {video_path.name}")
 
         model = self.init_whisper()
+
+        # whisper-cpp 引擎
+        if self.whisper_engine == "whisper-cpp":
+            segments_list = model.transcribe(str(video_path))
+            segments = [{"start": seg.t0/100, "end": seg.t1/100, "text": seg.text.strip()} for seg in segments_list]
+            print(f"    識別完成: {len(segments)} 個片段")
+            return segments
+
+        # faster-whisper 引擎（預設）
         segments_generator, info = model.transcribe(
             str(video_path),
             language=self.config["whisper"]["language"],
