@@ -58,273 +58,283 @@ HTML_TEMPLATE = """
         .file-input-wrapper input[type=file] { font-size: 100px; position: absolute; left: 0; top: 0; opacity: 0; cursor: pointer; }
         #selectedFile { margin: 10px 0; padding: 10px; background: #1a1a2e; border-radius: 5px; }
 
-        /* ===== Windows 98 風格資料夾瀏覽器 ===== */
+        /* ===== OS.js 風格資料夾瀏覽器 ===== */
         .folder-modal {
             display: none;
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0,0,0,0.4);
             z-index: 1000;
             align-items: center;
             justify-content: center;
         }
 
-        /* Windows 98 視窗 */
-        .win98-window {
-            background: #c0c0c0;
-            border: none;
-            box-shadow:
-                inset -1px -1px #0a0a0a,
-                inset 1px 1px #ffffff,
-                inset -2px -2px #808080,
-                inset 2px 2px #dfdfdf;
-            font-family: "Microsoft Sans Serif", "Segoe UI", Tahoma, sans-serif;
-            font-size: 11px;
-            width: 500px;
-            max-height: 80vh;
+        /* OS.js 現代視窗 */
+        .osjs-window {
+            background: #ebebeb;
+            border: 1px solid #716c6c;
+            border-radius: 6px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3), 0 2px 8px rgba(0,0,0,0.2);
+            font-family: 'Roboto', 'Segoe UI', 'Microsoft JhengHei', sans-serif;
+            font-size: 13px;
+            color: #242424;
+            width: 580px;
+            max-height: 85vh;
             display: flex;
             flex-direction: column;
+            overflow: hidden;
         }
 
-        /* 標題列 */
-        .win98-titlebar {
-            background: linear-gradient(90deg, #000080, #1084d0);
-            padding: 3px 4px;
+        /* 標題列 - macOS 風格按鈕 */
+        .osjs-titlebar {
+            background: linear-gradient(to bottom, #f8f8f8 0%, #e8e8e8 100%);
+            border-bottom: 1px solid #c1c1c1;
+            padding: 8px 12px;
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 8px;
             user-select: none;
+            min-height: 36px;
         }
-        .win98-titlebar-icon {
-            width: 16px;
-            height: 16px;
-            font-size: 14px;
-        }
-        .win98-titlebar-text {
-            flex: 1;
-            color: white;
-            font-weight: bold;
-            font-size: 12px;
-            letter-spacing: 0;
-        }
-        .win98-titlebar-btn {
-            width: 16px;
-            height: 14px;
-            background: #c0c0c0;
-            border: none;
-            box-shadow:
-                inset -1px -1px #0a0a0a,
-                inset 1px 1px #ffffff,
-                inset -2px -2px #808080,
-                inset 2px 2px #dfdfdf;
-            font-size: 10px;
-            font-weight: bold;
+        .osjs-titlebar-buttons {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            padding: 0;
-            margin-left: 2px;
+            gap: 8px;
         }
-        .win98-titlebar-btn:active {
-            box-shadow:
-                inset 1px 1px #0a0a0a,
-                inset -1px -1px #ffffff;
+        .osjs-titlebar-btn {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 1px solid rgba(102,102,102,0.5);
+            cursor: pointer;
+            transition: all 0.1s ease-out;
+        }
+        .osjs-titlebar-btn.close {
+            background: linear-gradient(to bottom, #e56c5c 0%, #f09c8d 100%);
+        }
+        .osjs-titlebar-btn.close:hover {
+            background: linear-gradient(to bottom, #f09c8d 0%, #e56c5c 100%);
+        }
+        .osjs-titlebar-btn.maximize {
+            background: linear-gradient(to bottom, #8dd22b 0%, #b1ec70 100%);
+        }
+        .osjs-titlebar-btn.minimize {
+            background: linear-gradient(to bottom, #f9c435 0%, #fdd675 100%);
+        }
+        .osjs-titlebar-icon {
+            font-size: 16px;
+            margin-left: 4px;
+        }
+        .osjs-titlebar-text {
+            flex: 1;
+            text-align: center;
+            font-weight: 500;
+            font-size: 13px;
+            color: #242424;
         }
 
         /* 工具列 / 路徑列 */
-        .win98-toolbar {
-            background: #c0c0c0;
-            padding: 4px 6px;
-            border-bottom: 1px solid #808080;
+        .osjs-toolbar {
+            background: #ebebeb;
+            padding: 8px 12px;
+            border-bottom: 1px solid #c1c1c1;
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 8px;
         }
-        .win98-toolbar-label {
-            color: #000;
-            font-size: 11px;
+        .osjs-toolbar-label {
+            color: #242424;
+            font-size: 13px;
+            font-weight: 500;
         }
-        .win98-address-box {
+        .osjs-address-box {
             flex: 1;
-            background: white;
-            border: none;
-            box-shadow:
-                inset -1px -1px #ffffff,
-                inset 1px 1px #808080,
-                inset -2px -2px #dfdfdf,
-                inset 2px 2px #0a0a0a;
-            padding: 3px 4px;
-            font-size: 11px;
+            background: #fff;
+            border: 1px solid #c1c1c1;
+            border-radius: 4px;
+            padding: 6px 10px;
+            font-size: 13px;
             font-family: inherit;
-            color: #000;
+            color: #242424;
+            outline: none;
+            transition: border-color 0.1s ease-out;
+        }
+        .osjs-address-box:focus {
+            border-color: rgba(0,0,200,0.5);
+        }
+        .osjs-toolbar-btn {
+            background: linear-gradient(to bottom, #f8f8f8 0%, #f4f4f4 100%);
+            border: 1px solid #c1c1c1;
+            border-radius: 4px;
+            padding: 6px 10px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.1s ease-out;
+        }
+        .osjs-toolbar-btn:hover {
+            background: linear-gradient(to bottom, #fff 0%, #f8f8f8 100%);
+        }
+        .osjs-toolbar-btn:active {
+            background: linear-gradient(to bottom, #f4f4f4 0%, #f8f8f8 100%);
         }
 
         /* 主要內容區 - 雙欄 */
-        .win98-content {
+        .osjs-content {
             display: flex;
             flex: 1;
             min-height: 0;
-            background: #c0c0c0;
-            padding: 6px;
-            gap: 6px;
+            background: #d9d9d9;
+            padding: 8px;
+            gap: 8px;
         }
 
         /* 左側 Tree View */
-        .win98-tree {
-            width: 160px;
-            background: white;
-            border: none;
-            box-shadow:
-                inset -1px -1px #ffffff,
-                inset 1px 1px #808080,
-                inset -2px -2px #dfdfdf,
-                inset 2px 2px #0a0a0a;
+        .osjs-tree {
+            width: 180px;
+            background: #fff;
+            border: 1px solid #c1c1c1;
+            border-radius: 4px;
             overflow-y: auto;
-            max-height: 300px;
-            font-size: 11px;
-            color: #000;
+            max-height: 340px;
+            font-size: 13px;
+            color: #242424;
         }
-        .win98-tree ul {
+        .osjs-tree ul {
             list-style: none;
             margin: 0;
             padding: 0 0 0 16px;
         }
-        .win98-tree > ul {
+        .osjs-tree > ul {
             padding: 4px;
         }
-        .win98-tree li {
-            padding: 2px 0;
+        .osjs-tree li {
+            padding: 4px 8px;
             cursor: pointer;
             white-space: nowrap;
+            border-radius: 3px;
+            transition: all 0.1s ease-out;
         }
-        .win98-tree li:hover {
-            background: #000080;
-            color: white;
+        .osjs-tree li:hover {
+            background: rgba(0,0,200,0.1);
         }
-        .win98-tree li.selected {
-            background: #000080;
-            color: white;
+        .osjs-tree li.selected {
+            background: rgba(0,0,200,0.9);
+            color: #fff;
         }
-        .win98-tree-icon {
-            margin-right: 4px;
-        }
-        .win98-tree details {
-            margin: 0;
-        }
-        .win98-tree summary {
-            cursor: pointer;
-            padding: 2px 0;
-            list-style: none;
-        }
-        .win98-tree summary::-webkit-details-marker {
-            display: none;
-        }
-        .win98-tree summary::before {
-            content: "📁";
-            margin-right: 4px;
-        }
-        .win98-tree details[open] > summary::before {
-            content: "📂";
+        .osjs-tree-icon {
+            margin-right: 6px;
         }
 
         /* 右側檔案列表 */
-        .win98-filelist {
+        .osjs-filelist {
             flex: 1;
-            background: white;
-            border: none;
-            box-shadow:
-                inset -1px -1px #ffffff,
-                inset 1px 1px #808080,
-                inset -2px -2px #dfdfdf,
-                inset 2px 2px #0a0a0a;
+            background: #fff;
+            border: 1px solid #c1c1c1;
+            border-radius: 4px;
             overflow-y: auto;
-            max-height: 300px;
+            max-height: 340px;
             padding: 4px;
         }
-        .win98-file-item {
+        .osjs-file-item {
             display: flex;
             align-items: center;
-            gap: 6px;
-            padding: 2px 4px;
+            gap: 8px;
+            padding: 6px 10px;
             cursor: pointer;
-            color: #000;
-            font-size: 11px;
+            color: #242424;
+            font-size: 13px;
+            border-radius: 3px;
+            transition: all 0.1s ease-out;
         }
-        .win98-file-item:hover {
-            background: #000080;
-            color: white;
+        .osjs-file-item:nth-child(even) {
+            background: #f9f9f9;
         }
-        .win98-file-item.selected {
-            background: #000080;
-            color: white;
+        .osjs-file-item:hover {
+            background: rgba(0,0,200,0.1);
         }
-        .win98-file-icon {
-            font-size: 16px;
+        .osjs-file-item.selected {
+            background: rgba(0,0,200,0.9);
+            color: #fff;
+        }
+        .osjs-file-icon {
+            font-size: 18px;
         }
 
         /* 狀態列 */
-        .win98-statusbar {
-            background: #c0c0c0;
-            border-top: 1px solid #808080;
-            padding: 2px 6px;
-            font-size: 11px;
-            color: #000;
+        .osjs-statusbar {
+            background: #ebebeb;
+            border-top: 1px solid #c1c1c1;
+            padding: 6px 12px;
+            font-size: 12px;
+            color: #666;
             display: flex;
-            gap: 8px;
-        }
-        .win98-statusbar-field {
-            box-shadow:
-                inset -1px -1px #ffffff,
-                inset 1px 1px #808080;
-            padding: 2px 4px;
-            flex: 1;
+            gap: 12px;
         }
 
         /* 底部按鈕區 */
-        .win98-footer {
-            background: #c0c0c0;
-            padding: 8px;
+        .osjs-footer {
+            background: #ebebeb;
+            padding: 12px;
             display: flex;
             justify-content: flex-end;
-            gap: 6px;
+            gap: 8px;
+            border-top: 1px solid #c1c1c1;
         }
-        .win98-btn {
-            min-width: 75px;
-            padding: 4px 12px;
-            background: #c0c0c0;
-            border: none;
-            box-shadow:
-                inset -1px -1px #0a0a0a,
-                inset 1px 1px #ffffff,
-                inset -2px -2px #808080,
-                inset 2px 2px #dfdfdf;
-            font-size: 11px;
+        .osjs-btn {
+            min-width: 80px;
+            padding: 8px 16px;
+            background: linear-gradient(to bottom, #f8f8f8 0%, #f4f4f4 100%);
+            border: 1px solid #c1c1c1;
+            border-radius: 4px;
+            font-size: 13px;
             font-family: inherit;
             cursor: pointer;
-            color: #000;
+            color: #242424;
+            transition: all 0.1s ease-out;
         }
-        .win98-btn:hover {
-            background: #d4d4d4;
+        .osjs-btn:hover {
+            background: linear-gradient(to bottom, #fff 0%, #f8f8f8 100%);
+            border-color: #999;
         }
-        .win98-btn:active {
-            box-shadow:
-                inset 1px 1px #0a0a0a,
-                inset -1px -1px #ffffff,
-                inset 2px 2px #808080,
-                inset -2px -2px #dfdfdf;
-            padding: 5px 11px 3px 13px;
+        .osjs-btn:active {
+            background: linear-gradient(to bottom, #f4f4f4 0%, #f8f8f8 100%);
         }
-        .win98-btn.default {
-            border: 1px solid #000;
+        .osjs-btn.primary {
+            background: linear-gradient(to bottom, rgba(0,0,200,0.8) 0%, rgba(0,0,200,0.9) 100%);
+            border-color: rgba(0,0,150,0.8);
+            color: #fff;
+        }
+        .osjs-btn.primary:hover {
+            background: linear-gradient(to bottom, rgba(0,0,200,0.9) 0%, rgba(0,0,200,1) 100%);
         }
 
         /* 空狀態 */
-        .win98-empty {
+        .osjs-empty {
             text-align: center;
             padding: 40px 20px;
-            color: #808080;
-            font-size: 11px;
+            color: #888;
+            font-size: 13px;
+        }
+
+        /* 載入動畫 */
+        .osjs-loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            color: #666;
+        }
+        .osjs-loading::after {
+            content: '';
+            width: 20px;
+            height: 20px;
+            border: 2px solid #c1c1c1;
+            border-top-color: rgba(0,0,200,0.8);
+            border-radius: 50%;
+            animation: osjs-spin 0.8s linear infinite;
+            margin-left: 10px;
+        }
+        @keyframes osjs-spin {
+            to { transform: rotate(360deg); }
         }
     </style>
 </head>
@@ -336,42 +346,47 @@ HTML_TEMPLATE = """
         <button class="tab" onclick="showTab('convert')">草稿轉換</button>
     </div>
 
-    <!-- Windows 98 風格資料夾瀏覽器 -->
+    <!-- OS.js 風格資料夾瀏覽器 -->
     <div id="folderModal" class="folder-modal">
-        <div class="win98-window">
-            <!-- 標題列 -->
-            <div class="win98-titlebar">
-                <span class="win98-titlebar-icon">📁</span>
-                <span class="win98-titlebar-text">瀏覽資料夾</span>
-                <button class="win98-titlebar-btn" onclick="closeFolderModal()">×</button>
+        <div class="osjs-window">
+            <!-- 標題列 - macOS 風格按鈕 -->
+            <div class="osjs-titlebar">
+                <div class="osjs-titlebar-buttons">
+                    <div class="osjs-titlebar-btn close" onclick="closeFolderModal()"></div>
+                    <div class="osjs-titlebar-btn minimize"></div>
+                    <div class="osjs-titlebar-btn maximize"></div>
+                </div>
+                <span class="osjs-titlebar-icon">📁</span>
+                <span class="osjs-titlebar-text">瀏覽資料夾</span>
             </div>
 
-            <!-- 工具列 - 路徑顯示 -->
-            <div class="win98-toolbar">
-                <span class="win98-toolbar-label">位置(&amp;L):</span>
-                <input type="text" id="addressBox" class="win98-address-box" readonly>
+            <!-- 工具列 - 路徑與導航 -->
+            <div class="osjs-toolbar">
+                <button class="osjs-toolbar-btn" onclick="goBack()" title="上一層">⬆️</button>
+                <button class="osjs-toolbar-btn" onclick="browseTo('')" title="根目錄">🏠</button>
+                <input type="text" id="addressBox" class="osjs-address-box" placeholder="選擇路徑..." readonly>
             </div>
 
             <!-- 主要內容 -->
-            <div class="win98-content">
+            <div class="osjs-content">
                 <!-- 左側樹狀目錄 -->
-                <div class="win98-tree" id="treeView">
+                <div class="osjs-tree" id="treeView">
                     <ul id="treeRoot"></ul>
                 </div>
 
                 <!-- 右側資料夾列表 -->
-                <div class="win98-filelist" id="folderList"></div>
+                <div class="osjs-filelist" id="folderList"></div>
             </div>
 
             <!-- 狀態列 -->
-            <div class="win98-statusbar">
-                <span class="win98-statusbar-field" id="statusText">請選擇資料夾</span>
+            <div class="osjs-statusbar">
+                <span id="statusText">請選擇資料夾</span>
             </div>
 
             <!-- 按鈕區 -->
-            <div class="win98-footer">
-                <button class="win98-btn default" onclick="confirmFolder()">確定</button>
-                <button class="win98-btn" onclick="closeFolderModal()">取消</button>
+            <div class="osjs-footer">
+                <button class="osjs-btn" onclick="closeFolderModal()">取消</button>
+                <button class="osjs-btn primary" onclick="confirmFolder()">選擇</button>
             </div>
         </div>
     </div>
@@ -472,19 +487,38 @@ function showTab(tabId) {
     if (tabId === 'convert') loadDrafts();
 }
 
-// ===== Windows 98 風格資料夾瀏覽器 =====
+// ===== OS.js 風格資料夾瀏覽器 =====
 var currentBrowsePath = '';
+var pathHistory = [];  // 瀏覽歷史
 var videoFiles = [];
 var treeData = {};  // 快取樹狀資料
 
 function openFolderBrowser() {
     document.getElementById('folderModal').style.display = 'flex';
+    pathHistory = [];
     initTreeView();
     browseTo('');
 }
 
 function closeFolderModal() {
     document.getElementById('folderModal').style.display = 'none';
+}
+
+// 上一層
+function goBack() {
+    if (!currentBrowsePath) return;
+    var parts = currentBrowsePath.replace(/\\/g, '/').split('/').filter(Boolean);
+    if (parts.length <= 1) {
+        browseTo('');
+    } else {
+        parts.pop();
+        var newPath = parts.join('/');
+        // Windows 磁碟機處理
+        if (parts.length === 1 && parts[0].endsWith(':')) {
+            newPath = parts[0] + '/';
+        }
+        browseTo(newPath);
+    }
 }
 
 // 跳脫 JS 字串中的特殊字元
@@ -499,11 +533,11 @@ function initTreeView() {
         .then(data => {
             if (data.error) return;
             var html = '<li class="selected" onclick="browseTo(\\'\\')">' +
-                       '<span class="win98-tree-icon">🖥️</span>我的電腦</li>';
+                       '<span class="osjs-tree-icon">🖥️</span>我的電腦</li>';
             for (var i = 0; i < data.folders.length; i++) {
                 var f = data.folders[i];
                 html += '<li onclick="browseTo(\\'' + escapeJS(f.path) + '\\'); event.stopPropagation();">' +
-                        '<span class="win98-tree-icon">💿</span>' + f.name + '</li>';
+                        '<span class="osjs-tree-icon">💿</span>' + f.name + '</li>';
             }
             document.getElementById('treeRoot').innerHTML = html;
         });
@@ -517,18 +551,18 @@ function browseTo(path) {
     document.getElementById('addressBox').value = path || '我的電腦';
 
     // 更新狀態列
-    document.getElementById('statusText').textContent = path ? '已選擇: ' + path : '請選擇資料夾';
+    document.getElementById('statusText').textContent = path ? '📂 ' + path : '請選擇資料夾';
 
     // 載入中
     document.getElementById('folderList').innerHTML =
-        '<div class="win98-empty">載入中...</div>';
+        '<div class="osjs-loading">載入中</div>';
 
     fetch('/api/browse?path=' + encodeURIComponent(path))
         .then(r => r.json())
         .then(data => {
             if (data.error) {
                 document.getElementById('folderList').innerHTML =
-                    '<div class="win98-empty">⚠️ ' + data.error + '</div>';
+                    '<div class="osjs-empty">⚠️ ' + data.error + '</div>';
                 return;
             }
 
@@ -536,14 +570,14 @@ function browseTo(path) {
             var isDriveList = !path;
 
             if (data.folders.length === 0) {
-                html = '<div class="win98-empty">此資料夾沒有子資料夾</div>';
+                html = '<div class="osjs-empty">📭 此資料夾沒有子資料夾</div>';
             } else {
                 for (var i = 0; i < data.folders.length; i++) {
                     var f = data.folders[i];
                     var icon = isDriveList ? '💿' : '📁';
 
-                    html += '<div class="win98-file-item" ondblclick="browseTo(\\'' + escapeJS(f.path) + '\\')" onclick="selectFolder(this, \\'' + escapeJS(f.path) + '\\')">';
-                    html += '<span class="win98-file-icon">' + icon + '</span>';
+                    html += '<div class="osjs-file-item" ondblclick="browseTo(\\'' + escapeJS(f.path) + '\\')" onclick="selectFolder(this, \\'' + escapeJS(f.path) + '\\')">';
+                    html += '<span class="osjs-file-icon">' + icon + '</span>';
                     html += '<span>' + f.name + '</span>';
                     html += '</div>';
                 }
@@ -556,14 +590,14 @@ function browseTo(path) {
         })
         .catch(e => {
             document.getElementById('folderList').innerHTML =
-                '<div class="win98-empty">❌ 載入失敗: ' + e + '</div>';
+                '<div class="osjs-empty">❌ 載入失敗: ' + e + '</div>';
         });
 }
 
 // 選擇資料夾（單擊）
 function selectFolder(elem, path) {
     // 移除其他選中狀態
-    document.querySelectorAll('.win98-file-item').forEach(function(el) {
+    document.querySelectorAll('.osjs-file-item').forEach(function(el) {
         el.classList.remove('selected');
     });
     // 設定當前選中
@@ -572,7 +606,7 @@ function selectFolder(elem, path) {
 
     // 更新位址列和狀態列
     document.getElementById('addressBox').value = path;
-    document.getElementById('statusText').textContent = '已選擇: ' + path;
+    document.getElementById('statusText').textContent = '📂 已選擇: ' + path;
 }
 
 // 更新樹狀目錄選中狀態
