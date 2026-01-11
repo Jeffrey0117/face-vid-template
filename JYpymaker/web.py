@@ -54,190 +54,315 @@ HTML_TEMPLATE = """
         .ui-switch label { cursor: pointer; padding: 4px 8px; border-radius: 12px; transition: all 0.2s; }
 
         /* ============================================
-           macOS 風格 - 亮色 Glassmorphism
-           參考 macOS Big Sur 設計語言
+           標準深色風格 (預設)
+           ============================================ */
+        body.ui-default {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft JhengHei', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            background-attachment: fixed;
+            color: #eee;
+            min-height: 100vh;
+        }
+        body.ui-default .main-container {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            backdrop-filter: blur(10px);
+        }
+        body.ui-default h1 {
+            color: #fff;
+            text-align: center;
+            font-weight: 600;
+            font-size: 20px;
+            margin: 0 0 20px 0;
+        }
+        body.ui-default .ui-switch {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        body.ui-default .ui-switch span { color: #fff; }
+        body.ui-default .ui-switch label { color: rgba(255, 255, 255, 0.6); }
+        body.ui-default .ui-switch label:hover { color: #fff; }
+        body.ui-default .ui-switch input:checked + label {
+            background: #4a90d9;
+            color: #fff;
+        }
+        body.ui-default .tabs {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 4px;
+        }
+        body.ui-default .tab {
+            padding: 8px 20px;
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.6);
+            cursor: pointer;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+        body.ui-default .tab:hover { color: #fff; }
+        body.ui-default .tab.active {
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
+        }
+        body.ui-default .tab-content {
+            background: transparent;
+            padding: 20px 0;
+        }
+        body.ui-default .section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        body.ui-default h3 { color: #fff; margin: 0 0 12px 0; font-size: 14px; }
+        body.ui-default input[type="text"], body.ui-default select {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #fff;
+            padding: 10px 12px;
+            border-radius: 8px;
+            width: 100%;
+        }
+        body.ui-default input[type="text"]::placeholder { color: rgba(255, 255, 255, 0.4); }
+        body.ui-default button {
+            padding: 8px 16px;
+            font-size: 14px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        body.ui-default button:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        body.ui-default .btn-green {
+            background: linear-gradient(135deg, #00b894 0%, #00a885 100%);
+            border: none;
+        }
+        body.ui-default .btn-green:hover {
+            background: linear-gradient(135deg, #00a885 0%, #009874 100%);
+        }
+        body.ui-default .draft {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        body.ui-default .draft:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+        body.ui-default #result, body.ui-default #transcribeResult {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            color: #eee;
+        }
+        body.ui-default .win98-titlebar { display: none; }
+
+        /* ============================================
+           macOS Big Sur 風格
+           參考 Puppertino Framework 設計語言
            ============================================ */
         body.ui-modern {
-            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', 'Microsoft JhengHei', sans-serif;
-            /* macOS 風格漸層桌布 - 亮色系 */
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', 'Microsoft JhengHei', sans-serif;
+            /* 簡潔灰藍漸層 */
+            background: linear-gradient(145deg, #667eea 0%, #764ba2 100%);
             background-attachment: fixed;
             color: #1d1d1f;
             min-height: 100vh;
         }
         body.ui-modern .main-container {
-            /* Glassmorphism - 亮色毛玻璃 */
-            background: rgba(255, 255, 255, 0.75);
-            backdrop-filter: blur(20px) saturate(180%);
-            -webkit-backdrop-filter: blur(20px) saturate(180%);
-            border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-            padding: 28px;
+            /* macOS 視窗效果 */
+            background: linear-gradient(180deg, #f6f6f6 0%, #ededed 100%);
+            border-radius: 12px;
+            border: 0.5px solid rgba(0, 0, 0, 0.2);
+            box-shadow:
+                0 22px 70px 4px rgba(0, 0, 0, 0.56),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9),
+                0 0 0 0.5px rgba(0, 0, 0, 0.1);
+            padding: 20px;
         }
         body.ui-modern h1 {
             color: #1d1d1f;
             text-align: center;
             font-weight: 600;
-            font-size: 26px;
-            margin-bottom: 24px;
-            letter-spacing: -0.5px;
+            font-size: 16px;
+            margin: 0 0 20px 0;
+            letter-spacing: -0.2px;
         }
         body.ui-modern .ui-switch {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(12px) saturate(150%);
-            -webkit-backdrop-filter: blur(12px) saturate(150%);
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.95);
+            border: 0.5px solid rgba(0, 0, 0, 0.12);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
         }
-        body.ui-modern .ui-switch span { color: #666; }
-        body.ui-modern .ui-switch label { color: #666; }
-        body.ui-modern .ui-switch label:hover { color: #333; }
+        body.ui-modern .ui-switch span { color: #1d1d1f; font-weight: 500; }
+        body.ui-modern .ui-switch label { color: #666; font-size: 11px; }
+        body.ui-modern .ui-switch label:hover { color: #1d1d1f; }
         body.ui-modern .ui-switch input:checked + label {
             background: #007aff;
             color: #fff;
         }
+        /* 內容區域 padding */
         body.ui-modern .tabs {
-            background: rgba(0, 0, 0, 0.04);
-            border-radius: 10px;
-            padding: 4px;
-            gap: 4px;
+            margin: 0;
+            background: rgba(0, 0, 0, 0.06);
+            border-radius: 8px;
+            padding: 3px;
+            gap: 2px;
         }
         body.ui-modern .tab {
-            padding: 10px 22px;
+            padding: 6px 18px;
             background: transparent;
             border: none;
-            color: #666;
+            color: rgba(0, 0, 0, 0.5);
             cursor: pointer;
-            border-radius: 8px;
-            font-size: 13px;
+            border-radius: 6px;
+            font-size: 12px;
             font-weight: 500;
-            transition: all 0.2s ease;
+            transition: all 0.15s ease;
         }
         body.ui-modern .tab:hover {
-            background: rgba(0, 0, 0, 0.06);
-            color: #333;
+            color: rgba(0, 0, 0, 0.7);
         }
         body.ui-modern .tab.active {
             background: #fff;
             color: #1d1d1f;
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 0 0 0.5px rgba(0, 0, 0, 0.04);
         }
         body.ui-modern .tab-content {
-            background: rgba(255, 255, 255, 0.5);
-            border-radius: 12px;
-            border: 1px solid rgba(0, 0, 0, 0.06);
-            margin-top: 8px;
+            background: transparent;
+            border-radius: 0;
+            border: none;
+            margin: 0;
+            padding: 20px;
         }
         body.ui-modern .section {
-            background: rgba(255, 255, 255, 0.6);
-            border-radius: 10px;
+            background: #fff;
+            border-radius: 8px;
             padding: 16px;
             margin-bottom: 16px;
-            border: 1px solid rgba(0, 0, 0, 0.06);
+            border: 0.5px solid rgba(0, 0, 0, 0.1);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
         }
         body.ui-modern .section h3 {
             color: #1d1d1f;
             font-weight: 600;
-            font-size: 15px;
-            margin-bottom: 14px;
-            letter-spacing: -0.3px;
+            font-size: 13px;
+            margin-bottom: 12px;
+            letter-spacing: -0.08px;
         }
         body.ui-modern label {
             display: block;
             margin: 10px 0 5px;
-            color: #666;
-            font-size: 12px;
+            color: rgba(0, 0, 0, 0.5);
+            font-size: 11px;
             font-weight: 500;
         }
         body.ui-modern input[type="text"], body.ui-modern select {
             width: 100%;
-            padding: 10px 14px;
-            border: 1px solid rgba(0, 0, 0, 0.12);
+            padding: 7px 10px;
+            border: 0.5px solid rgba(0, 0, 0, 0.15);
             background: #fff;
             color: #1d1d1f;
-            border-radius: 8px;
-            font-size: 14px;
-            transition: all 0.2s ease;
+            border-radius: 6px;
+            font-size: 13px;
+            transition: all 0.15s ease;
+            box-shadow: inset 0 0.5px 1px rgba(0, 0, 0, 0.05);
         }
         body.ui-modern input[type="text"]:focus, body.ui-modern select:focus {
-            border-color: #007aff;
+            border-color: rgba(0, 122, 255, 0.6);
             outline: none;
-            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.2);
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.25), inset 0 0.5px 1px rgba(0, 0, 0, 0.05);
         }
         body.ui-modern input[type="text"]::placeholder {
-            color: #999;
+            color: rgba(0, 0, 0, 0.3);
         }
         body.ui-modern button {
-            padding: 10px 20px;
+            padding: 6px 14px;
             font-size: 13px;
-            font-weight: 500;
-            background: #007aff;
-            color: #fff;
-            border: none;
-            border-radius: 8px;
+            font-weight: 400;
+            background: linear-gradient(180deg, #fff 0%, #f5f5f5 100%);
+            color: #1d1d1f;
+            border: 0.5px solid rgba(0, 0, 0, 0.15);
+            border-radius: 6px;
             cursor: pointer;
             margin: 4px;
-            transition: all 0.15s ease;
+            transition: all 0.1s ease;
+            box-shadow: 0 0.5px 1px rgba(0, 0, 0, 0.1);
         }
         body.ui-modern button:hover {
-            background: #0066d6;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
+            background: linear-gradient(180deg, #f8f8f8 0%, #e8e8e8 100%);
         }
         body.ui-modern button:active {
-            transform: translateY(0);
+            background: linear-gradient(180deg, #e0e0e0 0%, #d0d0d0 100%);
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
         }
         body.ui-modern .btn-green {
-            background: #34c759;
+            background: linear-gradient(180deg, #34c759 0%, #28a745 100%);
+            color: #fff;
+            border-color: rgba(0, 0, 0, 0.2);
+            text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
         }
         body.ui-modern .btn-green:hover {
-            background: #2db84d;
-            box-shadow: 0 4px 12px rgba(52, 199, 89, 0.3);
+            background: linear-gradient(180deg, #40d865 0%, #34c759 100%);
+        }
+        body.ui-modern .btn-green:active {
+            background: linear-gradient(180deg, #28a745 0%, #218838 100%);
         }
         body.ui-modern .draft {
-            padding: 12px 14px;
-            margin: 6px 0;
+            padding: 10px 12px;
+            margin: 4px 0;
             background: #fff;
-            border-radius: 8px;
-            border: 1px solid rgba(0, 0, 0, 0.08);
+            border-radius: 6px;
+            border: 0.5px solid rgba(0, 0, 0, 0.1);
             color: #1d1d1f;
-            transition: all 0.15s ease;
+            transition: all 0.1s ease;
+            font-size: 13px;
         }
         body.ui-modern .draft:hover {
             background: #f5f5f7;
-            border-color: rgba(0, 0, 0, 0.12);
         }
-        body.ui-modern .draft input { margin-right: 10px; }
+        body.ui-modern .draft input { margin-right: 8px; }
         body.ui-modern .draft-list {
             background: rgba(0, 0, 0, 0.03);
-            border-radius: 8px;
-            border: 1px solid rgba(0, 0, 0, 0.06);
+            border-radius: 6px;
+            border: 0.5px solid rgba(0, 0, 0, 0.08);
             padding: 4px;
         }
         body.ui-modern .success {
-            background: rgba(52, 199, 89, 0.15);
-            color: #248a3d;
-            border-radius: 10px;
-            border: 1px solid rgba(52, 199, 89, 0.3);
+            background: #e8f8ed;
+            color: #1e7e34;
+            border-radius: 8px;
+            border: 0.5px solid rgba(40, 167, 69, 0.3);
         }
         body.ui-modern .error {
-            background: rgba(255, 59, 48, 0.15);
-            color: #d70015;
-            border-radius: 10px;
-            border: 1px solid rgba(255, 59, 48, 0.3);
+            background: #fce8e6;
+            color: #c5221f;
+            border-radius: 8px;
+            border: 0.5px solid rgba(220, 53, 69, 0.3);
         }
         body.ui-modern .info {
-            background: rgba(0, 122, 255, 0.15);
+            background: #e8f4fd;
             color: #0066cc;
-            border-radius: 10px;
-            border: 1px solid rgba(0, 122, 255, 0.3);
+            border-radius: 8px;
+            border: 0.5px solid rgba(0, 122, 255, 0.3);
         }
         body.ui-modern .progress {
-            background: rgba(175, 82, 222, 0.15);
-            color: #8944ab;
-            border-radius: 10px;
-            border: 1px solid rgba(175, 82, 222, 0.3);
+            background: #f3e8fd;
+            color: #6f42c1;
+            border-radius: 8px;
+            border: 0.5px solid rgba(111, 66, 193, 0.3);
         }
         body.ui-modern .win98-titlebar { display: none; }
 
@@ -777,11 +902,13 @@ HTML_TEMPLATE = """
         .win98-loading { text-align: center; padding: 40px 20px; color: #808080; font-size: 11px; }
     </style>
 </head>
-<body class="ui-modern">
+<body class="ui-default">
     <!-- UI 風格切換 -->
     <div class="ui-switch">
         <span>UI:</span>
-        <input type="radio" name="uiStyle" id="uiModern" value="modern" checked onchange="switchUI('modern')">
+        <input type="radio" name="uiStyle" id="uiDefault" value="default" checked onchange="switchUI('default')">
+        <label for="uiDefault">標準</label>
+        <input type="radio" name="uiStyle" id="uiModern" value="modern" onchange="switchUI('modern')">
         <label for="uiModern">macOS</label>
         <input type="radio" name="uiStyle" id="uiRetro" value="retro" onchange="switchUI('retro')">
         <label for="uiRetro">Win98</label>
@@ -890,7 +1017,7 @@ HTML_TEMPLATE = """
                 <button onclick="openFolderBrowser()" class="btn-green" style="padding:12px 20px;">📁 選擇資料夾</button>
                 <input type="text" id="folderPath" placeholder="或手動輸入路徑" style="flex:1;" readonly>
             </div>
-            <div id="videoList" class="draft-list" style="max-height:200px;"></div>
+            <div id="videoList" class="draft-list" style="max-height:200px; display:none;"></div>
             <div style="margin-top:10px;">
                 <label>已選擇的檔案：</label>
                 <input type="text" id="videoPath" placeholder="請先選擇資料夾，再點選影片" style="font-size:14px;" readonly>
@@ -899,14 +1026,22 @@ HTML_TEMPLATE = """
 
         <div class="section">
             <h3>2. 辨識設定</h3>
-            <label>Whisper 模型：</label>
-            <select id="whisperModel">
-                <option value="tiny">tiny (最快，準確度低)</option>
-                <option value="base">base (快速)</option>
-                <option value="small">small (平衡)</option>
-                <option value="medium" selected>medium (推薦)</option>
-                <option value="large-v3">large-v3 (最準確，較慢)</option>
+            <label>辨識引擎：</label>
+            <select id="asrEngine" onchange="toggleEngineOptions()">
+                <option value="whisper" selected>faster-whisper (多語言)</option>
+                <option value="sensevoice">SenseVoice (中文優化)</option>
             </select>
+
+            <div id="whisperOptions">
+                <label>Whisper 模型：</label>
+                <select id="whisperModel">
+                    <option value="tiny">tiny (最快，準確度低)</option>
+                    <option value="base">base (快速)</option>
+                    <option value="small">small (平衡)</option>
+                    <option value="medium" selected>medium (推薦)</option>
+                    <option value="large-v3">large-v3 (最準確，較慢)</option>
+                </select>
+            </div>
 
             <label>語言：</label>
             <select id="language">
@@ -970,24 +1105,36 @@ HTML_TEMPLATE = """
 
 <script>
 var draftsData = [];
-var currentUIStyle = localStorage.getItem('uiStyle') || 'modern';
+var currentUIStyle = localStorage.getItem('uiStyle') || 'default';
 
 // 初始化 UI 風格
 function initUIStyle() {
-    if (currentUIStyle === 'retro') {
-        document.getElementById('uiRetro').checked = true;
-        document.body.className = 'ui-retro';
-    } else {
-        document.getElementById('uiModern').checked = true;
-        document.body.className = 'ui-modern';
-    }
+    var styleMap = {
+        'default': 'ui-default',
+        'modern': 'ui-modern',
+        'retro': 'ui-retro'
+    };
+    var radioMap = {
+        'default': 'uiDefault',
+        'modern': 'uiModern',
+        'retro': 'uiRetro'
+    };
+
+    document.body.className = styleMap[currentUIStyle] || 'ui-default';
+    var radio = document.getElementById(radioMap[currentUIStyle] || 'uiDefault');
+    if (radio) radio.checked = true;
 }
 
 // 切換 UI 風格
 function switchUI(style) {
     currentUIStyle = style;
     localStorage.setItem('uiStyle', style);
-    document.body.className = style === 'retro' ? 'ui-retro' : 'ui-modern';
+    var styleMap = {
+        'default': 'ui-default',
+        'modern': 'ui-modern',
+        'retro': 'ui-retro'
+    };
+    document.body.className = styleMap[style] || 'ui-default';
 }
 
 // 頁面載入時初始化
@@ -1195,6 +1342,7 @@ function confirmFolder() {
 function scanFolder() {
     var folder = document.getElementById('folderPath').value.trim();
     var listDiv = document.getElementById('videoList');
+    listDiv.style.display = 'block';
 
     if (!folder) {
         listDiv.innerHTML = '<p style="color:#888;padding:10px;">請先選擇資料夾</p>';
@@ -1236,6 +1384,22 @@ function selectVideo(idx) {
     document.getElementById('vf' + idx).style.background = '#3a7bd5';
 }
 
+function toggleEngineOptions() {
+    var engine = document.getElementById('asrEngine').value;
+    var whisperOpts = document.getElementById('whisperOptions');
+    var langSelect = document.getElementById('language');
+
+    if (engine === 'sensevoice') {
+        whisperOpts.style.display = 'none';
+        // SenseVoice 支援中英日韓粵，預設中文
+        langSelect.value = 'zh';
+        langSelect.disabled = true;
+    } else {
+        whisperOpts.style.display = 'block';
+        langSelect.disabled = false;
+    }
+}
+
 function startTranscribe(outputMode) {
     var pathInput = document.getElementById('videoPath').value.trim();
     var result = document.getElementById('transcribeResult');
@@ -1265,6 +1429,7 @@ function startTranscribe(outputMode) {
 
     var data = {
         path: pathInput,
+        engine: document.getElementById('asrEngine').value,
         model: document.getElementById('whisperModel').value,
         language: document.getElementById('language').value,
         traditional: document.getElementById('outputFormat').value === 'traditional',
@@ -1543,6 +1708,7 @@ def api_scan_folder():
 def api_transcribe():
     data = request.json
     file_path = data.get('path', '')
+    engine = data.get('engine', 'whisper')
     model = data.get('model', 'medium')
     language = data.get('language', 'zh')
     traditional = data.get('traditional', True)
@@ -1565,7 +1731,8 @@ def api_transcribe():
                 file_path,
                 model=model,
                 language=language,
-                traditional=traditional
+                traditional=traditional,
+                engine=engine
             )
 
             duration = round(time.time() - start_time, 1)
@@ -1586,7 +1753,8 @@ def api_transcribe():
                 file_path,
                 model=model,
                 language=language,
-                traditional=traditional
+                traditional=traditional,
+                engine=engine
             )
 
             duration = round(time.time() - start_time, 1)
