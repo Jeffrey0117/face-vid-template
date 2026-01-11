@@ -33,64 +33,284 @@ HTML_TEMPLATE = """
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <style>
-        body { font-family: "Microsoft JhengHei", sans-serif; max-width: 900px; margin: 40px auto; padding: 20px; background: #1a1a2e; color: #fff; }
-        h1 { color: #3a7bd5; text-align: center; }
+        /* ===== 共用基礎樣式 ===== */
+        * { box-sizing: border-box; }
+        body { max-width: 900px; margin: 40px auto; padding: 20px; transition: all 0.3s ease; }
         .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
-        .tab { padding: 12px 24px; background: #2a2a4e; border: none; color: #888; cursor: pointer; border-radius: 8px 8px 0 0; font-size: 16px; }
-        .tab.active { background: #3a7bd5; color: white; }
-        .tab-content { display: none; padding: 20px; background: #2a2a4e; border-radius: 0 8px 8px 8px; }
+        .tab-content { display: none; padding: 20px; }
         .tab-content.active { display: block; }
         .section { margin-bottom: 20px; }
-        .section h3 { color: #69db7c; margin-bottom: 10px; }
-        label { display: block; margin: 10px 0 5px; color: #aaa; }
-        input[type="text"], select { width: 100%; padding: 10px; border: 1px solid #444; background: #1a1a2e; color: #fff; border-radius: 5px; font-size: 14px; }
-        button { padding: 12px 24px; font-size: 16px; background: #3a7bd5; color: white; border: none; border-radius: 5px; cursor: pointer; margin: 5px; }
-        button:hover { background: #2a6bc5; }
-        button:disabled { opacity: 0.5; cursor: not-allowed; }
-        .btn-green { background: #4caf50; }
-        .btn-green:hover { background: #45a049; }
-        .draft { padding: 10px; margin: 5px 0; background: #1a1a2e; border-radius: 5px; }
-        .draft input { margin-right: 10px; }
         .draft-list { max-height: 300px; overflow-y: auto; }
-        #result, #transcribeResult { margin-top: 20px; padding: 15px; border-radius: 5px; white-space: pre-wrap; }
-        .success { background: #2e7d32; }
-        .error { background: #c62828; }
-        .info { background: #1565c0; }
-        .progress { background: #f57c00; }
-        .file-input-wrapper { position: relative; overflow: hidden; display: inline-block; }
-        .file-input-wrapper input[type=file] { font-size: 100px; position: absolute; left: 0; top: 0; opacity: 0; cursor: pointer; }
-        #selectedFile { margin: 10px 0; padding: 10px; background: #1a1a2e; border-radius: 5px; }
+        #result, #transcribeResult { margin-top: 20px; padding: 15px; white-space: pre-wrap; }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        /* UI 風格切換開關 */
+        /* UI 風格切換開關 - 固定在右上角 */
         .ui-switch {
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            z-index: 9999;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(0,0,0,0.6);
-            padding: 8px 12px;
-            border-radius: 20px;
-            font-size: 12px;
+            position: fixed; top: 10px; right: 10px; z-index: 9999;
+            display: flex; align-items: center; gap: 8px;
+            padding: 8px 12px; border-radius: 20px; font-size: 12px;
         }
-        .ui-switch label {
-            color: #aaa;
-            cursor: pointer;
-            padding: 4px 8px;
+        .ui-switch input[type="radio"] { display: none; }
+        .ui-switch label { cursor: pointer; padding: 4px 8px; border-radius: 12px; transition: all 0.2s; }
+
+        /* ============================================
+           macOS / OS.js 現代風格
+           ============================================ */
+        body.ui-modern {
+            font-family: 'Roboto', 'Segoe UI', 'Microsoft JhengHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #242424;
+        }
+        body.ui-modern .main-container {
+            background: #f5f5f5;
             border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            padding: 30px;
+        }
+        body.ui-modern h1 {
+            color: #333;
+            text-align: center;
+            font-weight: 300;
+            font-size: 28px;
+            margin-bottom: 25px;
+        }
+        body.ui-modern .ui-switch {
+            background: rgba(255,255,255,0.9);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        body.ui-modern .ui-switch label { color: #666; }
+        body.ui-modern .ui-switch label:hover { color: #333; }
+        body.ui-modern .ui-switch input:checked + label {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: #fff;
+        }
+        body.ui-modern .tab {
+            padding: 12px 24px;
+            background: #e0e0e0;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            border-radius: 8px 8px 0 0;
+            font-size: 14px;
             transition: all 0.2s;
         }
-        .ui-switch label:hover {
+        body.ui-modern .tab:hover { background: #d0d0d0; }
+        body.ui-modern .tab.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        body.ui-modern .tab-content {
+            background: #fff;
+            border-radius: 0 12px 12px 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        body.ui-modern .section h3 {
+            color: #667eea;
+            font-weight: 500;
+            margin-bottom: 15px;
+        }
+        body.ui-modern label { display: block; margin: 12px 0 6px; color: #666; font-size: 13px; }
+        body.ui-modern input[type="text"], body.ui-modern select {
+            width: 100%; padding: 10px 12px;
+            border: 1px solid #ddd;
+            background: #fff;
+            color: #333;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+        body.ui-modern input[type="text"]:focus, body.ui-modern select:focus {
+            border-color: #667eea;
+            outline: none;
+        }
+        body.ui-modern button {
+            padding: 10px 20px;
+            font-size: 14px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 5px;
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(102,126,234,0.3);
+        }
+        body.ui-modern button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102,126,234,0.4);
+        }
+        body.ui-modern .btn-green {
+            background: linear-gradient(135deg, #11998e, #38ef7d);
+            box-shadow: 0 2px 8px rgba(17,153,142,0.3);
+        }
+        body.ui-modern .btn-green:hover {
+            box-shadow: 0 4px 12px rgba(17,153,142,0.4);
+        }
+        body.ui-modern .draft {
+            padding: 12px;
+            margin: 8px 0;
+            background: #f9f9f9;
+            border-radius: 8px;
+            border: 1px solid #eee;
+        }
+        body.ui-modern .draft:hover { background: #f0f0f0; }
+        body.ui-modern .draft input { margin-right: 10px; }
+        body.ui-modern .success { background: linear-gradient(135deg, #11998e, #38ef7d); color: #fff; border-radius: 8px; }
+        body.ui-modern .error { background: linear-gradient(135deg, #eb3349, #f45c43); color: #fff; border-radius: 8px; }
+        body.ui-modern .info { background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; border-radius: 8px; }
+        body.ui-modern .progress { background: linear-gradient(135deg, #f093fb, #f5576c); color: #fff; border-radius: 8px; }
+        body.ui-modern .win98-titlebar { display: none; }
+
+        /* ============================================
+           Windows 98 復古風格
+           ============================================ */
+        body.ui-retro {
+            font-family: "Microsoft Sans Serif", "Segoe UI", Tahoma, sans-serif;
+            background: #008080;
+            color: #000;
+            font-size: 11px;
+        }
+        body.ui-retro .main-container {
+            background: #c0c0c0;
+            box-shadow:
+                inset -1px -1px #0a0a0a,
+                inset 1px 1px #ffffff,
+                inset -2px -2px #808080,
+                inset 2px 2px #dfdfdf;
+            padding: 4px;
+        }
+        body.ui-retro .win98-titlebar {
+            background: linear-gradient(90deg, #000080, #1084d0);
+            padding: 3px 6px;
+            display: flex;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+        body.ui-retro .win98-titlebar span {
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+            flex: 1;
+        }
+        body.ui-retro .win98-titlebar-btn {
+            width: 16px; height: 14px;
+            background: #c0c0c0;
+            border: none;
+            box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;
+            font-size: 9px; font-weight: bold;
+            cursor: pointer; margin-left: 2px;
+        }
+        body.ui-retro h1 {
+            display: none; /* Win98 用 titlebar 顯示標題 */
+        }
+        body.ui-retro .ui-switch {
+            background: #c0c0c0;
+            box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;
+            border-radius: 0;
+        }
+        body.ui-retro .ui-switch label { color: #000; border-radius: 0; }
+        body.ui-retro .ui-switch input:checked + label {
+            background: #000080;
             color: #fff;
         }
-        .ui-switch input[type="radio"] {
-            display: none;
+        body.ui-retro .tabs {
+            background: #c0c0c0;
+            padding: 4px 4px 0 4px;
+            gap: 2px;
         }
-        .ui-switch input[type="radio"]:checked + label {
-            background: #3a7bd5;
-            color: #fff;
+        body.ui-retro .tab {
+            padding: 4px 16px;
+            background: #c0c0c0;
+            border: none;
+            box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;
+            color: #000;
+            cursor: pointer;
+            border-radius: 0;
+            font-size: 11px;
+            font-family: inherit;
+        }
+        body.ui-retro .tab.active {
+            background: #c0c0c0;
+            box-shadow: inset 1px 1px #ffffff, inset -1px 0 #808080;
+            position: relative;
+            z-index: 1;
+        }
+        body.ui-retro .tab-content {
+            background: #c0c0c0;
+            border-radius: 0;
+            box-shadow: inset -1px -1px #ffffff, inset 1px 1px #808080;
+            padding: 12px;
+        }
+        body.ui-retro .section {
+            background: #c0c0c0;
+            padding: 8px;
+            margin-bottom: 8px;
+            box-shadow: inset -1px -1px #ffffff, inset 1px 1px #808080;
+        }
+        body.ui-retro .section h3 {
+            color: #000;
+            font-size: 11px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        body.ui-retro label { display: block; margin: 6px 0 3px; color: #000; font-size: 11px; }
+        body.ui-retro input[type="text"], body.ui-retro select {
+            width: 100%; padding: 3px 4px;
+            border: none;
+            box-shadow: inset -1px -1px #ffffff, inset 1px 1px #808080, inset -2px -2px #dfdfdf, inset 2px 2px #0a0a0a;
+            background: #fff;
+            color: #000;
+            border-radius: 0;
+            font-size: 11px;
+            font-family: inherit;
+        }
+        body.ui-retro button {
+            padding: 4px 12px;
+            font-size: 11px;
+            background: #c0c0c0;
+            color: #000;
+            border: none;
+            box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;
+            border-radius: 0;
+            cursor: pointer;
+            margin: 3px;
+            font-family: inherit;
+        }
+        body.ui-retro button:hover { background: #d4d4d4; }
+        body.ui-retro button:active {
+            box-shadow: inset 1px 1px #0a0a0a, inset -1px -1px #ffffff, inset 2px 2px #808080, inset -2px -2px #dfdfdf;
+        }
+        body.ui-retro .btn-green {
+            background: #c0c0c0;
+        }
+        body.ui-retro .draft {
+            padding: 4px;
+            margin: 2px 0;
+            background: #fff;
+            border-radius: 0;
+            box-shadow: inset -1px -1px #ffffff, inset 1px 1px #808080;
+        }
+        body.ui-retro .draft:hover { background: #000080; color: #fff; }
+        body.ui-retro .draft input { margin-right: 6px; }
+        body.ui-retro .success {
+            background: #c0c0c0; color: #008000;
+            box-shadow: inset -1px -1px #ffffff, inset 1px 1px #808080;
+            border-radius: 0;
+        }
+        body.ui-retro .error {
+            background: #c0c0c0; color: #ff0000;
+            box-shadow: inset -1px -1px #ffffff, inset 1px 1px #808080;
+            border-radius: 0;
+        }
+        body.ui-retro .info {
+            background: #c0c0c0; color: #000080;
+            box-shadow: inset -1px -1px #ffffff, inset 1px 1px #808080;
+            border-radius: 0;
+        }
+        body.ui-retro .progress {
+            background: #c0c0c0; color: #808000;
+            box-shadow: inset -1px -1px #ffffff, inset 1px 1px #808080;
+            border-radius: 0;
         }
 
         /* ===== OS.js 風格資料夾瀏覽器 ===== */
@@ -477,19 +697,28 @@ HTML_TEMPLATE = """
         .win98-loading { text-align: center; padding: 40px 20px; color: #808080; font-size: 11px; }
     </style>
 </head>
-<body>
+<body class="ui-modern">
     <!-- UI 風格切換 -->
     <div class="ui-switch">
-        <span style="color:#888;">UI:</span>
+        <span>UI:</span>
         <input type="radio" name="uiStyle" id="uiModern" value="modern" checked onchange="switchUI('modern')">
-        <label for="uiModern">OS.js</label>
+        <label for="uiModern">macOS</label>
         <input type="radio" name="uiStyle" id="uiRetro" value="retro" onchange="switchUI('retro')">
         <label for="uiRetro">Win98</label>
     </div>
 
-    <h1>JYpymaker 工具箱</h1>
+    <div class="main-container">
+        <!-- Win98 標題列 (僅在 retro 模式顯示) -->
+        <div class="win98-titlebar">
+            <span>📦 JYpymaker 工具箱</span>
+            <button class="win98-titlebar-btn">_</button>
+            <button class="win98-titlebar-btn">□</button>
+            <button class="win98-titlebar-btn">✕</button>
+        </div>
 
-    <div class="tabs">
+        <h1>JYpymaker 工具箱</h1>
+
+        <div class="tabs">
         <button class="tab active" onclick="showTab('transcribe')">語音辨識</button>
         <button class="tab" onclick="showTab('convert')">草稿轉換</button>
     </div>
@@ -657,6 +886,8 @@ HTML_TEMPLATE = """
         <div id="result"></div>
     </div>
 
+    </div><!-- end main-container -->
+
 <script>
 var draftsData = [];
 var currentUIStyle = localStorage.getItem('uiStyle') || 'modern';
@@ -665,8 +896,10 @@ var currentUIStyle = localStorage.getItem('uiStyle') || 'modern';
 function initUIStyle() {
     if (currentUIStyle === 'retro') {
         document.getElementById('uiRetro').checked = true;
+        document.body.className = 'ui-retro';
     } else {
         document.getElementById('uiModern').checked = true;
+        document.body.className = 'ui-modern';
     }
 }
 
@@ -674,6 +907,7 @@ function initUIStyle() {
 function switchUI(style) {
     currentUIStyle = style;
     localStorage.setItem('uiStyle', style);
+    document.body.className = style === 'retro' ? 'ui-retro' : 'ui-modern';
 }
 
 // 頁面載入時初始化
