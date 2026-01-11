@@ -54,111 +54,191 @@ HTML_TEMPLATE = """
         .ui-switch label { cursor: pointer; padding: 4px 8px; border-radius: 12px; transition: all 0.2s; }
 
         /* ============================================
-           macOS / OS.js 現代風格
+           macOS 風格 - 亮色 Glassmorphism
+           參考 macOS Big Sur 設計語言
            ============================================ */
         body.ui-modern {
-            font-family: 'Roboto', 'Segoe UI', 'Microsoft JhengHei', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', 'Microsoft JhengHei', sans-serif;
+            /* macOS 風格漸層桌布 - 亮色系 */
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #242424;
+            background-attachment: fixed;
+            color: #1d1d1f;
+            min-height: 100vh;
         }
         body.ui-modern .main-container {
-            background: #f5f5f5;
-            border-radius: 12px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-            padding: 30px;
+            /* Glassmorphism - 亮色毛玻璃 */
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            padding: 28px;
         }
         body.ui-modern h1 {
-            color: #333;
+            color: #1d1d1f;
             text-align: center;
-            font-weight: 300;
-            font-size: 28px;
-            margin-bottom: 25px;
+            font-weight: 600;
+            font-size: 26px;
+            margin-bottom: 24px;
+            letter-spacing: -0.5px;
         }
         body.ui-modern .ui-switch {
-            background: rgba(255,255,255,0.9);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px) saturate(150%);
+            -webkit-backdrop-filter: blur(12px) saturate(150%);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
         }
+        body.ui-modern .ui-switch span { color: #666; }
         body.ui-modern .ui-switch label { color: #666; }
         body.ui-modern .ui-switch label:hover { color: #333; }
         body.ui-modern .ui-switch input:checked + label {
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: #007aff;
             color: #fff;
         }
+        body.ui-modern .tabs {
+            background: rgba(0, 0, 0, 0.04);
+            border-radius: 10px;
+            padding: 4px;
+            gap: 4px;
+        }
         body.ui-modern .tab {
-            padding: 12px 24px;
-            background: #e0e0e0;
+            padding: 10px 22px;
+            background: transparent;
             border: none;
             color: #666;
             cursor: pointer;
-            border-radius: 8px 8px 0 0;
-            font-size: 14px;
-            transition: all 0.2s;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s ease;
         }
-        body.ui-modern .tab:hover { background: #d0d0d0; }
+        body.ui-modern .tab:hover {
+            background: rgba(0, 0, 0, 0.06);
+            color: #333;
+        }
         body.ui-modern .tab.active {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
+            background: #fff;
+            color: #1d1d1f;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
         }
         body.ui-modern .tab-content {
-            background: #fff;
-            border-radius: 0 12px 12px 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 12px;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            margin-top: 8px;
+        }
+        body.ui-modern .section {
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 16px;
+            border: 1px solid rgba(0, 0, 0, 0.06);
         }
         body.ui-modern .section h3 {
-            color: #667eea;
-            font-weight: 500;
-            margin-bottom: 15px;
+            color: #1d1d1f;
+            font-weight: 600;
+            font-size: 15px;
+            margin-bottom: 14px;
+            letter-spacing: -0.3px;
         }
-        body.ui-modern label { display: block; margin: 12px 0 6px; color: #666; font-size: 13px; }
+        body.ui-modern label {
+            display: block;
+            margin: 10px 0 5px;
+            color: #666;
+            font-size: 12px;
+            font-weight: 500;
+        }
         body.ui-modern input[type="text"], body.ui-modern select {
-            width: 100%; padding: 10px 12px;
-            border: 1px solid #ddd;
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid rgba(0, 0, 0, 0.12);
             background: #fff;
-            color: #333;
-            border-radius: 6px;
+            color: #1d1d1f;
+            border-radius: 8px;
             font-size: 14px;
-            transition: border-color 0.2s;
+            transition: all 0.2s ease;
         }
         body.ui-modern input[type="text"]:focus, body.ui-modern select:focus {
-            border-color: #667eea;
+            border-color: #007aff;
             outline: none;
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.2);
+        }
+        body.ui-modern input[type="text"]::placeholder {
+            color: #999;
         }
         body.ui-modern button {
             padding: 10px 20px;
-            font-size: 14px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
+            font-size: 13px;
+            font-weight: 500;
+            background: #007aff;
+            color: #fff;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
-            margin: 5px;
-            transition: all 0.2s;
-            box-shadow: 0 2px 8px rgba(102,126,234,0.3);
+            margin: 4px;
+            transition: all 0.15s ease;
         }
         body.ui-modern button:hover {
+            background: #0066d6;
             transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(102,126,234,0.4);
+            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
+        }
+        body.ui-modern button:active {
+            transform: translateY(0);
         }
         body.ui-modern .btn-green {
-            background: linear-gradient(135deg, #11998e, #38ef7d);
-            box-shadow: 0 2px 8px rgba(17,153,142,0.3);
+            background: #34c759;
         }
         body.ui-modern .btn-green:hover {
-            box-shadow: 0 4px 12px rgba(17,153,142,0.4);
+            background: #2db84d;
+            box-shadow: 0 4px 12px rgba(52, 199, 89, 0.3);
         }
         body.ui-modern .draft {
-            padding: 12px;
-            margin: 8px 0;
-            background: #f9f9f9;
+            padding: 12px 14px;
+            margin: 6px 0;
+            background: #fff;
             border-radius: 8px;
-            border: 1px solid #eee;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            color: #1d1d1f;
+            transition: all 0.15s ease;
         }
-        body.ui-modern .draft:hover { background: #f0f0f0; }
+        body.ui-modern .draft:hover {
+            background: #f5f5f7;
+            border-color: rgba(0, 0, 0, 0.12);
+        }
         body.ui-modern .draft input { margin-right: 10px; }
-        body.ui-modern .success { background: linear-gradient(135deg, #11998e, #38ef7d); color: #fff; border-radius: 8px; }
-        body.ui-modern .error { background: linear-gradient(135deg, #eb3349, #f45c43); color: #fff; border-radius: 8px; }
-        body.ui-modern .info { background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; border-radius: 8px; }
-        body.ui-modern .progress { background: linear-gradient(135deg, #f093fb, #f5576c); color: #fff; border-radius: 8px; }
+        body.ui-modern .draft-list {
+            background: rgba(0, 0, 0, 0.03);
+            border-radius: 8px;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            padding: 4px;
+        }
+        body.ui-modern .success {
+            background: rgba(52, 199, 89, 0.15);
+            color: #248a3d;
+            border-radius: 10px;
+            border: 1px solid rgba(52, 199, 89, 0.3);
+        }
+        body.ui-modern .error {
+            background: rgba(255, 59, 48, 0.15);
+            color: #d70015;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 59, 48, 0.3);
+        }
+        body.ui-modern .info {
+            background: rgba(0, 122, 255, 0.15);
+            color: #0066cc;
+            border-radius: 10px;
+            border: 1px solid rgba(0, 122, 255, 0.3);
+        }
+        body.ui-modern .progress {
+            background: rgba(175, 82, 222, 0.15);
+            color: #8944ab;
+            border-radius: 10px;
+            border: 1px solid rgba(175, 82, 222, 0.3);
+        }
         body.ui-modern .win98-titlebar { display: none; }
 
         /* ============================================
