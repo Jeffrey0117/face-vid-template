@@ -29,6 +29,9 @@ HTML_TEMPLATE = """
 <head>
     <meta charset="UTF-8">
     <title>JYpymaker 工具箱</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <style>
         body { font-family: "Microsoft JhengHei", sans-serif; max-width: 900px; margin: 40px auto; padding: 20px; background: #1a1a2e; color: #fff; }
         h1 { color: #3a7bd5; text-align: center; }
@@ -507,7 +510,7 @@ function closeFolderModal() {
 // 上一層
 function goBack() {
     if (!currentBrowsePath) return;
-    var parts = currentBrowsePath.replace(/\\/g, '/').split('/').filter(Boolean);
+    var parts = currentBrowsePath.replace(/[\\\\]/g, '/').split('/').filter(Boolean);
     if (parts.length <= 1) {
         browseTo('');
     } else {
@@ -523,7 +526,7 @@ function goBack() {
 
 // 跳脫 JS 字串中的特殊字元
 function escapeJS(str) {
-    return str.replace(/\\\\/g, '\\\\\\\\').replace(/'/g, "\\\\'");
+    return str.replace(/[\\\\]/g, '\\\\\\\\').replace(/'/g, "&apos;");
 }
 
 // 初始化左側樹狀目錄
@@ -532,11 +535,11 @@ function initTreeView() {
         .then(r => r.json())
         .then(data => {
             if (data.error) return;
-            var html = '<li class="selected" onclick="browseTo(\\'\\')">' +
+            var html = '<li class="selected" onclick="browseTo(&apos;&apos;)">' +
                        '<span class="osjs-tree-icon">🖥️</span>我的電腦</li>';
             for (var i = 0; i < data.folders.length; i++) {
                 var f = data.folders[i];
-                html += '<li onclick="browseTo(\\'' + escapeJS(f.path) + '\\'); event.stopPropagation();">' +
+                html += '<li onclick="browseTo(&apos;' + escapeJS(f.path) + '&apos;); event.stopPropagation();">' +
                         '<span class="osjs-tree-icon">💿</span>' + f.name + '</li>';
             }
             document.getElementById('treeRoot').innerHTML = html;
@@ -576,7 +579,7 @@ function browseTo(path) {
                     var f = data.folders[i];
                     var icon = isDriveList ? '💿' : '📁';
 
-                    html += '<div class="osjs-file-item" ondblclick="browseTo(\\'' + escapeJS(f.path) + '\\')" onclick="selectFolder(this, \\'' + escapeJS(f.path) + '\\')">';
+                    html += '<div class="osjs-file-item" ondblclick="browseTo(&apos;' + escapeJS(f.path) + '&apos;)" onclick="selectFolder(this, &apos;' + escapeJS(f.path) + '&apos;)">';
                     html += '<span class="osjs-file-icon">' + icon + '</span>';
                     html += '<span>' + f.name + '</span>';
                     html += '</div>';
