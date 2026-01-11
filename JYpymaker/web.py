@@ -61,6 +61,38 @@ HTML_TEMPLATE = """
         .file-input-wrapper input[type=file] { font-size: 100px; position: absolute; left: 0; top: 0; opacity: 0; cursor: pointer; }
         #selectedFile { margin: 10px 0; padding: 10px; background: #1a1a2e; border-radius: 5px; }
 
+        /* UI 風格切換開關 */
+        .ui-switch {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0,0,0,0.6);
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+        }
+        .ui-switch label {
+            color: #aaa;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 12px;
+            transition: all 0.2s;
+        }
+        .ui-switch label:hover {
+            color: #fff;
+        }
+        .ui-switch input[type="radio"] {
+            display: none;
+        }
+        .ui-switch input[type="radio"]:checked + label {
+            background: #3a7bd5;
+            color: #fff;
+        }
+
         /* ===== OS.js 風格資料夾瀏覽器 ===== */
         .folder-modal {
             display: none;
@@ -339,9 +371,122 @@ HTML_TEMPLATE = """
         @keyframes osjs-spin {
             to { transform: rotate(360deg); }
         }
+
+        /* ===== Windows 98 風格資料夾瀏覽器 ===== */
+        .win98-window {
+            background: #c0c0c0;
+            border: none;
+            box-shadow:
+                inset -1px -1px #0a0a0a,
+                inset 1px 1px #ffffff,
+                inset -2px -2px #808080,
+                inset 2px 2px #dfdfdf;
+            font-family: "Microsoft Sans Serif", "Segoe UI", Tahoma, sans-serif;
+            font-size: 11px;
+            width: 500px;
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .win98-titlebar {
+            background: linear-gradient(90deg, #000080, #1084d0);
+            padding: 3px 4px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            user-select: none;
+        }
+        .win98-titlebar-icon { width: 16px; height: 16px; font-size: 14px; }
+        .win98-titlebar-text { flex: 1; color: white; font-weight: bold; font-size: 12px; }
+        .win98-titlebar-btn {
+            width: 16px; height: 14px;
+            background: #c0c0c0;
+            border: none;
+            box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;
+            font-size: 10px; font-weight: bold;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; padding: 0; margin-left: 2px;
+        }
+        .win98-titlebar-btn:active {
+            box-shadow: inset 1px 1px #0a0a0a, inset -1px -1px #ffffff;
+        }
+        .win98-toolbar {
+            background: #c0c0c0;
+            padding: 4px 6px;
+            border-bottom: 1px solid #808080;
+            display: flex; align-items: center; gap: 4px;
+        }
+        .win98-toolbar-label { color: #000; font-size: 11px; }
+        .win98-address-box {
+            flex: 1; background: white; border: none;
+            box-shadow: inset -1px -1px #ffffff, inset 1px 1px #808080, inset -2px -2px #dfdfdf, inset 2px 2px #0a0a0a;
+            padding: 3px 4px; font-size: 11px; font-family: inherit; color: #000;
+        }
+        .win98-content {
+            display: flex; flex: 1; min-height: 0;
+            background: #c0c0c0; padding: 6px; gap: 6px;
+        }
+        .win98-tree {
+            width: 160px; background: white; border: none;
+            box-shadow: inset -1px -1px #ffffff, inset 1px 1px #808080, inset -2px -2px #dfdfdf, inset 2px 2px #0a0a0a;
+            overflow-y: auto; max-height: 300px; font-size: 11px; color: #000;
+        }
+        .win98-tree ul { list-style: none; margin: 0; padding: 0 0 0 16px; }
+        .win98-tree > ul { padding: 4px; }
+        .win98-tree li { padding: 2px 0; cursor: pointer; white-space: nowrap; }
+        .win98-tree li:hover { background: #000080; color: white; }
+        .win98-tree li.selected { background: #000080; color: white; }
+        .win98-tree-icon { margin-right: 4px; }
+        .win98-filelist {
+            flex: 1; background: white; border: none;
+            box-shadow: inset -1px -1px #ffffff, inset 1px 1px #808080, inset -2px -2px #dfdfdf, inset 2px 2px #0a0a0a;
+            overflow-y: auto; max-height: 300px; padding: 4px;
+        }
+        .win98-file-item {
+            display: flex; align-items: center; gap: 6px;
+            padding: 2px 4px; cursor: pointer; color: #000; font-size: 11px;
+        }
+        .win98-file-item:hover { background: #000080; color: white; }
+        .win98-file-item.selected { background: #000080; color: white; }
+        .win98-file-icon { font-size: 16px; }
+        .win98-statusbar {
+            background: #c0c0c0; border-top: 1px solid #808080;
+            padding: 2px 6px; font-size: 11px; color: #000; display: flex; gap: 8px;
+        }
+        .win98-statusbar-field {
+            box-shadow: inset -1px -1px #ffffff, inset 1px 1px #808080;
+            padding: 2px 4px; flex: 1;
+        }
+        .win98-footer {
+            background: #c0c0c0; padding: 8px;
+            display: flex; justify-content: flex-end; gap: 6px;
+        }
+        .win98-btn {
+            min-width: 75px; padding: 4px 12px;
+            background: #c0c0c0; border: none;
+            box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;
+            font-size: 11px; font-family: inherit; cursor: pointer; color: #000;
+        }
+        .win98-btn:hover { background: #d4d4d4; }
+        .win98-btn:active {
+            box-shadow: inset 1px 1px #0a0a0a, inset -1px -1px #ffffff, inset 2px 2px #808080, inset -2px -2px #dfdfdf;
+            padding: 5px 11px 3px 13px;
+        }
+        .win98-btn.default { border: 1px solid #000; }
+        .win98-empty { text-align: center; padding: 40px 20px; color: #808080; font-size: 11px; }
+        .win98-loading { text-align: center; padding: 40px 20px; color: #808080; font-size: 11px; }
     </style>
 </head>
 <body>
+    <!-- UI 風格切換 -->
+    <div class="ui-switch">
+        <span style="color:#888;">UI:</span>
+        <input type="radio" name="uiStyle" id="uiModern" value="modern" checked onchange="switchUI('modern')">
+        <label for="uiModern">OS.js</label>
+        <input type="radio" name="uiStyle" id="uiRetro" value="retro" onchange="switchUI('retro')">
+        <label for="uiRetro">Win98</label>
+    </div>
+
     <h1>JYpymaker 工具箱</h1>
 
     <div class="tabs">
@@ -390,6 +535,40 @@ HTML_TEMPLATE = """
             <div class="osjs-footer">
                 <button class="osjs-btn" onclick="closeFolderModal()">取消</button>
                 <button class="osjs-btn primary" onclick="confirmFolder()">選擇</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Windows 98 風格資料夾瀏覽器 -->
+    <div id="folderModalWin98" class="folder-modal">
+        <div class="win98-window">
+            <!-- 標題列 -->
+            <div class="win98-titlebar">
+                <span>📁 瀏覽資料夾</span>
+                <button class="win98-titlebar-btn" onclick="closeFolderModal()">✕</button>
+            </div>
+
+            <!-- 工具列 -->
+            <div class="win98-toolbar">
+                <button class="win98-btn" onclick="goBack()" title="上一層">⬆️ 上一層</button>
+                <button class="win98-btn" onclick="browseTo(&apos;&apos;)" title="根目錄">🏠 根目錄</button>
+                <input type="text" id="addressBoxWin98" class="win98-address-box" placeholder="選擇路徑..." readonly>
+            </div>
+
+            <!-- 主要內容 -->
+            <div class="win98-content">
+                <div class="win98-filelist" id="folderListWin98"></div>
+            </div>
+
+            <!-- 狀態列 -->
+            <div class="win98-statusbar">
+                <div class="win98-statusbar-field" id="statusTextWin98">請選擇資料夾</div>
+            </div>
+
+            <!-- 按鈕區 -->
+            <div class="win98-footer">
+                <button class="win98-btn" onclick="closeFolderModal()">取消</button>
+                <button class="win98-btn default" onclick="confirmFolder()">選擇</button>
             </div>
         </div>
     </div>
@@ -480,6 +659,25 @@ HTML_TEMPLATE = """
 
 <script>
 var draftsData = [];
+var currentUIStyle = localStorage.getItem('uiStyle') || 'modern';
+
+// 初始化 UI 風格
+function initUIStyle() {
+    if (currentUIStyle === 'retro') {
+        document.getElementById('uiRetro').checked = true;
+    } else {
+        document.getElementById('uiModern').checked = true;
+    }
+}
+
+// 切換 UI 風格
+function switchUI(style) {
+    currentUIStyle = style;
+    localStorage.setItem('uiStyle', style);
+}
+
+// 頁面載入時初始化
+document.addEventListener('DOMContentLoaded', initUIStyle);
 
 function showTab(tabId) {
     document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
@@ -497,14 +695,19 @@ var videoFiles = [];
 var treeData = {};  // 快取樹狀資料
 
 function openFolderBrowser() {
-    document.getElementById('folderModal').style.display = 'flex';
     pathHistory = [];
-    initTreeView();
+    if (currentUIStyle === 'retro') {
+        document.getElementById('folderModalWin98').style.display = 'flex';
+    } else {
+        document.getElementById('folderModal').style.display = 'flex';
+        initTreeView();
+    }
     browseTo('');
 }
 
 function closeFolderModal() {
     document.getElementById('folderModal').style.display = 'none';
+    document.getElementById('folderModalWin98').style.display = 'none';
 }
 
 // 上一層
@@ -550,54 +753,77 @@ function initTreeView() {
 function browseTo(path) {
     currentBrowsePath = path;
 
-    // 更新位址列
-    document.getElementById('addressBox').value = path || '我的電腦';
+    // 更新位址列 (兩種 UI)
+    var addrBox = document.getElementById('addressBox');
+    var addrBoxWin98 = document.getElementById('addressBoxWin98');
+    if (addrBox) addrBox.value = path || '我的電腦';
+    if (addrBoxWin98) addrBoxWin98.value = path || '我的電腦';
 
-    // 更新狀態列
-    document.getElementById('statusText').textContent = path ? '📂 ' + path : '請選擇資料夾';
+    // 更新狀態列 (兩種 UI)
+    var statusText = document.getElementById('statusText');
+    var statusTextWin98 = document.getElementById('statusTextWin98');
+    var statusMsg = path ? '📂 ' + path : '請選擇資料夾';
+    if (statusText) statusText.textContent = statusMsg;
+    if (statusTextWin98) statusTextWin98.textContent = statusMsg;
 
     // 載入中
-    document.getElementById('folderList').innerHTML =
-        '<div class="osjs-loading">載入中</div>';
+    var folderList = document.getElementById('folderList');
+    var folderListWin98 = document.getElementById('folderListWin98');
+    if (folderList) folderList.innerHTML = '<div class="osjs-loading">載入中</div>';
+    if (folderListWin98) folderListWin98.innerHTML = '<div class="win98-loading">載入中...</div>';
 
     fetch('/api/browse?path=' + encodeURIComponent(path))
         .then(r => r.json())
         .then(data => {
             if (data.error) {
-                document.getElementById('folderList').innerHTML =
-                    '<div class="osjs-empty">⚠️ ' + data.error + '</div>';
+                var errHtml = '<div class="osjs-empty">⚠️ ' + data.error + '</div>';
+                var errHtmlWin98 = '<div class="win98-empty">⚠️ ' + data.error + '</div>';
+                if (folderList) folderList.innerHTML = errHtml;
+                if (folderListWin98) folderListWin98.innerHTML = errHtmlWin98;
                 return;
             }
 
-            var html = '';
+            var htmlOsjs = '';
+            var htmlWin98 = '';
             var isDriveList = !path;
 
             if (data.folders.length === 0) {
-                html = '<div class="osjs-empty">📭 此資料夾沒有子資料夾</div>';
+                htmlOsjs = '<div class="osjs-empty">📭 此資料夾沒有子資料夾</div>';
+                htmlWin98 = '<div class="win98-empty">📭 此資料夾沒有子資料夾</div>';
             } else {
                 for (var i = 0; i < data.folders.length; i++) {
                     var f = data.folders[i];
                     var icon = isDriveList ? '💿' : '📁';
 
-                    html += '<div class="osjs-file-item" ondblclick="browseTo(&apos;' + escapeJS(f.path) + '&apos;)" onclick="selectFolder(this, &apos;' + escapeJS(f.path) + '&apos;)">';
-                    html += '<span class="osjs-file-icon">' + icon + '</span>';
-                    html += '<span>' + f.name + '</span>';
-                    html += '</div>';
+                    // OS.js 風格
+                    htmlOsjs += '<div class="osjs-file-item" ondblclick="browseTo(&apos;' + escapeJS(f.path) + '&apos;)" onclick="selectFolder(this, &apos;' + escapeJS(f.path) + '&apos;)">';
+                    htmlOsjs += '<span class="osjs-file-icon">' + icon + '</span>';
+                    htmlOsjs += '<span>' + f.name + '</span>';
+                    htmlOsjs += '</div>';
+
+                    // Win98 風格
+                    htmlWin98 += '<div class="win98-file-item" ondblclick="browseTo(&apos;' + escapeJS(f.path) + '&apos;)" onclick="selectFolderWin98(this, &apos;' + escapeJS(f.path) + '&apos;)">';
+                    htmlWin98 += '<span class="win98-file-icon">' + icon + '</span>';
+                    htmlWin98 += '<span>' + f.name + '</span>';
+                    htmlWin98 += '</div>';
                 }
             }
 
-            document.getElementById('folderList').innerHTML = html;
+            if (folderList) folderList.innerHTML = htmlOsjs;
+            if (folderListWin98) folderListWin98.innerHTML = htmlWin98;
 
-            // 更新樹狀目錄的選中狀態
+            // 更新樹狀目錄的選中狀態 (僅 OS.js)
             updateTreeSelection(path);
         })
         .catch(e => {
-            document.getElementById('folderList').innerHTML =
-                '<div class="osjs-empty">❌ 載入失敗: ' + e + '</div>';
+            var errHtml = '<div class="osjs-empty">❌ 載入失敗: ' + e + '</div>';
+            var errHtmlWin98 = '<div class="win98-empty">❌ 載入失敗: ' + e + '</div>';
+            if (folderList) folderList.innerHTML = errHtml;
+            if (folderListWin98) folderListWin98.innerHTML = errHtmlWin98;
         });
 }
 
-// 選擇資料夾（單擊）
+// 選擇資料夾（單擊）- OS.js 風格
 function selectFolder(elem, path) {
     // 移除其他選中狀態
     document.querySelectorAll('.osjs-file-item').forEach(function(el) {
@@ -610,6 +836,23 @@ function selectFolder(elem, path) {
     // 更新位址列和狀態列
     document.getElementById('addressBox').value = path;
     document.getElementById('statusText').textContent = '📂 已選擇: ' + path;
+}
+
+// 選擇資料夾（單擊）- Win98 風格
+function selectFolderWin98(elem, path) {
+    // 移除其他選中狀態
+    document.querySelectorAll('.win98-file-item').forEach(function(el) {
+        el.classList.remove('selected');
+    });
+    // 設定當前選中
+    elem.classList.add('selected');
+    currentBrowsePath = path;
+
+    // 更新位址列和狀態列
+    var addrBox = document.getElementById('addressBoxWin98');
+    var statusText = document.getElementById('statusTextWin98');
+    if (addrBox) addrBox.value = path;
+    if (statusText) statusText.textContent = '📂 已選擇: ' + path;
 }
 
 // 更新樹狀目錄選中狀態
