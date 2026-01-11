@@ -58,202 +58,273 @@ HTML_TEMPLATE = """
         .file-input-wrapper input[type=file] { font-size: 100px; position: absolute; left: 0; top: 0; opacity: 0; cursor: pointer; }
         #selectedFile { margin: 10px 0; padding: 10px; background: #1a1a2e; border-radius: 5px; }
 
-        /* ===== 資料夾瀏覽器樣式 ===== */
+        /* ===== Windows 98 風格資料夾瀏覽器 ===== */
         .folder-modal {
             display: none;
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.85);
+            background: rgba(0,0,0,0.5);
             z-index: 1000;
             align-items: center;
             justify-content: center;
-            animation: fadeIn 0.2s ease;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        .folder-modal-content {
-            background: linear-gradient(145deg, #1e1e3a, #16162e);
-            border-radius: 16px;
-            padding: 0;
-            width: 560px;
-            max-height: 75vh;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.1);
-            overflow: hidden;
-        }
-        .folder-modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 16px 20px;
-            background: linear-gradient(90deg, #3a7bd5, #00d4aa);
-            color: white;
-        }
-        .folder-modal-header h3 {
-            margin: 0;
-            font-size: 18px;
-            font-weight: 600;
-        }
-        .close-btn {
-            background: rgba(255,255,255,0.2);
-            border: none;
-            color: white;
-            font-size: 20px;
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        .close-btn:hover {
-            background: rgba(255,255,255,0.3);
         }
 
-        /* 麵包屑導航 */
-        .breadcrumb {
+        /* Windows 98 視窗 */
+        .win98-window {
+            background: #c0c0c0;
+            border: none;
+            box-shadow:
+                inset -1px -1px #0a0a0a,
+                inset 1px 1px #ffffff,
+                inset -2px -2px #808080,
+                inset 2px 2px #dfdfdf;
+            font-family: "Microsoft Sans Serif", "Segoe UI", Tahoma, sans-serif;
+            font-size: 11px;
+            width: 500px;
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 標題列 */
+        .win98-titlebar {
+            background: linear-gradient(90deg, #000080, #1084d0);
+            padding: 3px 4px;
             display: flex;
             align-items: center;
             gap: 4px;
-            padding: 12px 20px;
-            background: #0d0d1a;
-            border-bottom: 1px solid #2a2a4e;
-            flex-wrap: wrap;
-            min-height: 44px;
+            user-select: none;
         }
-        .breadcrumb-item {
-            padding: 4px 10px;
-            background: #2a2a4e;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 13px;
-            color: #9cd9ff;
-            transition: all 0.2s;
-            white-space: nowrap;
+        .win98-titlebar-icon {
+            width: 16px;
+            height: 16px;
+            font-size: 14px;
         }
-        .breadcrumb-item:hover {
-            background: #3a7bd5;
-            color: white;
-        }
-        .breadcrumb-sep {
-            color: #555;
-            font-size: 12px;
-        }
-        .breadcrumb-current {
-            color: #69db7c;
-            font-weight: 600;
-            background: #1a4a2a;
-        }
-
-        /* 資料夾列表 */
-        .folder-list {
+        .win98-titlebar-text {
             flex: 1;
-            overflow-y: auto;
-            padding: 10px;
-            max-height: 350px;
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+            letter-spacing: 0;
         }
-        .folder-item {
+        .win98-titlebar-btn {
+            width: 16px;
+            height: 14px;
+            background: #c0c0c0;
+            border: none;
+            box-shadow:
+                inset -1px -1px #0a0a0a,
+                inset 1px 1px #ffffff,
+                inset -2px -2px #808080,
+                inset 2px 2px #dfdfdf;
+            font-size: 10px;
+            font-weight: bold;
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 12px 16px;
-            margin: 4px 0;
-            background: #1a1a2e;
-            border-radius: 8px;
+            justify-content: center;
             cursor: pointer;
-            transition: all 0.15s;
-            border: 1px solid transparent;
+            padding: 0;
+            margin-left: 2px;
         }
-        .folder-item:hover {
-            background: #252550;
-            border-color: #3a7bd5;
-            transform: translateX(4px);
+        .win98-titlebar-btn:active {
+            box-shadow:
+                inset 1px 1px #0a0a0a,
+                inset -1px -1px #ffffff;
         }
-        .folder-item.drive {
-            background: linear-gradient(135deg, #1a2a4a, #1a1a2e);
+
+        /* 工具列 / 路徑列 */
+        .win98-toolbar {
+            background: #c0c0c0;
+            padding: 4px 6px;
+            border-bottom: 1px solid #808080;
+            display: flex;
+            align-items: center;
+            gap: 4px;
         }
-        .folder-item.drive:hover {
-            background: linear-gradient(135deg, #2a3a5a, #252550);
+        .win98-toolbar-label {
+            color: #000;
+            font-size: 11px;
         }
-        .folder-icon {
-            font-size: 22px;
-            min-width: 28px;
-            text-align: center;
-        }
-        .folder-name {
+        .win98-address-box {
             flex: 1;
-            font-size: 14px;
-            color: #e0e0e0;
+            background: white;
+            border: none;
+            box-shadow:
+                inset -1px -1px #ffffff,
+                inset 1px 1px #808080,
+                inset -2px -2px #dfdfdf,
+                inset 2px 2px #0a0a0a;
+            padding: 3px 4px;
+            font-size: 11px;
+            font-family: inherit;
+            color: #000;
         }
-        .folder-arrow {
-            color: #555;
+
+        /* 主要內容區 - 雙欄 */
+        .win98-content {
+            display: flex;
+            flex: 1;
+            min-height: 0;
+            background: #c0c0c0;
+            padding: 6px;
+            gap: 6px;
+        }
+
+        /* 左側 Tree View */
+        .win98-tree {
+            width: 160px;
+            background: white;
+            border: none;
+            box-shadow:
+                inset -1px -1px #ffffff,
+                inset 1px 1px #808080,
+                inset -2px -2px #dfdfdf,
+                inset 2px 2px #0a0a0a;
+            overflow-y: auto;
+            max-height: 300px;
+            font-size: 11px;
+            color: #000;
+        }
+        .win98-tree ul {
+            list-style: none;
+            margin: 0;
+            padding: 0 0 0 16px;
+        }
+        .win98-tree > ul {
+            padding: 4px;
+        }
+        .win98-tree li {
+            padding: 2px 0;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .win98-tree li:hover {
+            background: #000080;
+            color: white;
+        }
+        .win98-tree li.selected {
+            background: #000080;
+            color: white;
+        }
+        .win98-tree-icon {
+            margin-right: 4px;
+        }
+        .win98-tree details {
+            margin: 0;
+        }
+        .win98-tree summary {
+            cursor: pointer;
+            padding: 2px 0;
+            list-style: none;
+        }
+        .win98-tree summary::-webkit-details-marker {
+            display: none;
+        }
+        .win98-tree summary::before {
+            content: "📁";
+            margin-right: 4px;
+        }
+        .win98-tree details[open] > summary::before {
+            content: "📂";
+        }
+
+        /* 右側檔案列表 */
+        .win98-filelist {
+            flex: 1;
+            background: white;
+            border: none;
+            box-shadow:
+                inset -1px -1px #ffffff,
+                inset 1px 1px #808080,
+                inset -2px -2px #dfdfdf,
+                inset 2px 2px #0a0a0a;
+            overflow-y: auto;
+            max-height: 300px;
+            padding: 4px;
+        }
+        .win98-file-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 2px 4px;
+            cursor: pointer;
+            color: #000;
+            font-size: 11px;
+        }
+        .win98-file-item:hover {
+            background: #000080;
+            color: white;
+        }
+        .win98-file-item.selected {
+            background: #000080;
+            color: white;
+        }
+        .win98-file-icon {
             font-size: 16px;
         }
 
-        /* 選中路徑顯示 */
-        .selected-path {
-            padding: 12px 20px;
-            background: #0d0d1a;
-            border-top: 1px solid #2a2a4e;
-            font-family: 'Consolas', monospace;
-            font-size: 13px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        /* 底部按鈕 */
-        .folder-modal-footer {
+        /* 狀態列 */
+        .win98-statusbar {
+            background: #c0c0c0;
+            border-top: 1px solid #808080;
+            padding: 2px 6px;
+            font-size: 11px;
+            color: #000;
             display: flex;
-            gap: 12px;
-            padding: 16px 20px;
-            background: #16162e;
+            gap: 8px;
         }
-        .btn-cancel {
+        .win98-statusbar-field {
+            box-shadow:
+                inset -1px -1px #ffffff,
+                inset 1px 1px #808080;
+            padding: 2px 4px;
             flex: 1;
-            padding: 12px 20px;
-            background: #3a3a5e;
-            border: none;
-            color: #aaa;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.2s;
-        }
-        .btn-cancel:hover {
-            background: #4a4a6e;
-            color: #fff;
-        }
-        .btn-confirm {
-            flex: 1;
-            padding: 12px 20px;
-            background: linear-gradient(135deg, #4caf50, #45a049);
-            border: none;
-            color: white;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            transition: all 0.2s;
-        }
-        .btn-confirm:hover {
-            background: linear-gradient(135deg, #5cbf60, #4db051);
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(76,175,80,0.4);
         }
 
-        /* 空狀態提示 */
-        .folder-empty {
+        /* 底部按鈕區 */
+        .win98-footer {
+            background: #c0c0c0;
+            padding: 8px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 6px;
+        }
+        .win98-btn {
+            min-width: 75px;
+            padding: 4px 12px;
+            background: #c0c0c0;
+            border: none;
+            box-shadow:
+                inset -1px -1px #0a0a0a,
+                inset 1px 1px #ffffff,
+                inset -2px -2px #808080,
+                inset 2px 2px #dfdfdf;
+            font-size: 11px;
+            font-family: inherit;
+            cursor: pointer;
+            color: #000;
+        }
+        .win98-btn:hover {
+            background: #d4d4d4;
+        }
+        .win98-btn:active {
+            box-shadow:
+                inset 1px 1px #0a0a0a,
+                inset -1px -1px #ffffff,
+                inset 2px 2px #808080,
+                inset -2px -2px #dfdfdf;
+            padding: 5px 11px 3px 13px;
+        }
+        .win98-btn.default {
+            border: 1px solid #000;
+        }
+
+        /* 空狀態 */
+        .win98-empty {
             text-align: center;
             padding: 40px 20px;
-            color: #666;
-        }
-        .folder-empty-icon {
-            font-size: 48px;
-            margin-bottom: 10px;
-            opacity: 0.5;
+            color: #808080;
+            font-size: 11px;
         }
     </style>
 </head>
@@ -265,32 +336,42 @@ HTML_TEMPLATE = """
         <button class="tab" onclick="showTab('convert')">草稿轉換</button>
     </div>
 
-    <!-- 資料夾瀏覽彈窗 -->
+    <!-- Windows 98 風格資料夾瀏覽器 -->
     <div id="folderModal" class="folder-modal">
-        <div class="folder-modal-content">
-            <div class="folder-modal-header">
-                <h3>📁 選擇資料夾</h3>
-                <button onclick="closeFolderModal()" class="close-btn">&times;</button>
+        <div class="win98-window">
+            <!-- 標題列 -->
+            <div class="win98-titlebar">
+                <span class="win98-titlebar-icon">📁</span>
+                <span class="win98-titlebar-text">瀏覽資料夾</span>
+                <button class="win98-titlebar-btn" onclick="closeFolderModal()">×</button>
             </div>
 
-            <!-- 麵包屑導航 -->
-            <div id="breadcrumb" class="breadcrumb">
-                <span class="breadcrumb-item" onclick="browseTo('')">🖥️ 電腦</span>
+            <!-- 工具列 - 路徑顯示 -->
+            <div class="win98-toolbar">
+                <span class="win98-toolbar-label">位置(&amp;L):</span>
+                <input type="text" id="addressBox" class="win98-address-box" readonly>
             </div>
 
-            <!-- 資料夾列表 -->
-            <div id="folderList" class="folder-list"></div>
+            <!-- 主要內容 -->
+            <div class="win98-content">
+                <!-- 左側樹狀目錄 -->
+                <div class="win98-tree" id="treeView">
+                    <ul id="treeRoot"></ul>
+                </div>
 
-            <!-- 選中的路徑顯示 -->
-            <div class="selected-path">
-                <span style="color:#888;">已選擇：</span>
-                <span id="selectedPathText" style="color:#69db7c;">尚未選擇</span>
+                <!-- 右側資料夾列表 -->
+                <div class="win98-filelist" id="folderList"></div>
+            </div>
+
+            <!-- 狀態列 -->
+            <div class="win98-statusbar">
+                <span class="win98-statusbar-field" id="statusText">請選擇資料夾</span>
             </div>
 
             <!-- 按鈕區 -->
-            <div class="folder-modal-footer">
-                <button onclick="closeFolderModal()" class="btn-cancel">取消</button>
-                <button onclick="confirmFolder()" class="btn-confirm">✓ 選擇此資料夾</button>
+            <div class="win98-footer">
+                <button class="win98-btn default" onclick="confirmFolder()">確定</button>
+                <button class="win98-btn" onclick="closeFolderModal()">取消</button>
             </div>
         </div>
     </div>
@@ -391,55 +472,19 @@ function showTab(tabId) {
     if (tabId === 'convert') loadDrafts();
 }
 
-// ===== 資料夾瀏覽器 =====
+// ===== Windows 98 風格資料夾瀏覽器 =====
 var currentBrowsePath = '';
 var videoFiles = [];
-var pathHistory = [];
+var treeData = {};  // 快取樹狀資料
 
 function openFolderBrowser() {
     document.getElementById('folderModal').style.display = 'flex';
-    browseTo('');  // 從根目錄（磁碟機列表）開始
+    initTreeView();
+    browseTo('');
 }
 
 function closeFolderModal() {
     document.getElementById('folderModal').style.display = 'none';
-}
-
-// 更新麵包屑導航
-function updateBreadcrumb(path) {
-    var breadcrumb = document.getElementById('breadcrumb');
-    var html = '<span class="breadcrumb-item" onclick="browseTo(\\'\\')">🖥️ 電腦</span>';
-
-    if (path) {
-        // 解析路徑各層
-        var normalized = path.replace(/\\\\/g, '/');
-        var parts = normalized.split('/').filter(p => p);
-
-        var currentPath = '';
-        for (var i = 0; i < parts.length; i++) {
-            var part = parts[i];
-            if (i === 0 && part.match(/^[A-Za-z]:$/)) {
-                // Windows 磁碟機
-                currentPath = part + '/';
-                html += '<span class="breadcrumb-sep">›</span>';
-                if (i === parts.length - 1) {
-                    html += '<span class="breadcrumb-item breadcrumb-current">💿 ' + part + '</span>';
-                } else {
-                    html += '<span class="breadcrumb-item" onclick="browseTo(\\'' + escapeJS(currentPath) + '\\')">💿 ' + part + '</span>';
-                }
-            } else {
-                currentPath += (i === 0 || (i === 1 && parts[0].match(/^[A-Za-z]:$/))) ? part : '/' + part;
-                html += '<span class="breadcrumb-sep">›</span>';
-                if (i === parts.length - 1) {
-                    html += '<span class="breadcrumb-item breadcrumb-current">📁 ' + part + '</span>';
-                } else {
-                    html += '<span class="breadcrumb-item" onclick="browseTo(\\'' + escapeJS(currentPath) + '\\')">📁 ' + part + '</span>';
-                }
-            }
-        }
-    }
-
-    breadcrumb.innerHTML = html;
 }
 
 // 跳脫 JS 字串中的特殊字元
@@ -447,60 +492,99 @@ function escapeJS(str) {
     return str.replace(/\\\\/g, '\\\\\\\\').replace(/'/g, "\\\\'");
 }
 
+// 初始化左側樹狀目錄
+function initTreeView() {
+    fetch('/api/browse?path=')
+        .then(r => r.json())
+        .then(data => {
+            if (data.error) return;
+            var html = '<li class="selected" onclick="browseTo(\\'\\')">' +
+                       '<span class="win98-tree-icon">🖥️</span>我的電腦</li>';
+            for (var i = 0; i < data.folders.length; i++) {
+                var f = data.folders[i];
+                html += '<li onclick="browseTo(\\'' + escapeJS(f.path) + '\\'); event.stopPropagation();">' +
+                        '<span class="win98-tree-icon">💿</span>' + f.name + '</li>';
+            }
+            document.getElementById('treeRoot').innerHTML = html;
+        });
+}
+
+// 瀏覽到指定路徑
 function browseTo(path) {
     currentBrowsePath = path;
-    updateBreadcrumb(path);
 
-    // 更新選中路徑顯示
-    document.getElementById('selectedPathText').textContent = path || '尚未選擇';
+    // 更新位址列
+    document.getElementById('addressBox').value = path || '我的電腦';
 
-    // 載入中動畫
+    // 更新狀態列
+    document.getElementById('statusText').textContent = path ? '已選擇: ' + path : '請選擇資料夾';
+
+    // 載入中
     document.getElementById('folderList').innerHTML =
-        '<div style="text-align:center;padding:40px;color:#888;">' +
-        '<div style="font-size:32px;margin-bottom:10px;">⏳</div>' +
-        '<div>載入中...</div></div>';
+        '<div class="win98-empty">載入中...</div>';
 
     fetch('/api/browse?path=' + encodeURIComponent(path))
         .then(r => r.json())
         .then(data => {
             if (data.error) {
                 document.getElementById('folderList').innerHTML =
-                    '<div class="folder-empty">' +
-                    '<div class="folder-empty-icon">⚠️</div>' +
-                    '<div>' + data.error + '</div></div>';
+                    '<div class="win98-empty">⚠️ ' + data.error + '</div>';
                 return;
             }
 
             var html = '';
             var isDriveList = !path;
 
-            // 資料夾列表
             if (data.folders.length === 0) {
-                html = '<div class="folder-empty">' +
-                       '<div class="folder-empty-icon">📂</div>' +
-                       '<div>此資料夾沒有子資料夾</div></div>';
+                html = '<div class="win98-empty">此資料夾沒有子資料夾</div>';
             } else {
                 for (var i = 0; i < data.folders.length; i++) {
                     var f = data.folders[i];
                     var icon = isDriveList ? '💿' : '📁';
-                    var itemClass = isDriveList ? 'folder-item drive' : 'folder-item';
 
-                    html += '<div class="' + itemClass + '" onclick="browseTo(\\'' + escapeJS(f.path) + '\\')">';
-                    html += '<span class="folder-icon">' + icon + '</span>';
-                    html += '<span class="folder-name">' + f.name + '</span>';
-                    html += '<span class="folder-arrow">›</span>';
+                    html += '<div class="win98-file-item" ondblclick="browseTo(\\'' + escapeJS(f.path) + '\\')" onclick="selectFolder(this, \\'' + escapeJS(f.path) + '\\')">';
+                    html += '<span class="win98-file-icon">' + icon + '</span>';
+                    html += '<span>' + f.name + '</span>';
                     html += '</div>';
                 }
             }
 
             document.getElementById('folderList').innerHTML = html;
+
+            // 更新樹狀目錄的選中狀態
+            updateTreeSelection(path);
         })
         .catch(e => {
             document.getElementById('folderList').innerHTML =
-                '<div class="folder-empty">' +
-                '<div class="folder-empty-icon">❌</div>' +
-                '<div>載入失敗: ' + e + '</div></div>';
+                '<div class="win98-empty">❌ 載入失敗: ' + e + '</div>';
         });
+}
+
+// 選擇資料夾（單擊）
+function selectFolder(elem, path) {
+    // 移除其他選中狀態
+    document.querySelectorAll('.win98-file-item').forEach(function(el) {
+        el.classList.remove('selected');
+    });
+    // 設定當前選中
+    elem.classList.add('selected');
+    currentBrowsePath = path;
+
+    // 更新位址列和狀態列
+    document.getElementById('addressBox').value = path;
+    document.getElementById('statusText').textContent = '已選擇: ' + path;
+}
+
+// 更新樹狀目錄選中狀態
+function updateTreeSelection(path) {
+    document.querySelectorAll('#treeRoot li').forEach(function(li) {
+        li.classList.remove('selected');
+    });
+    // 簡單匹配：如果是根目錄，選中「我的電腦」
+    if (!path) {
+        var first = document.querySelector('#treeRoot li');
+        if (first) first.classList.add('selected');
+    }
 }
 
 function confirmFolder() {
@@ -510,7 +594,7 @@ function confirmFolder() {
     }
     document.getElementById('folderPath').value = currentBrowsePath;
     closeFolderModal();
-    scanFolder();  // 自動掃描
+    scanFolder();
 }
 
 // ===== 語音辨識 =====
