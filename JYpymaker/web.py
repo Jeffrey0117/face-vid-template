@@ -57,6 +57,204 @@ HTML_TEMPLATE = """
         .file-input-wrapper { position: relative; overflow: hidden; display: inline-block; }
         .file-input-wrapper input[type=file] { font-size: 100px; position: absolute; left: 0; top: 0; opacity: 0; cursor: pointer; }
         #selectedFile { margin: 10px 0; padding: 10px; background: #1a1a2e; border-radius: 5px; }
+
+        /* ===== 資料夾瀏覽器樣式 ===== */
+        .folder-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.85);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.2s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .folder-modal-content {
+            background: linear-gradient(145deg, #1e1e3a, #16162e);
+            border-radius: 16px;
+            padding: 0;
+            width: 560px;
+            max-height: 75vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.1);
+            overflow: hidden;
+        }
+        .folder-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            background: linear-gradient(90deg, #3a7bd5, #00d4aa);
+            color: white;
+        }
+        .folder-modal-header h3 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .close-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            font-size: 20px;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .close-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        /* 麵包屑導航 */
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 12px 20px;
+            background: #0d0d1a;
+            border-bottom: 1px solid #2a2a4e;
+            flex-wrap: wrap;
+            min-height: 44px;
+        }
+        .breadcrumb-item {
+            padding: 4px 10px;
+            background: #2a2a4e;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            color: #9cd9ff;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .breadcrumb-item:hover {
+            background: #3a7bd5;
+            color: white;
+        }
+        .breadcrumb-sep {
+            color: #555;
+            font-size: 12px;
+        }
+        .breadcrumb-current {
+            color: #69db7c;
+            font-weight: 600;
+            background: #1a4a2a;
+        }
+
+        /* 資料夾列表 */
+        .folder-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+            max-height: 350px;
+        }
+        .folder-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            margin: 4px 0;
+            background: #1a1a2e;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.15s;
+            border: 1px solid transparent;
+        }
+        .folder-item:hover {
+            background: #252550;
+            border-color: #3a7bd5;
+            transform: translateX(4px);
+        }
+        .folder-item.drive {
+            background: linear-gradient(135deg, #1a2a4a, #1a1a2e);
+        }
+        .folder-item.drive:hover {
+            background: linear-gradient(135deg, #2a3a5a, #252550);
+        }
+        .folder-icon {
+            font-size: 22px;
+            min-width: 28px;
+            text-align: center;
+        }
+        .folder-name {
+            flex: 1;
+            font-size: 14px;
+            color: #e0e0e0;
+        }
+        .folder-arrow {
+            color: #555;
+            font-size: 16px;
+        }
+
+        /* 選中路徑顯示 */
+        .selected-path {
+            padding: 12px 20px;
+            background: #0d0d1a;
+            border-top: 1px solid #2a2a4e;
+            font-family: 'Consolas', monospace;
+            font-size: 13px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* 底部按鈕 */
+        .folder-modal-footer {
+            display: flex;
+            gap: 12px;
+            padding: 16px 20px;
+            background: #16162e;
+        }
+        .btn-cancel {
+            flex: 1;
+            padding: 12px 20px;
+            background: #3a3a5e;
+            border: none;
+            color: #aaa;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        .btn-cancel:hover {
+            background: #4a4a6e;
+            color: #fff;
+        }
+        .btn-confirm {
+            flex: 1;
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #4caf50, #45a049);
+            border: none;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .btn-confirm:hover {
+            background: linear-gradient(135deg, #5cbf60, #4db051);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(76,175,80,0.4);
+        }
+
+        /* 空狀態提示 */
+        .folder-empty {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+        }
+        .folder-empty-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+            opacity: 0.5;
+        }
     </style>
 </head>
 <body>
@@ -67,18 +265,48 @@ HTML_TEMPLATE = """
         <button class="tab" onclick="showTab('convert')">草稿轉換</button>
     </div>
 
+    <!-- 資料夾瀏覽彈窗 -->
+    <div id="folderModal" class="folder-modal">
+        <div class="folder-modal-content">
+            <div class="folder-modal-header">
+                <h3>📁 選擇資料夾</h3>
+                <button onclick="closeFolderModal()" class="close-btn">&times;</button>
+            </div>
+
+            <!-- 麵包屑導航 -->
+            <div id="breadcrumb" class="breadcrumb">
+                <span class="breadcrumb-item" onclick="browseTo('')">🖥️ 電腦</span>
+            </div>
+
+            <!-- 資料夾列表 -->
+            <div id="folderList" class="folder-list"></div>
+
+            <!-- 選中的路徑顯示 -->
+            <div class="selected-path">
+                <span style="color:#888;">已選擇：</span>
+                <span id="selectedPathText" style="color:#69db7c;">尚未選擇</span>
+            </div>
+
+            <!-- 按鈕區 -->
+            <div class="folder-modal-footer">
+                <button onclick="closeFolderModal()" class="btn-cancel">取消</button>
+                <button onclick="confirmFolder()" class="btn-confirm">✓ 選擇此資料夾</button>
+            </div>
+        </div>
+    </div>
+
     <!-- 語音辨識 Tab -->
     <div id="transcribe" class="tab-content active">
         <div class="section">
             <h3>1. 選擇影片檔案</h3>
             <div style="display:flex; gap:10px; margin-bottom:10px;">
-                <input type="text" id="folderPath" placeholder="輸入資料夾路徑，例如: C:\\Videos" style="flex:1;">
-                <button onclick="scanFolder()">掃描資料夾</button>
+                <button onclick="openFolderBrowser()" class="btn-green" style="padding:12px 20px;">📁 選擇資料夾</button>
+                <input type="text" id="folderPath" placeholder="或手動輸入路徑" style="flex:1;" readonly>
             </div>
             <div id="videoList" class="draft-list" style="max-height:200px;"></div>
             <div style="margin-top:10px;">
-                <label>或直接輸入檔案路徑：</label>
-                <input type="text" id="videoPath" placeholder="C:\\Videos\\my_video.mp4" style="font-size:14px;">
+                <label>已選擇的檔案：</label>
+                <input type="text" id="videoPath" placeholder="請先選擇資料夾，再點選影片" style="font-size:14px;" readonly>
             </div>
         </div>
 
@@ -106,17 +334,14 @@ HTML_TEMPLATE = """
                 <option value="traditional" selected>繁體中文 (自動轉換)</option>
                 <option value="simplified">簡體中文 (原始輸出)</option>
             </select>
-
-            <label>輸出方式：</label>
-            <select id="outputMode">
-                <option value="draft" selected>產生剪映草稿（影片+字幕，一條龍）</option>
-                <option value="srt">只產生 SRT 字幕檔</option>
-            </select>
         </div>
 
-        <div class="section">
-            <button class="btn-green" onclick="startTranscribe()" id="transcribeBtn" style="font-size: 18px; padding: 15px 40px;">
-                開始辨識
+        <div class="section" style="display:flex; gap:20px; justify-content:center;">
+            <button class="btn-green" onclick="startTranscribe('srt')" id="srtBtn" style="font-size: 18px; padding: 20px 30px; min-width: 180px;">
+                📝 產生字幕
+            </button>
+            <button class="btn-green" onclick="startTranscribe('draft')" id="draftBtn" style="font-size: 18px; padding: 20px 30px; min-width: 180px; background: linear-gradient(135deg, #f093fb, #f5576c);">
+                🎬 一條龍草稿
             </button>
         </div>
 
@@ -166,15 +391,135 @@ function showTab(tabId) {
     if (tabId === 'convert') loadDrafts();
 }
 
-// ===== 語音辨識 =====
+// ===== 資料夾瀏覽器 =====
+var currentBrowsePath = '';
 var videoFiles = [];
+var pathHistory = [];
 
+function openFolderBrowser() {
+    document.getElementById('folderModal').style.display = 'flex';
+    browseTo('');  // 從根目錄（磁碟機列表）開始
+}
+
+function closeFolderModal() {
+    document.getElementById('folderModal').style.display = 'none';
+}
+
+// 更新麵包屑導航
+function updateBreadcrumb(path) {
+    var breadcrumb = document.getElementById('breadcrumb');
+    var html = '<span class="breadcrumb-item" onclick="browseTo(\\'\\')">🖥️ 電腦</span>';
+
+    if (path) {
+        // 解析路徑各層
+        var normalized = path.replace(/\\\\/g, '/');
+        var parts = normalized.split('/').filter(p => p);
+
+        var currentPath = '';
+        for (var i = 0; i < parts.length; i++) {
+            var part = parts[i];
+            if (i === 0 && part.match(/^[A-Za-z]:$/)) {
+                // Windows 磁碟機
+                currentPath = part + '/';
+                html += '<span class="breadcrumb-sep">›</span>';
+                if (i === parts.length - 1) {
+                    html += '<span class="breadcrumb-item breadcrumb-current">💿 ' + part + '</span>';
+                } else {
+                    html += '<span class="breadcrumb-item" onclick="browseTo(\\'' + escapeJS(currentPath) + '\\')">💿 ' + part + '</span>';
+                }
+            } else {
+                currentPath += (i === 0 || (i === 1 && parts[0].match(/^[A-Za-z]:$/))) ? part : '/' + part;
+                html += '<span class="breadcrumb-sep">›</span>';
+                if (i === parts.length - 1) {
+                    html += '<span class="breadcrumb-item breadcrumb-current">📁 ' + part + '</span>';
+                } else {
+                    html += '<span class="breadcrumb-item" onclick="browseTo(\\'' + escapeJS(currentPath) + '\\')">📁 ' + part + '</span>';
+                }
+            }
+        }
+    }
+
+    breadcrumb.innerHTML = html;
+}
+
+// 跳脫 JS 字串中的特殊字元
+function escapeJS(str) {
+    return str.replace(/\\\\/g, '\\\\\\\\').replace(/'/g, "\\\\'");
+}
+
+function browseTo(path) {
+    currentBrowsePath = path;
+    updateBreadcrumb(path);
+
+    // 更新選中路徑顯示
+    document.getElementById('selectedPathText').textContent = path || '尚未選擇';
+
+    // 載入中動畫
+    document.getElementById('folderList').innerHTML =
+        '<div style="text-align:center;padding:40px;color:#888;">' +
+        '<div style="font-size:32px;margin-bottom:10px;">⏳</div>' +
+        '<div>載入中...</div></div>';
+
+    fetch('/api/browse?path=' + encodeURIComponent(path))
+        .then(r => r.json())
+        .then(data => {
+            if (data.error) {
+                document.getElementById('folderList').innerHTML =
+                    '<div class="folder-empty">' +
+                    '<div class="folder-empty-icon">⚠️</div>' +
+                    '<div>' + data.error + '</div></div>';
+                return;
+            }
+
+            var html = '';
+            var isDriveList = !path;
+
+            // 資料夾列表
+            if (data.folders.length === 0) {
+                html = '<div class="folder-empty">' +
+                       '<div class="folder-empty-icon">📂</div>' +
+                       '<div>此資料夾沒有子資料夾</div></div>';
+            } else {
+                for (var i = 0; i < data.folders.length; i++) {
+                    var f = data.folders[i];
+                    var icon = isDriveList ? '💿' : '📁';
+                    var itemClass = isDriveList ? 'folder-item drive' : 'folder-item';
+
+                    html += '<div class="' + itemClass + '" onclick="browseTo(\\'' + escapeJS(f.path) + '\\')">';
+                    html += '<span class="folder-icon">' + icon + '</span>';
+                    html += '<span class="folder-name">' + f.name + '</span>';
+                    html += '<span class="folder-arrow">›</span>';
+                    html += '</div>';
+                }
+            }
+
+            document.getElementById('folderList').innerHTML = html;
+        })
+        .catch(e => {
+            document.getElementById('folderList').innerHTML =
+                '<div class="folder-empty">' +
+                '<div class="folder-empty-icon">❌</div>' +
+                '<div>載入失敗: ' + e + '</div></div>';
+        });
+}
+
+function confirmFolder() {
+    if (!currentBrowsePath) {
+        alert('請先選擇一個資料夾');
+        return;
+    }
+    document.getElementById('folderPath').value = currentBrowsePath;
+    closeFolderModal();
+    scanFolder();  // 自動掃描
+}
+
+// ===== 語音辨識 =====
 function scanFolder() {
     var folder = document.getElementById('folderPath').value.trim();
     var listDiv = document.getElementById('videoList');
 
     if (!folder) {
-        listDiv.innerHTML = '<p style="color:#ff6b6b;padding:10px;">請輸入資料夾路徑</p>';
+        listDiv.innerHTML = '<p style="color:#888;padding:10px;">請先選擇資料夾</p>';
         return;
     }
 
@@ -213,27 +558,31 @@ function selectVideo(idx) {
     document.getElementById('vf' + idx).style.background = '#3a7bd5';
 }
 
-function startTranscribe() {
+function startTranscribe(outputMode) {
     var pathInput = document.getElementById('videoPath').value.trim();
     var result = document.getElementById('transcribeResult');
-    var btn = document.getElementById('transcribeBtn');
+    var srtBtn = document.getElementById('srtBtn');
+    var draftBtn = document.getElementById('draftBtn');
 
     if (!pathInput) {
         result.className = 'error';
-        result.textContent = '請輸入影片檔案路徑！\\n\\n例如: C:\\\\Videos\\\\my_video.mp4';
+        result.textContent = '請選擇或輸入影片檔案路徑！';
         return;
     }
 
-    var outputMode = document.getElementById('outputMode').value;
-
-    btn.disabled = true;
-    btn.textContent = '處理中...';
+    // 禁用兩個按鈕
+    srtBtn.disabled = true;
+    draftBtn.disabled = true;
     result.className = 'progress';
 
     if (outputMode === 'draft') {
-        result.textContent = '正在處理...\\n\\n1. 啟動 Whisper 語音辨識\\n2. 轉換為繁體中文\\n3. 產生剪映草稿\\n\\n這可能需要幾分鐘，請耐心等候...';
+        srtBtn.textContent = '處理中...';
+        draftBtn.textContent = '🎬 處理中...';
+        result.textContent = '一條龍處理中...\\n\\n1. Whisper 語音辨識\\n2. 轉換繁體中文\\n3. 產生剪映草稿\\n\\n請耐心等候...';
     } else {
-        result.textContent = '正在啟動 Whisper 模型，請稍候...\\n這可能需要幾分鐘，取決於影片長度和模型大小。';
+        srtBtn.textContent = '📝 處理中...';
+        draftBtn.textContent = '處理中...';
+        result.textContent = '語音辨識中...\\n\\n請耐心等候，時間取決於影片長度。';
     }
 
     var data = {
@@ -256,28 +605,32 @@ function startTranscribe() {
             result.textContent = '錯誤: ' + data.error;
         } else if (data.draft_path) {
             result.className = 'success';
-            result.textContent = '完成！剪映草稿已建立！\\n\\n' +
-                '草稿名稱: ' + data.draft_name + '\\n' +
-                '草稿路徑: ' + data.draft_path + '\\n' +
-                '字幕檔案: ' + data.srt_path + '\\n' +
-                '處理時間: ' + data.duration + ' 秒\\n\\n' +
-                '請重新開啟剪映即可看到此草稿！';
+            result.textContent = '✅ 剪映草稿已建立！\\n\\n' +
+                '草稿: ' + data.draft_name + '\\n' +
+                '字幕: ' + data.srt_path + '\\n' +
+                '耗時: ' + data.duration + ' 秒\\n\\n' +
+                '重新開啟剪映即可看到！';
         } else {
             result.className = 'success';
-            result.textContent = '辨識完成！\\n\\n' +
-                '輸出檔案: ' + data.output + '\\n' +
-                '片段數量: ' + data.segments + '\\n' +
-                '處理時間: ' + data.duration + ' 秒';
+            result.textContent = '✅ 字幕產生完成！\\n\\n' +
+                '檔案: ' + data.output + '\\n' +
+                '片段: ' + data.segments + ' 段\\n' +
+                '耗時: ' + data.duration + ' 秒';
         }
-        btn.disabled = false;
-        btn.textContent = '開始辨識';
+        resetButtons();
     })
     .catch(e => {
         result.className = 'error';
         result.textContent = '請求失敗: ' + e;
-        btn.disabled = false;
-        btn.textContent = '開始辨識';
+        resetButtons();
     });
+}
+
+function resetButtons() {
+    document.getElementById('srtBtn').disabled = false;
+    document.getElementById('draftBtn').disabled = false;
+    document.getElementById('srtBtn').textContent = '📝 產生字幕';
+    document.getElementById('draftBtn').textContent = '🎬 一條龍草稿';
 }
 
 // ===== 草稿轉換 =====
@@ -418,6 +771,56 @@ def api_convert():
             results.append({'name': path, 'success': False, 'error': str(e)})
 
     return jsonify({'results': results})
+
+
+@app.route('/api/browse')
+def api_browse():
+    """瀏覽資料夾結構"""
+    import string
+    path = request.args.get('path', '')
+
+    folders = []
+
+    if not path:
+        # 列出所有磁碟機 (Windows)
+        import platform
+        if platform.system() == 'Windows':
+            for letter in string.ascii_uppercase:
+                drive = f"{letter}:/"
+                if Path(drive).exists():
+                    folders.append({'name': f"{letter}: 磁碟機", 'path': drive})
+        else:
+            # macOS/Linux: 列出常用目錄
+            home = Path.home()
+            common_paths = [
+                (home, '家目錄'),
+                (home / 'Desktop', '桌面'),
+                (home / 'Downloads', '下載'),
+                (home / 'Documents', '文件'),
+                (home / 'Movies', '影片'),
+                (home / 'Videos', '影片'),
+            ]
+            for p, name in common_paths:
+                if p.exists():
+                    folders.append({'name': name, 'path': str(p)})
+    else:
+        # 列出指定路徑下的子資料夾
+        folder_path = Path(path)
+        if not folder_path.exists():
+            return jsonify({'error': f'路徑不存在: {path}'})
+        if not folder_path.is_dir():
+            return jsonify({'error': f'不是資料夾: {path}'})
+
+        try:
+            for f in sorted(folder_path.iterdir(), key=lambda x: x.name.lower()):
+                if f.is_dir() and not f.name.startswith('.'):
+                    folders.append({'name': f.name, 'path': str(f)})
+        except PermissionError:
+            return jsonify({'error': '沒有權限存取此資料夾'})
+        except Exception as e:
+            return jsonify({'error': str(e)})
+
+    return jsonify({'folders': folders})
 
 
 @app.route('/api/scan_folder')
